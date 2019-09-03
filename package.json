@@ -1,0 +1,26 @@
+{
+  "name": "book-islands",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nerik/book-islands.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nerik/book-islands/issues"
+  },
+  "homepage": "https://github.com/nerik/book-islands#readme",
+  "devDependencies": {
+    "@turf/area": "^6.0.1",
+    "@turf/turf": "^5.1.6",
+    "eslint": "^6.3.0",
+    "lodash": "^4.17.15",
+    "mapshaper": "^0.4.126"
+  }
+}

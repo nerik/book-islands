@@ -1,0 +1,1 @@
+npx mapshaper in/GSHHS_f_L1\ \(full\ res\ shorelines\)/GSHHS_f_L1.shp  -o format=geojson out/shorelines.json
