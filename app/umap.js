@@ -20,13 +20,13 @@ document.getElementById('controls').addEventListener('mousedown', e => {
   if (e.target.id === 'check-clusters') {
     console.log(e.target.checked)
     document.getElementById('clusters').style.visibility = (!e.target.checked) ? 'visible' : 'hidden'
-
   }
 })
 
+var url = new URL(window.location)
+var umap = url.searchParams.get('umap') || 'UMAP_with_author'
 
-
-d3.csv('../in/UMAP_with_ids.csv')
+d3.csv(`../in/umap/${umap}.csv`)
   .then(data => {
     const features = data.map(p => {
       const feature = {
