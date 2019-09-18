@@ -2,7 +2,7 @@
 
 const fs = require('fs')
 const BOOKS_DB_PATH = './in/google-books/books_with_mid.db'
-const TITLES_PATH = './out/titles.json'
+const TITLES_PATH = './out/db/titles.json'
 
 let bookTitles = {}
 

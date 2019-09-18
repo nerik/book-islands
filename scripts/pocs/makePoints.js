@@ -10,9 +10,8 @@ const parse = require('csv-parse/lib/sync')
 const TYPE = 'author'
 
 const OUT_PATH = `./out/points-${TYPE}.geo.json`
-const OUT_AUTHORBOOKS_PATH = `./out/points-authorbooks.geo.json`
+const OUT_AUTHORBOOKS_PATH = './out/points-authorbooks.geo.json'
 const UMAP_PATH = (TYPE === 'book') ? './in/umap/UMAP_with_ids.csv' : './in/umap/UMAP_with_author.csv'
-const BOOKS_TABLE_PATH = './in/google-books/books_with_mid.csv'
 
 const authors = require('../out/authors.json')
 const titles = require('../out/titles.json')

@@ -2,7 +2,7 @@
 
 const fs = require('fs')
 const BOOKS_DB_PATH = './in/google-books/books_with_mid.db'
-const AUTHORS_PATH = './out/authors.json'
+const AUTHORS_PATH = './out/db/authors.json'
 
 let authors
 
