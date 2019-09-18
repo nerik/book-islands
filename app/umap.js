@@ -108,7 +108,7 @@ d3.csv(`../in/umap/${umap}.csv`)
         document.getElementById('info').innerText = d.properties.point_count
       })
       .on('click', d => {
-        const leaves = index.getLeaves(d.properties.cluster_id, 100)
+        const leaves = index.getLeaves(d.properties.cluster_id, Infinity)
         console.log(leaves)
         console.log(leaves.map(d => d.properties.id))
 
