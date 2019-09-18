@@ -10,17 +10,17 @@ const sqlite3 = require('sqlite3').verbose()
 const db = new sqlite3.Database(BOOKS_DB_PATH, sqlite3.OPEN_READONLY, (err) => {
   if (err) console.log(err)
   db.all(`SELECT
-      author,
-      avg(relatedness_signal_projected_query_popularity) AS popularity,
+      author as id,
+      sum(relatedness_signal_projected_query_popularity) AS score,
+      avg(relatedness_signal_projected_query_popularity) AS avg_popularity,
       count(id) books_count,
       group_concat(id) ids,
       group_concat(title, '|') titles
       FROM books_with_mid
       GROUP BY author
-      ORDER BY popularity DESC`, (err, rows) => {
+      ORDER BY score DESC`, (err, rows) => {
     if (err) console.log(err)
     authors = rows
     fs.writeFileSync(AUTHORS_PATH, JSON.stringify(authors))
   })
-
 })

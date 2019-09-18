@@ -1,4 +1,5 @@
 node_modules
 /in
 /out
+/tiles
 .DS_Store
