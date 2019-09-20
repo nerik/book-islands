@@ -3,7 +3,7 @@ const fs = require('fs')
 const _ = require('lodash')
 const d3 = require('d3')
 const turf = require('@turf/turf')
-const cliProgress = require('cli-progress')
+const progressBar = require('../util/progressBar')
 const parse = require('csv-parse/lib/sync')
 
 // const TYPE = 'book'
@@ -40,8 +40,7 @@ var lng = d3.scaleLinear().domain([xMin, xMax]).range([MIN_LNG, MAX_LNG])
 var lat = d3.scaleLinear().domain([yMin, yMax]).range([MIN_LAT, MAX_LAT])
 
 
-const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic)
-progressBar.start(umap.length, 0)
+const pb = progressBar(umap.length)
 
 const authorBooksFeatures = []
 const features = umap.map(record => {
@@ -73,10 +72,10 @@ const features = umap.map(record => {
       console.log('cant find author', record.id, 'in db')
     }
   }
-  progressBar.increment()
+  pb.increment()
   return point
 })
-progressBar.stop()
+pb.stop()
 
 fs.writeFileSync(OUT_PATH, JSON.stringify(turf.featureCollection(features)))
 

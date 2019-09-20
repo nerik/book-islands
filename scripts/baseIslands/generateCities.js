@@ -2,7 +2,7 @@
 const fs = require('fs')
 const parse = require('csv-parse/lib/sync')
 const turf = require('@turf/turf')
-const cliProgress = require('cli-progress')
+const progressBar = require('../util/progressBar')
 
 const { BASE_ISLANDS, BASE_CITIES } = require('../constants')
 
@@ -46,8 +46,7 @@ console.log('Read ', cities.length, ' cities')
 
 const baseIslands = JSON.parse(fs.readFileSync(BASE_ISLANDS, 'utf-8'))
 
-const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic)
-// progressBar.start(baseIslands.features.length, 0)
+const pb = progressBar(baseIslands.features.length)
 
 const islandsCities = {}
 let cnt = 0
@@ -69,10 +68,10 @@ baseIslands.features.forEach(feature => {
     cntWithout++
   }
   islandsCities[feature.properties.id] = islandCities
-  // progressBar.increment()
+  pb.increment()
 })
 
-progressBar.stop()
+pb.stop()
 
 console.log('Attributed', cnt, 'cities')
 console.log(cntWithout, ' islands without any city out of ' , baseIslands.features.length)

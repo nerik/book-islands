@@ -2,7 +2,7 @@
 
 const fs = require('fs')
 const turf = require('@turf/turf')
-const cliProgress = require('cli-progress')
+const progressBar = require('../util/progressBar')
 const transposeFeature = require('../util/transposeFeature')
 const { SHORELINES, BASE_ISLANDS, BASE_ISLANDS_LOWDEF } = require('../constants')
 
@@ -29,8 +29,7 @@ const filteredFeatures = islands.features.filter(feature => {
   }
 })
 
-const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic)
-progressBar.start(filteredFeatures.length, 0)
+const pb = progressBar(filteredFeatures.length)
 
 // console.log(filteredFeatures)
 
@@ -46,27 +45,30 @@ geoJSON.features = filteredFeatures.map((feature, i) => {
   })
 
   const center = turf.centerOfMass(feature)
-  const transposedIsland = transposeFeature(feature, center)
+  // const transposedIsland = transposeFeature(feature, center)
 
   const properties = {
     id: i,
-    originalCenter: turf.coordAll(center)[0],
-    center: turf.coordAll(turf.centerOfMass(transposedIsland))[0],
-    originalBBox: turf.bbox(feature),
-    bbox: turf.bbox(transposedIsland),
+    center: turf.coordAll(center)[0],
+    // center: turf.coordAll(turf.centerOfMass(transposedIsland))[0],
+    bbox: turf.bbox(feature),
+    // bbox: turf.bbox(transposedIsland),
   }
 
-  transposedIsland.properties = lowdefFeature.properties = properties
+  // transposedIsland.properties = 
+  feature.properties = 
+  lowdefFeature.properties = properties
 
   geoJSONLowdef.features.push(lowdefFeature)
 
-  progressBar.increment()
-  return transposedIsland
+  pb.increment()
+  // return transposedIsland
+  return feature
 })
 
-progressBar.stop()
+pb.stop()
 
 fs.writeFileSync(BASE_ISLANDS, JSON.stringify(geoJSON))
 fs.writeFileSync(BASE_ISLANDS_LOWDEF, JSON.stringify(geoJSONLowdef))
 
-console.log('Wrote ', geoJSON.features.length, ' features to ', BASE_ISLANDS)
+console.log('Wrote ', geoJSON.features.length, ' features to ', BASE_ISLANDS, '+', BASE_ISLANDS_LOWDEF)

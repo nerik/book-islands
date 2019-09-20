@@ -3,7 +3,7 @@
 // run with node --max-old-space-size=8192
 
 const fs = require('fs')
-const cliProgress = require('cli-progress')
+const progressBar = require('../util/progressBar')
 const JSONStream = require( 'JSONStream')
 const _ = require('lodash')
 const { BASE_ISLANDS_LOWDEF, DB, UMAP_GEO, ISLANDS_LOWDEF } = require('../constants')
@@ -30,11 +30,10 @@ const getRandomIsland = () => {
   return baseIslands.features[rd]
 }
 
-const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic)
-progressBar.start(umap.features.length, 0)
+const pb = progressBar(umap.features.length)
 
 geoJSON.features = umap.features.map(umapPoint => {
-  progressBar.increment()
+  pb.increment()
   const dbRecord = db.find(r => r.id === umapPoint.properties.id)
   if (dbRecord === undefined) {
     console.log('Couldnt find', umapPoint.properties.id)
@@ -51,7 +50,7 @@ geoJSON.features = umap.features.map(umapPoint => {
 
   return island
 })
-progressBar.stop()
+pb.stop()
 
 console.log('Done layouting.')
 

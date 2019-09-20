@@ -34,7 +34,10 @@
     "lodash": "^4.17.15",
     "mapshaper": "^0.4.126",
     "node-hgt": "^1.2.3",
+    "paper": "^0.12.3",
     "rimraf": "^3.0.0",
-    "sqlite3": "^4.1.0"
+    "sqlite3": "^4.1.0",
+    "supercluster": "^6.0.2",
+    "transformation-matrix": "^2.1.0"
   }
 }
