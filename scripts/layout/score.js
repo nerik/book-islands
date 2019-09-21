@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+Error.stackTraceLimit = Infinity
 const fs = require('fs')
 const turf = require('@turf/turf')
 const _ = require('lodash')
@@ -70,7 +70,7 @@ const findScaleFit = (clusterPointsMrct, clusterCenterMrct, islandMrct) => {
   let prevScale = 1
   let prevIslandAtScaleMrct = transposedNoScale
 
-  const STEP_INCREMENT = .05
+  const STEP_INCREMENT = .2
   const MAX_NUM_ITERATIONS = (1/STEP_INCREMENT) - 1
 
   for (let i = 0; i < MAX_NUM_ITERATIONS; i++) {
@@ -129,26 +129,39 @@ const findScaleFit = (clusterPointsMrct, clusterCenterMrct, islandMrct) => {
   // return { newScale: null }
 }
 
-const getFitScore = (islandAtScaleMrct, allClusterPointsMrct, clusterEnveloppe) => {
-  // create buffers around all points
-
-  // merge buffers
-
-  // intersect merged buffers with island
+const getFitScore = (islandAtScale, clusterBuffers) => {
+  // intersect buffers with island
+  const intersected = clusterBuffers.map(b => {
+    return turf.intersect(b, islandAtScale)
+  })
+  // merge buffers - not needed if only one
+  const merged = turf.union.apply(null, intersected)
 
   // compared intersected area vs island total area
+  const mergedArea = turf.area(merged)
+  const islandArea = turf.area(islandAtScale)
+
+  const r = islandArea/mergedArea
+
+  if (r > 1) {
+    // wtf
+    return -1
+  }
+
+  return r
+
 
   // TODO 2 points clusters env is null
-  const clusterArea = turf.area(clusterEnveloppe)
-  const islandArea = turf.area(islandAtScaleMrct)
-  const r = clusterArea/islandArea
-  return r > 1 ? 0 : r
+  // const clusterArea = turf.area(clusterEnveloppe)
+  // const islandArea = turf.area(islandAtScaleMrct)
+  // const r = clusterArea/islandArea
+  // return r > 1 ? 0 : r
 }
 
 
 const filteredClusters = clusters.features
   // TODO 
-  .filter(cluster => cluster.properties.point_count > 2)
+  .filter(cluster => cluster.properties.point_count > 1)
   .filter(
     cluster => 
       cluster.geometry.coordinates[0] > TEST_BBOX.minX &&
@@ -164,26 +177,33 @@ const scores = {}
 const pb = progressBar(filteredClusters.length)
 filteredClusters.forEach(cluster => {
   const clusterId = cluster.properties.cluster_id
-  const allClusterPointsMrct = umap.features
+  const allClusterPoints = umap.features
     .filter(p => p.properties.cluster_id === cluster.properties.cluster_id)
-    .map(p => turf.toMercator(p))
+  
+  const allClusterPointsMrct = allClusterPoints.map(p => turf.toMercator(p))
 
   const clusterCenterMrct = turf.toMercator(cluster)
-  const clusterEnveloppe = turf.concave(turf.featureCollection(allClusterPointsMrct))
-  const clusterBBox = turf.bbox(clusterEnveloppe)
+  const clusterBBox = turf.bbox(turf.featureCollection(allClusterPointsMrct))
   const clusterR = bboxRatio(clusterBBox)
+  const clusterBuffers = allClusterPoints.map(p => turf.buffer(p, 10, {
+    units: 'kilometers',
+    steps: 8
+  }))
+  const simplifiedClusterBuffers = clusterBuffers.map(b => turf.simplify(b))
+  
   const fitScores = baseIslandsMrct.features.map(baseIslandMrct => {
     const islandId = baseIslandMrct.properties.id
-    // check if w/h ratios are not too different (ignore for 1 and 2 pts clusters)
-    if (cluster.properties.point_count > 2 &&
-        Math.abs(clusterR - baseIslandMrct.properties.r) > .5) {
+    // check if w/h ratios are not too different (ignore for 1pt clusters)
+    if (cluster.properties.point_count > 1 &&
+        Math.abs(clusterR - baseIslandMrct.properties.r) > 1) {
       return {
         islandId,
         error: 'ratiosDiverge',
         fitScore: 0
       }
     }
-    const islandMrct = _.cloneDeep(baseIslandMrct)
+    // const islandMrct = _.cloneDeep(baseIslandMrct)
+    const islandMrct = baseIslandMrct
     const { newScale, islandAtScaleMrct, error } =
       findScaleFit(allClusterPointsMrct, clusterCenterMrct, islandMrct)
     
@@ -195,27 +215,46 @@ filteredClusters.forEach(cluster => {
       }
     }
 
-    const fitScore = getFitScore(islandAtScaleMrct, allClusterPointsMrct, clusterEnveloppe)
-    return {
-      islandId,
-      newScale,
-      islandAtScaleMrct,
-      fitScore,
+    const islandAtScale = turf.toWgs84(islandAtScaleMrct)
+
+    try {
+      const fitScore = getFitScore(islandAtScale, simplifiedClusterBuffers)
+
+      if (fitScore === -1) {
+        return {
+          islandId,
+          error: 'intersectBiggerThanIsland',
+          fitScore: 0
+        }
+      }
+      return {
+        islandId,
+        newScale,
+        islandAtScale,
+        fitScore,
+      }
+    } catch (e) {
+
+      return {
+        islandId,
+        error: 'island',
+        fitScore: 0
+      }
     }
   })
 
   const ordered = _.orderBy(fitScores, ['fitScore'], ['desc'])
-    .slice(0, 10)
+  // .slice(0, 10)
 
   // console.log(ordered.filter(f => f.fitScore > 0).map(f => f.fitScore))
   scores[clusterId] = ordered.map(fs => {
     const props = { ... fs }
-    delete props.islandAtScaleMrct
+    delete props.islandAtScale
     return props
   })
 
-  if (ordered[0].islandAtScaleMrct) {
-    const island = turf.toWgs84(ordered[0].islandAtScaleMrct)
+  if (ordered[0].score > 0 && ordered[0].islandAtScale) {
+    const island = ordered[0].islandAtScale
     island.properties.r = cluster.properties.r
     island.properties.g = cluster.properties.g
     island.properties.b = cluster.properties.b

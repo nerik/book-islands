@@ -17,5 +17,5 @@ module.exports = {
     maxX: 0,
     maxY: 6
   },
-  MAX_BASE_ISLAND_SCALE_UP: 1.5
+  MAX_BASE_ISLAND_SCALE_UP: 2
 }

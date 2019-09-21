@@ -18,8 +18,8 @@ const numFeatures = islands.features.length
 
 console.log('Read ' , numFeatures, ' polygons')
 
-const MIN_AREA = 300000000 //sq m
-const MAX_AREA = 100000000000 //sq m
+const MIN_AREA = 200000000 //sq m
+const MAX_AREA = 50000000000 //sq m
 
 const geoJSON = {
   'type': 'FeatureCollection',
@@ -40,10 +40,10 @@ const filteredFeatures = islands.features.filter(feature => {
   }
 })
 
-const pb = progressBar(filteredFeatures.length)
 
 console.log(filteredFeatures.length, ' features meet size rquirements out of ', islands.features.length, '\n\n')
-console.log('\n\n')
+
+const pb = progressBar(filteredFeatures.length)
 
 const getProps = (feature) => {
   const center = turf.coordAll(turf.centerOfMass(feature))[0]
@@ -60,6 +60,7 @@ const getProps = (feature) => {
 }
 
 geoJSON.features = filteredFeatures.map((feature, i) => {
+  // Generate low def, not projected
   // const bufferedFeature = turf.buffer(feature, 1, {
   //   units: 'kilometers'
   // })
@@ -71,6 +72,7 @@ geoJSON.features = filteredFeatures.map((feature, i) => {
   })
   featureLowdef.properties = getProps(featureLowdef)
 
+  // Generate low def, projected to mercator
   const featureLowdefMrct = turf.toMercator(featureLowdef)
   const originalCenter = turf.coordAll(turf.centerOfMass(featureLowdefMrct))[0]
   const matrix = compose(
@@ -79,7 +81,9 @@ geoJSON.features = filteredFeatures.map((feature, i) => {
   )
   featureLowdefMrct.geometry.coordinates[0] = applyToPoints(matrix, featureLowdefMrct.geometry.coordinates[0])
   featureLowdefMrct.properties = getProps(featureLowdefMrct)
+  featureLowdefMrct.properties.wsg84Area = featureLowdef.properties.area
 
+  // Copy island id
   feature.properties.id = featureLowdef.properties.id = featureLowdefMrct.properties.id = i
 
   geoJSONLowdef.features.push(featureLowdef)

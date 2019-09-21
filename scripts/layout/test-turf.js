@@ -160,32 +160,38 @@ const island = {
 }
 Error.stackTraceLimit = Infinity
 
-const pointMctr = points.map(p => turf.toMercator(p))
-const islandMctr = turf.toMercator(island)
+// // turf's buffer fails with mercator coords
+// // turf's area calculation seems to be wrong with mercator coords :/
 
-const buffers = pointMctr.map(p => turf.toMercator(turf.buffer(turf.toWgs84(p), 500, {
-  units: 'kilometers',
-  steps: 8
-})))
+// const buffers = points.map(p => turf.buffer(p, 500, {
+//   units: 'kilometers',
+//   steps: 1
+// }))
 
-const intersected = buffers.map(b => {
-  return turf.intersect(b, islandMctr)
-})
+// const simpBuffers = buffers.map(b => turf.simplify(b, {
+//   tolerance: 0.001
+// }))
 
-const merged = intersected.slice(1).reduce((acc, current) => {
-  return turf.union(acc, current)
-}, buffers[0])
+// const intersected = simpBuffers.map(b => {
+//   return turf.intersect(b, island)
+// })
+// const merged = turf.union.apply(null, intersected)
 
-const mergedWgs = turf.toWgs84(merged)
+// // const merged = intersected.slice(1).reduce((acc, current) => {
+// //   return turf.union(acc, current)
+// // }, buffers[0])
 
-const mergedArea = turf.area(mergedWgs)
-const islandArea = turf.area(island)
+// const mergedArea = turf.area(merged)
+// const islandArea = turf.area(island)
 
-mergedWgs.properties = {
-  mergedArea,
-  islandArea,
-  r: mergedArea/islandArea
-}
+// merged.properties = {
+//   mergedArea,
+//   islandArea,
+//   r: mergedArea/islandArea
+// }
+
+const ptsbbox = turf.concave(turf.featureCollection(points))
+const diff = turf.difference(island, ptsbbox)
 
 
-console.log(JSON.stringify(mergedWgs))
+console.log(JSON.stringify(diff))
