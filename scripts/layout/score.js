@@ -62,8 +62,8 @@ const transposeAndScale = (center, polygon, newScale = 1) => {
 
 // Tries to scale up or down an island so that it fits best cluster points
 const findScaleFit = (clusterPointsMrct, clusterCenterMrct, islandMrct) => {
-  // if points already fit, try scaling down, else try scale up
   const transposedNoScale = transposeAndScale(clusterCenterMrct, islandMrct, 1)
+  // if points already fit, try scaling down, else try scale up
   const dir = pointsWithinFeature(clusterPointsMrct, transposedNoScale) ? -1 : 1
 
   let currentScale = 1
@@ -71,20 +71,20 @@ const findScaleFit = (clusterPointsMrct, clusterCenterMrct, islandMrct) => {
   let prevIslandAtScaleMrct = transposedNoScale
 
   const STEP_INCREMENT = .2
-  const MAX_NUM_ITERATIONS = (1/STEP_INCREMENT) - 1
+  const INCREMENT_AMPLITUDE = (dir === 1) ? MAX_BASE_ISLAND_SCALE_UP : 1
+  const maxNumIterations = Math.ceil(INCREMENT_AMPLITUDE/STEP_INCREMENT)
 
-  for (let i = 0; i < MAX_NUM_ITERATIONS; i++) {
+  for (let i = 0; i < maxNumIterations; i++) {
     // abandon trying to scale up too much to avoid too distorted geoms
     if (dir === 1 && currentScale >= MAX_BASE_ISLAND_SCALE_UP) {
       // console.log('Cant scale up more, rejecting')
       return { error: 'cantScaleUp' }
     }
-
     currentScale += STEP_INCREMENT * dir
+    // console.log('now trying with scl::', currentScale)
     
     const islandAtScaleMrct = transposeAndScale(clusterCenterMrct, islandMrct, currentScale)
     const fits = pointsWithinFeature(clusterPointsMrct, islandAtScaleMrct)
-
     // scaling down and it now doesnt fit anymore: use prev
     if (dir === -1 && !fits) {
       // console.log('Scaling down, was fitting at ', prevScale)
@@ -96,7 +96,7 @@ const findScaleFit = (clusterPointsMrct, clusterCenterMrct, islandMrct) => {
 
     // scaling up and it now fits: use current
     if (dir === 1 && fits) {
-      // console.log('Now fits scaling up at', currentScale)
+      // console.log('Scaling up, now fits at', currentScale)
       return {
         scale: currentScale,
         islandAtScaleMrct
@@ -106,30 +106,13 @@ const findScaleFit = (clusterPointsMrct, clusterCenterMrct, islandMrct) => {
     prevIslandAtScaleMrct = islandAtScaleMrct
     prevScale = currentScale
   }
-
   return {
     error: `unknownWithDir${(dir === 1) ? 'Up' : 'Down'}`
   }
-
-  // // ideal case
-  // if (finalIslandMrct) {
-  //   return { 
-  //     islandAtScaleMrct: finalIslandMrct,
-  //     newScale: finalScale
-  //   }
-  // // if ideal case not found and scaling down: use smallest option
-  // } else if (dir === -1) {
-  //   console.log('Scaling down, smallest scale found ', currentScale)
-  //   return {
-  //     islandAtScaleMrct: prevIslandAtScaleMrct,
-  //     newScale: prevScale
-  //   }
-  // }
-  // console.log('Couldnt find fit')
-  // return { newScale: null }
 }
 
 const getFitScore = (islandAtScale, clusterBuffers) => {
+  
   // intersect buffers with island
   const intersected = clusterBuffers.map(b => {
     return turf.intersect(b, islandAtScale)
@@ -158,10 +141,16 @@ const getFitScore = (islandAtScale, clusterBuffers) => {
   // return r > 1 ? 0 : r
 }
 
+const getFitScoreFast = (islandAtScale, clusterEnveloppeArea) => {
+  const islandArea = turf.area(islandAtScale)
+  const r = clusterEnveloppeArea/islandArea
+  return r
+}
+
 
 const filteredClusters = clusters.features
   // TODO 
-  .filter(cluster => cluster.properties.point_count > 1)
+  .filter(cluster => cluster.properties.point_count > 2)
   .filter(
     cluster => 
       cluster.geometry.coordinates[0] > TEST_BBOX.minX &&
@@ -169,7 +158,7 @@ const filteredClusters = clusters.features
     cluster.geometry.coordinates[1] > TEST_BBOX.minY &&
     cluster.geometry.coordinates[1] < TEST_BBOX.maxY
   )
-  .slice(0, 10)
+  .slice(0, 1000)
 
 const testFeatures = []
 const scores = {}
@@ -183,27 +172,30 @@ filteredClusters.forEach(cluster => {
   const allClusterPointsMrct = allClusterPoints.map(p => turf.toMercator(p))
 
   const clusterCenterMrct = turf.toMercator(cluster)
-  const clusterBBox = turf.bbox(turf.featureCollection(allClusterPointsMrct))
-  const clusterR = bboxRatio(clusterBBox)
-  const clusterBuffers = allClusterPoints.map(p => turf.buffer(p, 10, {
-    units: 'kilometers',
-    steps: 8
-  }))
-  const simplifiedClusterBuffers = clusterBuffers.map(b => turf.simplify(b))
+  // TODO wil fail with 2 or less points
+  const clusterEnveloppe = turf.concave(turf.featureCollection(allClusterPoints))
+  const clusterEnveloppeArea = turf.area(clusterEnveloppe)
+
+  // const clusterBBox = turf.bbox(turf.featureCollection(allClusterPointsMrct))
+  // const clusterR = bboxRatio(clusterBBox)
+  // const clusterBuffers = allClusterPoints.map(p => turf.buffer(p, 10, {
+  //   units: 'kilometers',
+  //   steps: 8
+  // }))
+  // const simplifiedClusterBuffers = clusterBuffers.map(b => turf.simplify(b))
   
   const fitScores = baseIslandsMrct.features.map(baseIslandMrct => {
     const islandId = baseIslandMrct.properties.id
     // check if w/h ratios are not too different (ignore for 1pt clusters)
-    if (cluster.properties.point_count > 1 &&
-        Math.abs(clusterR - baseIslandMrct.properties.r) > 1) {
-      return {
-        islandId,
-        error: 'ratiosDiverge',
-        fitScore: 0
-      }
-    }
-    // const islandMrct = _.cloneDeep(baseIslandMrct)
-    const islandMrct = baseIslandMrct
+    // if (cluster.properties.point_count > 1 &&
+    //     Math.abs(clusterR - baseIslandMrct.properties.r) > 1) {
+    //   return {
+    //     islandId,
+    //     error: 'ratiosDiverge',
+    //     fitScore: 0
+    //   }
+    // }
+    const islandMrct = _.cloneDeep(baseIslandMrct)
     const { newScale, islandAtScaleMrct, error } =
       findScaleFit(allClusterPointsMrct, clusterCenterMrct, islandMrct)
     
@@ -217,34 +209,19 @@ filteredClusters.forEach(cluster => {
 
     const islandAtScale = turf.toWgs84(islandAtScaleMrct)
 
-    try {
-      const fitScore = getFitScore(islandAtScale, simplifiedClusterBuffers)
+    // const fitScore = getFitScore(islandAtScale, simplifiedClusterBuffers)
+    const fitScore = getFitScoreFast(islandAtScale, clusterEnveloppeArea)
 
-      if (fitScore === -1) {
-        return {
-          islandId,
-          error: 'intersectBiggerThanIsland',
-          fitScore: 0
-        }
-      }
-      return {
-        islandId,
-        newScale,
-        islandAtScale,
-        fitScore,
-      }
-    } catch (e) {
-
-      return {
-        islandId,
-        error: 'island',
-        fitScore: 0
-      }
+    return {
+      islandId,
+      newScale,
+      islandAtScale,
+      fitScore,
     }
   })
 
   const ordered = _.orderBy(fitScores, ['fitScore'], ['desc'])
-  // .slice(0, 10)
+  // .slice(0, 50)
 
   // console.log(ordered.filter(f => f.fitScore > 0).map(f => f.fitScore))
   scores[clusterId] = ordered.map(fs => {
@@ -253,7 +230,7 @@ filteredClusters.forEach(cluster => {
     return props
   })
 
-  if (ordered[0].score > 0 && ordered[0].islandAtScale) {
+  if (ordered[0].fitScore > 0 && ordered[0].islandAtScale) {
     const island = ordered[0].islandAtScale
     island.properties.r = cluster.properties.r
     island.properties.g = cluster.properties.g
@@ -267,6 +244,10 @@ filteredClusters.forEach(cluster => {
 
 
 console.log('Found at least 1 candidate for', testFeatures.length, '/', filteredClusters.length , 'features')
+
+const avg = (a) => _.sum(a) / a.length
+const fitAverages = Object.keys(scores).map(id => scores[id].filter(s => s.fitScore > 0).length)
+console.log('Average of', Math.round(avg(fitAverages), 'islands for each cluster (total islands:', baseIslandsMrct.features.length, ')' ))
 
 const geoJSON = {
   'type': 'FeatureCollection',
