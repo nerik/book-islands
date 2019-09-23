@@ -9,7 +9,7 @@ const pointsWithinFeature = require('../util/pointsWithinFeature')
 const bboxRatio = require('../util/bboxRatio')
 
 const {
-  UMAP_GEO_CLUSTER, CLUSTERS, BASE_ISLANDS_LOWDEF, BASE_ISLANDS_LOWDEF_MRCT, BASE_ISLANDS_CLUSTER_SCORES,
+  UMAP_GEO_CLUSTER, CLUSTERS, BASE_ISLANDS_LOWDEF, BASE_ISLANDS_LOWDEF_MRCT, BASE_ISLANDS_CLUSTER_META,
   TEST_BBOX, MAX_BASE_ISLAND_SCALE_UP
 } = require('../constants')
 
@@ -255,4 +255,4 @@ const geoJSON = {
 }
 
 fs.writeFileSync('out/layout/testIslands.geo.json', JSON.stringify(geoJSON))
-fs.writeFileSync(BASE_ISLANDS_CLUSTER_SCORES, JSON.stringify(scores))
+fs.writeFileSync(BASE_ISLANDS_CLUSTER_META, JSON.stringify(scores))
