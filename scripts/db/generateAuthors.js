@@ -2,7 +2,8 @@
 
 const fs = require('fs')
 const BOOKS_DB_PATH = './in/google-books/books_with_mid.db'
-const AUTHORS_PATH = './out/db/authors.json'
+
+const { AUTHORS } = require('../constants')
 
 let authors
 
@@ -11,16 +12,17 @@ const db = new sqlite3.Database(BOOKS_DB_PATH, sqlite3.OPEN_READONLY, (err) => {
   if (err) console.log(err)
   db.all(`SELECT
       author as id,
-      sum(relatedness_signal_projected_query_popularity) AS score,
+      sum(relatedness_signal_projected_query_popularity) AS sum_popularity,
       avg(relatedness_signal_projected_query_popularity) AS avg_popularity,
       count(id) books_count,
       group_concat(id) ids,
       group_concat(title, '|') titles
       FROM books_with_mid
       GROUP BY author
-      ORDER BY score DESC`, (err, rows) => {
+      ORDER BY sum_popularity DESC`, (err, rows) => {
     if (err) console.log(err)
     authors = rows
-    fs.writeFileSync(AUTHORS_PATH, JSON.stringify(authors))
+    fs.writeFileSync(AUTHORS, JSON.stringify(authors))
+    console.log('Wrote to', AUTHORS)
   })
 })

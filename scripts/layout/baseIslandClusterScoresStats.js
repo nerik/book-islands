@@ -2,10 +2,10 @@
 const fs = require('fs')
 const _ = require('lodash')
 const {
-  BASE_ISLANDS_CLUSTER_META
+  BASE_ISLANDS_META
 } = require('../constants')
 
-const scores = JSON.parse(fs.readFileSync(BASE_ISLANDS_CLUSTER_META, 'utf-8'))
+const scores = JSON.parse(fs.readFileSync(BASE_ISLANDS_META, 'utf-8'))
 
 
 const pct = (v, t) => Math.round((v/t) * 100)

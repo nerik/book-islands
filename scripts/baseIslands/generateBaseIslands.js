@@ -84,7 +84,7 @@ geoJSON.features = filteredFeatures.map((feature, i) => {
   featureLowdefMrct.properties.wsg84Area = featureLowdef.properties.area
 
   // Copy island id
-  feature.properties.id = featureLowdef.properties.id = featureLowdefMrct.properties.id = i
+  feature.properties.island_id = featureLowdef.properties.island_id = featureLowdefMrct.properties.island_id = i
 
   geoJSONLowdef.features.push(featureLowdef)
   geoJSONLowdefMrct.features.push(featureLowdefMrct)

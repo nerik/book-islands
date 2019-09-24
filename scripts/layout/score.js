@@ -7,16 +7,19 @@ const {scale, translate, compose, applyToPoints} = require('transformation-matri
 const progressBar = require('../util/progressBar')
 const pointsWithinFeature = require('../util/pointsWithinFeature')
 const bboxRatio = require('../util/bboxRatio')
+const transposeAndScale = require('../util/transposeAndScale')
 
 const {
-  UMAP_GEO_CLUSTER, CLUSTERS, BASE_ISLANDS_LOWDEF, BASE_ISLANDS_LOWDEF_MRCT, BASE_ISLANDS_CLUSTER_META,
+  CLUSTER_POINTS, CLUSTERS, BASE_ISLANDS_LOWDEF, BASE_ISLANDS_LOWDEF_MRCT, BASE_ISLANDS_META,
   TEST_BBOX, MAX_BASE_ISLAND_SCALE_UP
 } = require('../constants')
 
 const baseIslandsMrct = JSON.parse(fs.readFileSync(BASE_ISLANDS_LOWDEF_MRCT, 'utf-8'))
 const baseIslands = JSON.parse(fs.readFileSync(BASE_ISLANDS_LOWDEF, 'utf-8'))
-const umap = JSON.parse(fs.readFileSync(UMAP_GEO_CLUSTER, 'utf-8'))
+const umap = JSON.parse(fs.readFileSync(CLUSTER_POINTS, 'utf-8'))
 const clusters = JSON.parse(fs.readFileSync(CLUSTERS, 'utf-8'))
+
+console.log('Read inputs.')
 
 // First project all base island to mercator and translate them to map origin
 // TODO move to base island gen?
@@ -37,28 +40,6 @@ const clusters = JSON.parse(fs.readFileSync(CLUSTERS, 'utf-8'))
 //   // mrct.properties.bbox = turf.bbox(mrct)
 //   return islandMrct
 // })
-
-
-const transposeAndScale = (center, polygon, newScale = 1) => {
-  // latest transformations apply first
-  const matrix = compose(
-    // translate to target center
-    translate(center.geometry.coordinates[0], center.geometry.coordinates[1]),
-    // apply transformation(s)
-    scale(newScale, newScale),
-  )
-  
-  const newPolygon = {
-    type: 'Feature',
-    geometry: {
-      type: 'Polygon',
-      coordinates: []
-    }
-  }
-  // TODO that [0] wont work with multipolygons
-  newPolygon.geometry.coordinates[0] = applyToPoints(matrix, polygon.geometry.coordinates[0]) 
-  return newPolygon
-}
 
 // Tries to scale up or down an island so that it fits best cluster points
 const findScaleFit = (clusterPointsMrct, clusterCenterMrct, islandMrct) => {
@@ -89,7 +70,7 @@ const findScaleFit = (clusterPointsMrct, clusterCenterMrct, islandMrct) => {
     if (dir === -1 && !fits) {
       // console.log('Scaling down, was fitting at ', prevScale)
       return {
-        scale: prevScale,
+        newScale: prevScale,
         islandAtScaleMrct: prevIslandAtScaleMrct
       }
     }
@@ -98,7 +79,7 @@ const findScaleFit = (clusterPointsMrct, clusterCenterMrct, islandMrct) => {
     if (dir === 1 && fits) {
       // console.log('Scaling up, now fits at', currentScale)
       return {
-        scale: currentScale,
+        newScale: currentScale,
         islandAtScaleMrct
       }
     }
@@ -185,12 +166,12 @@ filteredClusters.forEach(cluster => {
   // const simplifiedClusterBuffers = clusterBuffers.map(b => turf.simplify(b))
   
   const fitScores = baseIslandsMrct.features.map(baseIslandMrct => {
-    const islandId = baseIslandMrct.properties.id
+    const island_id = baseIslandMrct.properties.island_id
     // check if w/h ratios are not too different (ignore for 1pt clusters)
     // if (cluster.properties.point_count > 1 &&
     //     Math.abs(clusterR - baseIslandMrct.properties.r) > 1) {
     //   return {
-    //     islandId,
+    //     island_id,
     //     error: 'ratiosDiverge',
     //     fitScore: 0
     //   }
@@ -201,7 +182,7 @@ filteredClusters.forEach(cluster => {
     
     if (error !== undefined) {
       return {
-        islandId,
+        island_id,
         error,
         fitScore: 0
       }
@@ -213,7 +194,7 @@ filteredClusters.forEach(cluster => {
     const fitScore = getFitScoreFast(islandAtScale, clusterEnveloppeArea)
 
     return {
-      islandId,
+      island_id,
       newScale,
       islandAtScale,
       fitScore,
@@ -255,4 +236,4 @@ const geoJSON = {
 }
 
 fs.writeFileSync('out/layout/testIslands.geo.json', JSON.stringify(geoJSON))
-fs.writeFileSync(BASE_ISLANDS_CLUSTER_META, JSON.stringify(scores))
+fs.writeFileSync(BASE_ISLANDS_META, JSON.stringify(scores))

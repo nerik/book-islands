@@ -43,7 +43,7 @@ baseIslands.features.forEach(islandFeature => {
     if (lng > minLng && lng < maxLng && lat > minLat && lng < maxLat) {
       if (turf.booleanWithin(city, bufferedIsland)) {
         islandCities.push(city)
-        city.properties.island_id = islandFeature.properties.id
+        city.properties.island_id = islandFeature.properties.island_id
         features.push(city)
         cnt++
       }
@@ -52,7 +52,7 @@ baseIslands.features.forEach(islandFeature => {
   if (!islandCities.length) {
     cntWithout++
   }
-  islandsCities[islandFeature.properties.id] = islandCities
+  islandsCities[islandFeature.properties.island_id] = islandCities
   pb.increment()
 })
 
