@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "http-server -p 9091",
+    "start": "live-server --no-browser --port=9091",
     "serve": "node server/"
   },
   "repository": {
@@ -32,6 +32,7 @@
     "express": "^4.17.1",
     "http-server": "^0.11.1",
     "jimp": "^0.6.8",
+    "live-server": "^1.2.1",
     "lodash": "^4.17.15",
     "mapshaper": "^0.4.126",
     "node-hgt": "^1.2.3",
