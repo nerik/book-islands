@@ -57,7 +57,7 @@ clusters = clusters.map(cluster => {
         featuresDict[id].properties.author_error = true
         console.log('cant find author', id)
       } else {
-        featuresDict[id].properties.sum_popularity = author.sum_popularity
+        featuresDict[id].properties.sum_popularity = Math.round(author.sum_popularity)
         featuresDict[id].properties.avg_popularity = author.avg_popularity
         featuresDict[id].properties.books_count = author.books_count
       }

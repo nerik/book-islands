@@ -13,8 +13,10 @@ module.exports = {
   CLUSTERS: 'out/layout/clusters.geo.json',
   BASE_ISLANDS_META: 'out/layout/baseIslandsMeta.json',
   ISLANDS_LOWDEF: 'out/layout/islands_lowdef.geo.json',
-  ISLANDS_TRANS: 'out/layout/islands.trans.json',
+  ISLANDS_META: 'out/layout/islands.meta.json',
+  TERRITORY_LABELS: 'out/layout/territory_labels.geo.json',
   ISLANDS_TILES: 'tiles/islands',
+  POINTS_TILES: 'tiles/points',
   TEST_BBOX: {
     minX: -40,
     minY: -20,

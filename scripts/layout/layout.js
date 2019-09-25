@@ -4,7 +4,9 @@ const turf = require('@turf/turf')
 const progressBar = require('../util/progressBar')
 const transposeAndScale = require('../util/transposeAndScale')
 
-const { CLUSTERS, BASE_ISLANDS_LOWDEF_MRCT, BASE_ISLANDS_META, ISLANDS_TRANS, ISLANDS_LOWDEF } = require('../constants')
+const { CLUSTERS, BASE_ISLANDS_LOWDEF_MRCT, BASE_ISLANDS_META, ISLANDS_META, ISLANDS_LOWDEF } = require('../constants')
+
+const MIN_DISTANCE_SIMILAR_DEGREES = 5
 
 const baseIslandsMrct = JSON.parse(fs.readFileSync(BASE_ISLANDS_LOWDEF_MRCT, 'utf-8'))
 const baseIslandsMeta = JSON.parse(fs.readFileSync(BASE_ISLANDS_META, 'utf-8'))
@@ -24,7 +26,7 @@ const clustersByPop = clustersFiltered
 
 
 const islands = []
-const finalTransformations = []
+const finalTransformations = {}
 
 
 
@@ -38,7 +40,13 @@ const cheapDistance = (clusterCenter, island) => {
 const cheapOverlap = (bbox1, bbox2) => {
   const [minX1, minY1, maxX1, maxY1] = bbox1
   const [minX2, minY2, maxX2, maxY2] = bbox2
-  if (minX1 > minX2 )
+  if (minX1 > minX2 && maxX1 < maxX2) return true 
+
+  if (maxX1 < minX2) return false
+  if (maxX2 < minX1) return false
+  if (maxY1 < minY2) return false
+  if (maxY2 < minY1) return false
+  return true
 }
 
 const overlapsWithIslandsAround = (islandAtScaleMrct, islandsAround) => {
@@ -46,23 +54,25 @@ const overlapsWithIslandsAround = (islandAtScaleMrct, islandsAround) => {
   const islandAtScaleBBox = turf.bbox(islandAtScale)
   for (let islandIndex = 0; islandIndex < islandsAround.length; islandIndex++) {
     const islandAround = islandsAround[islandIndex]
-    // TODO start with bbox?
-    // const overlaps = turf.booleanOverlap(islandAtScale, islandAround)
-    const overlaps = turf.booleanDisjoint(islandAtScale, islandAround) === false
-    if (overlaps) return true
+
+    const overlapsFast = cheapOverlap(islandAtScaleBBox, turf.bbox(islandAround))
+    if (overlapsFast) {
+      const overlaps = turf.booleanDisjoint(islandAtScale, islandAround) === false
+      if (overlaps) return true
+    }
   }
   return false
 }
 
 const getIslandAtFinalScale = (clusterCenterMrct, islandMrct, startScale, islandsAround) => {
-  // const transposedNoScale = transposeAndScale(clusterCenterMrct, islandMrct, 1)
   let currentScale = startScale
+  let islandAtScaleMrct
 
-  const STEP_INCREMENT = .2
+  const STEP_INCREMENT = .05
   const maxNumIterations = Math.ceil(startScale/STEP_INCREMENT)
 
   for (let i = 0; i < maxNumIterations; i++) {
-    const islandAtScaleMrct = transposeAndScale(clusterCenterMrct, islandMrct, currentScale)
+    islandAtScaleMrct = transposeAndScale(clusterCenterMrct, islandMrct, currentScale)
     // TODO do not send again islandsAround already marked as not overlapping?
     const overlaps = overlapsWithIslandsAround(islandAtScaleMrct, islandsAround)
     // scaling down and it now doesnt fit anymore: use prev
@@ -76,12 +86,15 @@ const getIslandAtFinalScale = (clusterCenterMrct, islandMrct, startScale, island
   }
 
   return {
-    error: 'cantFit'
+    error: 'cantFit',
+    finalScale: currentScale + STEP_INCREMENT,
+    islandAtFinalScale: islandAtScaleMrct
   }
 }
 
 
 let numFallbacked = 0
+let numDidntFit = 0
 const pb = progressBar(clustersByPop.length)
 for (let clusterIndex = 0; clusterIndex < clustersByPop.length; clusterIndex++) {
 // for (let clusterIndex = 0; clusterIndex < 100; clusterIndex++) {
@@ -94,7 +107,7 @@ for (let clusterIndex = 0; clusterIndex < clustersByPop.length; clusterIndex++) 
   
   // console.log('Cluster', cluster.properties.cluster_id)
   // Gather islands within bbox around cluster center (cheap: large bbox/buffer and pick a polygon point)
-  const islandsAround = islands.filter(island => cheapDistance(cluster, island) < 5)
+  const islandsAround = islands.filter(island => cheapDistance(cluster, island) < MIN_DISTANCE_SIMILAR_DEGREES)
   // console.log('Found', islandsAround.length, ' islands around')
   const islandsAroundIds = islandsAround.map(island => island.properties.island_id)
 
@@ -125,19 +138,27 @@ for (let clusterIndex = 0; clusterIndex < clustersByPop.length; clusterIndex++) 
     clusterCenterMrct, islandMrct, bestIslandCandidate.newScale, islandsAround
   )
 
-  if (!error) {
-    const island = turf.toWgs84(islandAtFinalScale)
-    island.properties = {...cluster.properties}
-    island.properties.island_id = bestIslandCandidate.island_id
-  
-    islands.push(island)
+  if (error) {
+    numDidntFit++
   }
+  const island = turf.toWgs84(islandAtFinalScale)
+  island.properties = {...cluster.properties}
+  island.properties.island_id = bestIslandCandidate.island_id
 
+  islands.push(island)
+  finalTransformations[cluster.properties.cluster_id] = {
+    scoringScale: bestIslandCandidate.newScale,
+    layoutScale: finalScale,
+  }
 }
 
 console.log('Layouted ', islands.length, 'islands')
-console.log('Had to fallback with ', numFallbacked, 'islands')
+console.log('Had to fallback with ', numFallbacked, 'islands (couldnt find different enough neighbour)')
+console.log('Islands didnt fit ', numDidntFit)
 
 
 fs.writeFileSync(ISLANDS_LOWDEF, JSON.stringify(turf.featureCollection(islands)))
-// fs.writeFileSync(ISLANDS_TRANS, JSON.stringify(finalTransformations))
+fs.writeFileSync(ISLANDS_META, JSON.stringify(finalTransformations))
+
+console.log ('Wrote', ISLANDS_LOWDEF)
+console.log ('Wrote', ISLANDS_META)
