@@ -10,6 +10,8 @@ module.exports = {
   GEONAMES_POP_PLACES: 'out/baseIslands/populated_places.csv',
   CITIES: 'out/baseIslands/cities.geo.json',
   CITIES_STATS: 'out/baseIslands/cities_stats.json',
+  UMAP_CAT: 'in/umap/cat',
+  UMAP_CAT_STATS: 'out/umap/umap_cat_stats.json',
   UMAP_GEO: 'out/umap/umap.geo.json',
   CLUSTER_POINTS: 'out/layout/cluster_points.geo.json',
   CLUSTERS: 'out/layout/clusters.geo.json',

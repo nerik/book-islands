@@ -1,0 +1,58 @@
+{
+  "arts_and_entertainment": {
+    "scale": [0.5, 0.5],
+    "translate": [-120, 60]
+  },
+  "children_literature": {
+    "scale": [0.5, 0.5],
+    "translate": [-150, 30]
+  },
+  "classics": {
+    "scale": [0.5, 0.5],
+    "translate": [-140, 0]
+  },
+  "education_combined": {
+    "scale": [0.1, 1],
+    "translate": [-120, -50]
+  },
+  "history": {
+    "scale": [0.5, 0.5],
+    "translate": [0, 60]
+  },
+  "hobbies": {
+    "scale": [0.5, 0.5],
+    "translate": [0, 0]
+  },
+  "law_and_government": {
+    "scale": [0.5, 0.5],
+    "translate": [0, -30]
+  },
+  "news": {
+    "scale": [0.5, 0.5],
+    "translate": [0, -60]
+  },
+  "novels": {
+    "scale": [0.5, 0.5],
+    "translate": [70, -60]
+  },
+  "people_and_society": {
+    "scale": [0.5, 0.5],
+    "translate": [130, -40]
+  },
+  "philosophy": {
+    "scale": [0.5, 0.5],
+    "translate": [130, 0]
+  },
+  "poetry": {
+    "scale": [0.5, 0.5],
+    "translate": [130, 60]
+  },
+  "religion_and_belief": {
+    "scale": [0.5, 0.5],
+    "translate": [130, 30]
+  },
+  "science": {
+    "scale": [0.5, 0.5],
+    "translate": [30, 30]
+  }
+}
