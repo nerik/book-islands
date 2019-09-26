@@ -372,7 +372,7 @@ const getSharedEdgesWith = (poly1, poly2) => {
       }
     })
   })
-  return sharedEdges
+  return _.uniqBy(sharedEdges, v => v.join(','))
 }
 
 const getPoly = (v, index) => {
@@ -514,6 +514,7 @@ const allFrontierCells = territories.map(territory => {
         .filter(c => c.territory !== territory.index)
       return {
         index: c.index,
+        poly: c.poly,
         neighborsForeign
       } 
     })
@@ -521,6 +522,9 @@ const allFrontierCells = territories.map(territory => {
   const frontierCells = neighborContainers.filter(c => c.neighborsForeign.length)
   return frontierCells
 })
+
+
+
 
 
 // const allFrontierSegments = _.flatten(allFrontierCells.map(territoryFrontierCells => {
@@ -535,7 +539,26 @@ const allFrontierCells = territories.map(territory => {
 // console.log(allFrontierSegments)
 
 
+const territoriesSegments = allFrontierCells.map(territoryFrontierCells => {
+  console.log(territoryFrontierCells)
+  const segments = []
+  territoryFrontierCells.forEach(frontierCell => {
+    frontierCell.neighborsForeign.map(foreignCell => {
+      console.log(frontierCell, foreignCell)
+      const sharedEdges = getSharedEdgesWith(frontierCell.poly, foreignCell.poly)
+      if (sharedEdges && sharedEdges.length) {
+        segments.push(sharedEdges)
+      }
+    })
+  })
+  return _.uniqBy(segments, v => v.join(','))
+})
 
+// territoriesSegments.forEach(segs => {
+
+// })
+
+console.log(territoriesSegments)
 
 
 
@@ -615,12 +638,14 @@ context.stroke()
 
 // Frontier segments
 
-// context.beginPath()
-// context.strokeStyle = 'pink'
-// context.lineWidth = 4
-// allFrontierSegments.forEach(seg => {
-//   context.moveTo(seg[0][0],  seg[0][1])
-//   context.lineTo(seg[1][0],  seg[1][1])
-// })
-// context.closePath()
-// context.stroke()
+context.beginPath()
+context.strokeStyle = 'red'
+context.lineWidth = 2
+territoriesSegments.forEach(territorySegs => {
+  territorySegs.forEach(seg => {
+    context.moveTo(seg[0][0], seg[0][1])
+    context.lineTo(seg[1][0], seg[1][1])
+  })
+})
+context.closePath()
+context.stroke()
