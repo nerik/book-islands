@@ -20,7 +20,7 @@ const clustersFiltered = clusters.features.filter(cluster => {
 })
 
 
-// We might want to also sort by numbooks
+// TODO: We might want to also sort by numbooks
 const clustersByPop = clustersFiltered
   .sort((a, b) => b.properties.sum_popularity - a.properties.sum_popularity)
 

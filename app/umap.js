@@ -34,7 +34,7 @@ const getClustersSupercluster = (features, bbox) => {
   initialIndex.load(features)
   const initialClustersWithNoise = initialIndex.getClusters(bbox, 2)
   const initialClusters = initialClustersWithNoise
-    // .filter(c => c.properties.cluster_id)
+    .filter(c => c.properties.cluster_id)
     .map(cluster => {
       const initialClusterId = cluster.properties.cluster_id
       if (initialClusterId === undefined) {
@@ -56,12 +56,12 @@ const getClustersSupercluster = (features, bbox) => {
       }
     })
 
-  console.log('Initial pass: generated ', initialClusters.length,
-             ' clusters')
+  console.log('Initial pass: generated ', initialClusters.length, ' clusters')
+  console.log('Initial pass: ', initialClustersWithNoise.length - initialClusters.length, ' points left alone')
   console.log('Initial pass mean pts per cluster: ', d3.mean(initialClusters.map(c => c.initialLeaves.length)))
 
   const metaIndex = new Supercluster({
-    radius: .1,
+    radius: .08,
     maxZoom: 18
   })
   metaIndex.load(initialClusters)
@@ -87,7 +87,7 @@ const getClustersSupercluster = (features, bbox) => {
     if (metaClusterId === undefined) {
       const initialClusterId = metaCluster.properties.initialClusterId
       if (initialClusterId === undefined) {
-        // console.log('standalone point in metacluster standalone point')
+        console.log('standalone point in metacluster standalone point')
         return {
           leaves: []
         }
@@ -112,7 +112,7 @@ const getClustersSupercluster = (features, bbox) => {
     }
   })
   console.log('Meta pass: generated ', metaClusters.length,
-             ' clusters + ', initialClustersWithNoise.length - initialClusters.length, ' standalone pts')
+    ' clusters + ', initialClustersWithNoise.length - initialClusters.length, ' standalone pts')
   console.log('First pass mean pts per cluster: ', d3.mean(metaClusters.map(c => c.leaves.length)))
 
 
@@ -122,7 +122,7 @@ const getClustersSupercluster = (features, bbox) => {
     featuresDict[feature.properties.id] = feature
   })
 
-  metaClusters.forEach((cluster) => {
+  metaClusters.forEach((cluster) => { 
     if (cluster.leaves) {
       cluster.leaves.forEach(leaf => {
         const id = leaf
@@ -210,7 +210,7 @@ d3.csv(`../in/umap/${umap}.csv`)
     const clusteredFeatures = getClustersSupercluster(
       features,
       // features.slice(0, 9999),
-    bbox)
+      bbox)
     // const clusteredFeatures = getClustersDbscan(features)
     console.log(clusteredFeatures)
     const clusters = getClusters(clusteredFeatures)
@@ -219,7 +219,7 @@ d3.csv(`../in/umap/${umap}.csv`)
   
 
     const x = d3.scaleLinear()
-      .domain([5, 6])
+      .domain([5.3, 6.3])
       .range([ 0, width ])
   
     svg.append('g')

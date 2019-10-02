@@ -2,12 +2,14 @@
 
 const fs = require('fs')
 const _ = require('lodash')
+const d3 = require('d3')
+const d3Arr = require('d3-array')
 const turf = require('@turf/turf')
 const Supercluster = require('supercluster')
 const avg = require('../util/avg')
 const progressBar = require('../util/progressBar')
 
-const { AUTHORS, UMAP_GEO, CLUSTER_POINTS, CLUSTERS } = require('../constants')
+const { AUTHORS, UMAP_GEO, CLUSTERS } = require('../constants')
 
 const umap = JSON.parse(fs.readFileSync(UMAP_GEO, 'utf-8'))
 const authors = JSON.parse(fs.readFileSync(AUTHORS, 'utf-8'))
@@ -17,84 +19,150 @@ const maxX = _.maxBy(umap.features, d => d.geometry.coordinates[0]).geometry.coo
 const minY = _.minBy(umap.features, d => d.geometry.coordinates[1]).geometry.coordinates[1]
 const maxY = _.maxBy(umap.features, d => d.geometry.coordinates[1]).geometry.coordinates[1]
 
+const bbox = [minX, minY, maxX, maxY]
 
-const index = new Supercluster({
-  radius: 150,
-  minZoom: 8,
-  maxZoom: 8
+//  -------  Initial pass: generate very tight clusters (usually 2-3 points)
+const initialIndex = new Supercluster({
+  radius: .25,
+  maxZoom: 18
 })
-index.load(umap.features)
-let clusters = index.getClusters([minX, minY, maxX, maxY], 2)
-console.log('Created ', clusters.length, 'clusters')
+initialIndex.load(umap.features)
 
+const initialClustersWithNoise = initialIndex.getClusters(bbox, 2)
+
+// remove noise for consideration in meta pass
+const initialClustersWithoutNoise = initialClustersWithNoise.filter(c => c.properties.cluster_id)
+
+// get initial pass leaves
+const initialClusters = initialClustersWithoutNoise
+  .map(cluster => {
+    const initialClusterId = cluster.properties.cluster_id
+    return {
+      ...cluster,
+      properties: {
+        initialClusterId: cluster.properties.cluster_id,
+        initialLeaves: initialIndex.getLeaves(initialClusterId, Infinity).map(l => l.properties.id),
+        cluster_id: undefined,
+      }
+    }
+  })
+
+console.log('Initial pass: generated ', initialClusters.length, ' clusters')
+console.log('Initial pass: ', initialClustersWithNoise.length - initialClusters.length, ' points left alone')
+console.log('Initial pass mean pts per cluster: ', d3Arr.mean(initialClusters.map(c => c.properties.initialLeaves.length)))
+
+
+
+// ------- Meta pass: make cluster of clusters with wider radius
+const metaIndex = new Supercluster({
+  radius: 1,
+  maxZoom: 18
+})
+metaIndex.load(initialClusters)
+const metaClustersWithNoise = metaIndex.getClusters(bbox, 2)
+
+const rdChan = () => Math.floor(Math.random() * 255)
+const rdCol = () => [rdChan(),rdChan(),rdChan()]
+
+const metaClusters = metaClustersWithNoise.map(metaCluster => {
+  const metaClusterId = metaCluster.properties.cluster_id
+  const [cluster_r,cluster_g,cluster_b] = rdCol()
+  let cluster_id
+  let cluster_leaves
+  if (metaClusterId === undefined) {
+    const initialClusterId = metaCluster.properties.initialClusterId
+    cluster_id = `i_${initialClusterId}`
+    cluster_leaves = initialClusters.find(c => c.properties.initialClusterId === initialClusterId).properties.initialLeaves
+  } else {
+    const allInitialLeaves = metaIndex.getLeaves(metaClusterId, Infinity)
+      .map(metaLeaf => {
+        const initialClusterId = metaLeaf.properties.initialClusterId
+        if (initialClusterId === undefined) {
+          return [metaLeaf.properties.id]
+        }
+        const firstCluster = initialClusters.find(c => c.properties.initialClusterId === initialClusterId)
+        return firstCluster.properties.initialLeaves
+      })
+    cluster_id = metaClusterId
+    cluster_leaves = _.flatten(allInitialLeaves)
+  }
+  return {
+    ...metaCluster,
+    properties: {
+      is_cluster: true,
+      cluster_id,
+      cluster_point_count: cluster_leaves.length,
+      cluster_leaves,
+      cluster_r,
+      cluster_g,
+      cluster_b
+    }
+  }
+})
+
+console.log('Meta pass: generated ', metaClusters.length, ' clusters')
+console.log('Meta pass mean pts per cluster: ', d3Arr.mean(metaClusters.map(c => c.properties.cluster_leaves.length)))
+
+
+
+// ----- attach cluster to umap features
 const featuresDict = {}
 umap.features.forEach(feature => {
   featuresDict[feature.properties.id] = feature
 })
 
-const NUM_COLORS = 100
-const rdChan = () => Math.floor(Math.random() * 255)
-const colors = Array.from(Array(NUM_COLORS)).map(() => [rdChan(),rdChan(),rdChan()])
-const rdCol = () => colors[Math.floor(Math.random() * NUM_COLORS)]
-
-const pb = progressBar(clusters.length)
-clusters = clusters.map(cluster => {
-  pb.increment()
-  const [r,g,b] = rdCol()
-
-  const properties = {...cluster.properties}
-  if (cluster.properties.cluster_id) {
-    const children = index.getChildren(cluster.properties.cluster_id).map(l => l.properties.id)
-    const childrenProps = []
-    children.forEach(id => {
-      featuresDict[id].properties.cluster_id = cluster.properties.cluster_id
-      featuresDict[id].properties.r = r
-      featuresDict[id].properties.g = g
-      featuresDict[id].properties.b = b
-
-      const author = authors.find(a => a.id === id)
-      if (!author) {
-        featuresDict[id].properties.author_error = true
-        console.log('cant find author', id)
-      } else {
-        featuresDict[id].properties.sum_popularity = Math.round(author.sum_popularity)
-        featuresDict[id].properties.avg_popularity = author.avg_popularity
-        featuresDict[id].properties.books_count = author.books_count
-      }
-      childrenProps.push(featuresDict[id].properties)
-    })
-    properties.children = children
-    properties.sum_popularity = _.sumBy(childrenProps, a => a.sum_popularity)
-    properties.avg_popularity = avg(childrenProps.map(a => a.sum_popularity))
-    properties.books_count = _.sumBy(childrenProps, a => a.books_count)
-  } else {
-    const cluster_id = cluster.properties.id
-    properties.children = [cluster_id]
-    properties.point_count = 1
-    const author = authors.find(a => a.id === cluster_id)
-    properties.sum_popularity = author.sum_popularity
-    properties.avg_popularity = author.avg_popularity
-    properties.books_count = author.books_count
-    properties.cluster_id = featuresDict[cluster_id].properties.cluster_id = cluster.properties.id
-  }
-
-  return {
-    ...cluster,
-    properties: {
-      ...properties,
-      r,
-      g,
-      b
-    }
-  }
+metaClusters.forEach((cluster) => { 
+  cluster.properties.cluster_leaves.forEach(leaf => {
+    const id = leaf
+    featuresDict[id].properties.cluster_id = cluster.properties.cluster_id
+    featuresDict[id].properties.cluster_r = cluster.properties.cluster_r
+    featuresDict[id].properties.cluster_g = cluster.properties.cluster_g
+    featuresDict[id].properties.cluster_b = cluster.properties.cluster_b
+  })
 })
 
-const clusterPoints = Object.keys(featuresDict).map(id => {
+let clusterPoints = Object.keys(featuresDict).map(id => {
   const feature = featuresDict[id]
+  if (!feature.properties.cluster_id) {
+    feature.properties.is_cluster = false
+    feature.properties.cluster_r = 100
+    feature.properties.cluster_g = 100
+    feature.properties.cluster_b = 100
+  }
   return feature
 })
 
-fs.writeFileSync(CLUSTER_POINTS, JSON.stringify(turf.featureCollection(clusterPoints)))
-fs.writeFileSync(CLUSTERS, JSON.stringify(turf.featureCollection(clusters)))
-console.log('Wrote ', CLUSTER_POINTS)
+
+// retrieve authors
+const authorDict = {}
+authors.forEach(author => {
+  authorDict[author.id] = author
+})
+
+clusterPoints = clusterPoints.map(pt => {
+  const author = authorDict[pt.properties.id]
+  if (!author) {
+    pt.properties.author_error = true
+    console.log('cant find author', pt.properties.id)
+  } else {
+    pt.properties.sum_popularity = author.sum_popularity
+    pt.properties.avg_popularity = author.avg_popularity
+    pt.properties.books_count = author.books_count
+  }
+  return pt
+})
+
+// Compute per-cluster stats
+metaClusters.forEach(cluster => {
+  const childrenProps = cluster.properties.cluster_leaves.map(id => {
+    return featuresDict[id].properties
+  })
+  cluster.properties.sum_popularity = _.sumBy(childrenProps, a => a.sum_popularity)
+  cluster.properties.avg_popularity = avg(childrenProps.map(a => a.sum_popularity))
+  cluster.properties.books_count = _.sumBy(childrenProps, a => a.books_count)
+})
+
+const merged = clusterPoints.concat(metaClusters)
+
+fs.writeFileSync(CLUSTERS, JSON.stringify(turf.featureCollection(merged)))
 console.log('Wrote ', CLUSTERS)

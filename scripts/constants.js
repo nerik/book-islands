@@ -13,7 +13,6 @@ module.exports = {
   UMAP_CAT: 'in/umap/cat',
   UMAP_CAT_STATS: 'out/umap/umap_cat_stats.json',
   UMAP_GEO: 'out/umap/umap.geo.json',
-  CLUSTER_POINTS: 'out/layout/cluster_points.geo.json',
   CLUSTERS: 'out/layout/clusters.geo.json',
   BASE_ISLANDS_META: 'out/layout/baseIslandsMeta.json',
   ISLANDS_LOWDEF: 'out/layout/islands_lowdef.geo.json',
