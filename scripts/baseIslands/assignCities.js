@@ -5,7 +5,7 @@ const parse = require('csv-parse/lib/sync')
 const turf = require('@turf/turf')
 const progressBar = require('../util/progressBar')
 
-const { BASE_ISLANDS_LOWDEF, GEONAMES_POP_PLACES, CITIES_STATS, CITIES } = require('../constants')
+const { BASE_ISLANDS_LOWDEF, GEONAMES_POP_PLACES, CITIES_STATS, CITIES_REAL } = require('../constants')
 
 const csv = fs.readFileSync(GEONAMES_POP_PLACES, 'utf-8')
 
@@ -64,5 +64,5 @@ console.log(cntWithout, ' islands without any city out of ' , baseIslands.featur
 
 console.log('Writing', CITIES_STATS)
 fs.writeFileSync(CITIES_STATS, JSON.stringify(islandsCities))
-console.log('Writing', CITIES)
-fs.writeFileSync(CITIES, JSON.stringify(turf.featureCollection(features)))
+console.log('Writing', CITIES_REAL)
+fs.writeFileSync(CITIES_REAL, JSON.stringify(turf.featureCollection(features)))
