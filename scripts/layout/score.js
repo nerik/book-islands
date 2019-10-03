@@ -3,6 +3,7 @@ Error.stackTraceLimit = Infinity
 const fs = require('fs')
 const turf = require('@turf/turf')
 const _ = require('lodash')
+const d3Arr = require('d3-array')
 const {scale, translate, compose, applyToPoints} = require('transformation-matrix')
 const progressBar = require('../util/progressBar')
 const pointsWithinFeature = require('../util/pointsWithinFeature')
@@ -192,6 +193,7 @@ filteredClusters.forEach(cluster => {
     }
 
     const islandAtScale = turf.toWgs84(islandAtScaleMrct)
+    const islandArea = turf.area(islandAtScale)
 
     const fitScore = (clusterCanHaveScore)
       ? getFitScoreFast(islandAtScale, clusterEnveloppeArea)
@@ -203,8 +205,20 @@ filteredClusters.forEach(cluster => {
       islandAtScale,
       fitScore,
       clusterCanHaveScore,
+      islandArea
     }
   })
+
+
+  if (clusterCanHaveScore !== true) {
+    // console.log(fitScores)
+    const fsWithScale = fitScores.filter(fs => fs.error === undefined)
+    const maxArea = d3Arr.max(fsWithScale, d => d.islandArea)
+    fitScores.filter(fs => fs.error === undefined).forEach(fs => {
+      fs.fitScore = (maxArea - fs.islandArea)/maxArea
+    })
+    // console.log(fitScores)
+  }
 
   const ordered = _.orderBy(fitScores, ['fitScore'], ['desc'])
   // .slice(0, 50)
@@ -216,18 +230,20 @@ filteredClusters.forEach(cluster => {
     return props
   })
 
+  // generate test features (ie take "the best" island for each cluster)
+  // - not actually in use, just for preview
   let island
-  if (ordered[0].clusterCanHaveScore) {
-    if (ordered[0].islandAtScale) {
-      island = ordered[0].islandAtScale
-    }
-  } else {
-    const rd = Math.floor(Math.random() * ordered.length)
-    const scoreObj = ordered[rd]
-    if (scoreObj.islandAtScale) {
-      island = scoreObj.islandAtScale
-    }
+  // if (ordered[0].clusterCanHaveScore) {
+  if (ordered[0].islandAtScale) {
+    island = ordered[0].islandAtScale
   }
+  // } else {
+  //   const rd = Math.floor(Math.random() * ordered.length)
+  //   const scoreObj = ordered[rd]
+  //   if (scoreObj.islandAtScale) {
+  //     island = scoreObj.islandAtScale
+  //   }
+  // }
   if (island) {
     island.properties.cluster_r = cluster.properties.cluster_r
     island.properties.cluster_g = cluster.properties.cluster_g
