@@ -216,12 +216,16 @@ for (let clusterIndex = 0; clusterIndex < clustersByPop.length; clusterIndex++) 
     clusterCenterMrct, islandMrct, bestIslandCandidate.newScale, islandsAround
   )
 
+  const layouted_id = cluster.properties.layouted_id
+
   if (error) {
     numDidntFit++
+    finalTransformations[layouted_id] = {
+      error
+    }
     continue
   }
 
-  const layouted_id = cluster.properties.layouted_id
 
   const island = turf.toWgs84(islandAtFinalScale)
   island.properties = {
@@ -231,6 +235,8 @@ for (let clusterIndex = 0; clusterIndex < clustersByPop.length; clusterIndex++) 
   island.properties.island_id = bestIslandCandidate.island_id
 
   islands.push(island)
+
+
   finalTransformations[layouted_id] = {
     scoringScale: bestIslandCandidate.newScale,
     layoutScale: finalScale,
