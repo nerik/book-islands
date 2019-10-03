@@ -5,7 +5,7 @@ module.exports = (total) => {
     stopOnComplete: true,
     clearOnComplete: true,
     barsize: 30,
-    format: '[{bar}] {percentage}% | {duration_formatted} / {eta_formatted} | {value}/{total}'
+    // format: '[{bar}] {percentage}% | {duration_formatted} / {eta_formatted} | {value}/{total}'
   }, cliProgress.Presets.rect)
   progressBar.start(total, 0)
   return progressBar
