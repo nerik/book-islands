@@ -4,9 +4,9 @@ const turf = require('@turf/turf')
 const progressBar = require('../util/progressBar')
 const transposeAndScale = require('../util/transposeAndScale')
 
-const { CLUSTERS, BASE_ISLANDS_LOWDEF_MRCT, BASE_ISLANDS_META, ISLANDS_META, ISLANDS_LOWDEF } = require('../constants')
+const { CLUSTERS, BASE_ISLANDS_LOWDEF_MRCT, BASE_ISLANDS_META, ISLANDS_META, ISLANDS_LOWDEF, TEST_BBOX } = require('../constants')
 
-const MIN_DISTANCE_SIMILAR_DEGREES = 5
+const MIN_DISTANCE_SIMILAR_DEGREES = 3
 
 const baseIslandsMrct = JSON.parse(fs.readFileSync(BASE_ISLANDS_LOWDEF_MRCT, 'utf-8'))
 const baseIslandsMeta = JSON.parse(fs.readFileSync(BASE_ISLANDS_META, 'utf-8'))
@@ -14,7 +14,7 @@ const clusters = JSON.parse(fs.readFileSync(CLUSTERS, 'utf-8'))
 
 
 const clustersFiltered = clusters.features
-  // Remove clustered points (but keep clusters and standalone points)
+  // Remove clustered points (but keep clusters + standalone points)
   .filter(cluster => {
     return cluster.properties.is_cluster || cluster.properties.cluster_id === undefined
   })
@@ -26,6 +26,13 @@ const clustersFiltered = clusters.features
     const islandCandidatesForCluster = baseIslandsMeta[clusterId]
     return islandCandidatesForCluster
   })
+  .filter(
+    cluster => 
+      cluster.geometry.coordinates[0] > TEST_BBOX.minX &&
+    cluster.geometry.coordinates[0] < TEST_BBOX.maxX &&
+    cluster.geometry.coordinates[1] > TEST_BBOX.minY &&
+    cluster.geometry.coordinates[1] < TEST_BBOX.maxY
+  )
 
 
 // give them a layout priority (popularity + numbooks)
@@ -138,6 +145,7 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
     const rd = Math.floor(Math.random() * islandsNotAround.length)
     islandMrct = islandsNotAround[rd]
   } else {
+    console.log('Warning: cant find any different island around')
     // fall back to just picking a random island
     const rd = Math.floor(Math.random() * baseIslandsMrct.features.length)
     islandMrct = baseIslandsMrct.features[rd]
@@ -212,16 +220,24 @@ for (let clusterIndex = 0; clusterIndex < clustersByPop.length; clusterIndex++) 
     numDidntFit++
     continue
   }
+
+  const layouted_id = cluster.properties.layouted_id
+
   const island = turf.toWgs84(islandAtFinalScale)
-  island.properties = {...cluster.properties}
+  island.properties = {
+    ...cluster.properties,
+    layouted_id
+  }
   island.properties.island_id = bestIslandCandidate.island_id
 
   islands.push(island)
-
-  finalTransformations[cluster.properties.cluster_id] = {
+  finalTransformations[layouted_id] = {
     scoringScale: bestIslandCandidate.newScale,
     layoutScale: finalScale,
-    center: cluster
+    center: {
+      properties: {},
+      geometry: cluster.geometry
+    }
   }
 }
 

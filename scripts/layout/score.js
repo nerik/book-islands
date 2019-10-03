@@ -137,14 +137,14 @@ const points = clusters.features
 const filteredClusters = clusters.features
   // the clusters geoJSON contains clusters + noise, remove noise
   .filter(cluster => cluster.properties.is_cluster === true)
-  // .filter(
-  //   cluster => 
-  //     cluster.geometry.coordinates[0] > TEST_BBOX.minX &&
-  //   cluster.geometry.coordinates[0] < TEST_BBOX.maxX &&
-  //   cluster.geometry.coordinates[1] > TEST_BBOX.minY &&
-  //   cluster.geometry.coordinates[1] < TEST_BBOX.maxY
-  // )
-  .slice(0, 1000)
+  .filter(
+    cluster => 
+      cluster.geometry.coordinates[0] > TEST_BBOX.minX &&
+    cluster.geometry.coordinates[0] < TEST_BBOX.maxX &&
+    cluster.geometry.coordinates[1] > TEST_BBOX.minY &&
+    cluster.geometry.coordinates[1] < TEST_BBOX.maxY
+  )
+  // .slice(0, 1000)
 
 console.log('Fitting/scoring', filteredClusters.length, ' clusters')
 

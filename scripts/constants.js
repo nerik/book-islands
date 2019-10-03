@@ -21,10 +21,10 @@ module.exports = {
   ISLANDS_TILES: 'tiles/islands',
   POINTS_TILES: 'tiles/points',
   TEST_BBOX: {
-    minX: -40,
-    minY: -20,
+    minX: -10,
+    minY: -10,
     maxX: 0,
-    maxY: 6
+    maxY: 0
   },
   MAX_BASE_ISLAND_SCALE_UP: 2
 }

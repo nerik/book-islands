@@ -89,6 +89,7 @@ const metaClusters = metaClustersWithNoise.map(metaCluster => {
     properties: {
       is_cluster: true,
       cluster_id,
+      layouted_id: `c_${cluster_id}`,
       cluster_point_count: cluster_leaves.length,
       cluster_leaves,
       cluster_r,
@@ -113,6 +114,7 @@ metaClusters.forEach((cluster) => {
   cluster.properties.cluster_leaves.forEach(leaf => {
     const id = leaf
     featuresDict[id].properties.is_cluster = false
+    featuresDict[id].properties.layouted_id = `pc_${id}`
     featuresDict[id].properties.cluster_id = cluster.properties.cluster_id
     featuresDict[id].properties.cluster_r = cluster.properties.cluster_r
     featuresDict[id].properties.cluster_g = cluster.properties.cluster_g
@@ -120,10 +122,13 @@ metaClusters.forEach((cluster) => {
   })
 })
 
+// prepare standalone points
 let clusterPoints = Object.keys(featuresDict).map(id => {
   const feature = featuresDict[id]
   if (!feature.properties.cluster_id) {
+    const id = feature.properties.id
     feature.properties.is_cluster = false
+    feature.properties.layouted_id = `ps_${id}`
     feature.properties.cluster_r = 100
     feature.properties.cluster_g = 100
     feature.properties.cluster_b = 100
