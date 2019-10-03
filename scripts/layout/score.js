@@ -4,10 +4,8 @@ const fs = require('fs')
 const turf = require('@turf/turf')
 const _ = require('lodash')
 const d3Arr = require('d3-array')
-const {scale, translate, compose, applyToPoints} = require('transformation-matrix')
 const progressBar = require('../util/progressBar')
 const pointsWithinFeature = require('../util/pointsWithinFeature')
-const bboxRatio = require('../util/bboxRatio')
 const transposeAndScale = require('../util/transposeAndScale')
 
 const {
@@ -139,16 +137,14 @@ const points = clusters.features
 const filteredClusters = clusters.features
   // the clusters geoJSON contains clusters + noise, remove noise
   .filter(cluster => cluster.properties.is_cluster === true)
-  // TODO
-  // .filter(cluster => cluster.properties.cluster_point_count > 2)
-  .filter(
-    cluster => 
-      cluster.geometry.coordinates[0] > TEST_BBOX.minX &&
-    cluster.geometry.coordinates[0] < TEST_BBOX.maxX &&
-    cluster.geometry.coordinates[1] > TEST_BBOX.minY &&
-    cluster.geometry.coordinates[1] < TEST_BBOX.maxY
-  )
-  .slice(0, 100)
+  // .filter(
+  //   cluster => 
+  //     cluster.geometry.coordinates[0] > TEST_BBOX.minX &&
+  //   cluster.geometry.coordinates[0] < TEST_BBOX.maxX &&
+  //   cluster.geometry.coordinates[1] > TEST_BBOX.minY &&
+  //   cluster.geometry.coordinates[1] < TEST_BBOX.maxY
+  // )
+  .slice(0, 1000)
 
 console.log('Fitting/scoring', filteredClusters.length, ' clusters')
 

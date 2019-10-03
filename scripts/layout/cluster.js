@@ -2,12 +2,10 @@
 
 const fs = require('fs')
 const _ = require('lodash')
-const d3 = require('d3')
 const d3Arr = require('d3-array')
 const turf = require('@turf/turf')
 const Supercluster = require('supercluster')
 const avg = require('../util/avg')
-const progressBar = require('../util/progressBar')
 
 const { AUTHORS, UMAP_GEO, CLUSTERS } = require('../constants')
 
@@ -114,6 +112,7 @@ umap.features.forEach(feature => {
 metaClusters.forEach((cluster) => { 
   cluster.properties.cluster_leaves.forEach(leaf => {
     const id = leaf
+    featuresDict[id].properties.is_cluster = false
     featuresDict[id].properties.cluster_id = cluster.properties.cluster_id
     featuresDict[id].properties.cluster_r = cluster.properties.cluster_r
     featuresDict[id].properties.cluster_g = cluster.properties.cluster_g
