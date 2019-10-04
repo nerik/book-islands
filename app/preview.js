@@ -130,7 +130,7 @@ const style = {
       },
       'paint': {}
     },
-    
+
 
   ],
 }
