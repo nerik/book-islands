@@ -8307,7 +8307,6 @@ territories.forEach(territory => {
         neighborsForeign
       } 
     })
-  // console.log(neighborContainers)
   territory.frontierCells = neighborContainers.filter(c => c.neighborsForeign.length)
 
   // get border cells

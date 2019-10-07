@@ -61,9 +61,10 @@ const checkRandomCity = (randomPt, cities) => {
 }
 
 const checkCityInTerritory = (pt, territory = null) => {
-  if (territory === null) {
-    return true
-  }
+  // if (territory === null) {
+  //   return true
+  // }
+  return true
 }
 
 const getBooks = (author) => {
@@ -78,8 +79,13 @@ const getBooks = (author) => {
   return _.orderBy(books, ['popularity'], ['desc'])
 }
 
+const numClusters = filteredClusters.filter(c => c.properties.is_cluster).length
 
-console.log('Will do inner layout for:', filteredClusters.length)
+console.log('Will do inner layout for:', filteredClusters.length, 'islands')
+console.log('Will do inner layout for:', numClusters, ' clusters')
+
+let numClustersSucceeded = 0
+let numClustersDone = 0
 const bookPoints = []
 const allTerritories = []
 filteredClusters.forEach(cluster => {
@@ -100,13 +106,25 @@ filteredClusters.forEach(cluster => {
     // for now just generate "dirty" territories ovelapping islands
     // will then have to generate "borders"
     const clusterWeights = clusterPoints.map(p => 1)
-    territories = getClusterTerritories(clusterPoints, clusterWeights, island)
-    territories.forEach(territory => {
-      territory.properties = {
-        ...cluster.properties
+    console.log('Clustering:', numClustersDone, '/', numClusters)
+    if (numClustersDone < 10) {
+      try {
+        territories = getClusterTerritories(clusterPoints, clusterWeights, island)
+        console.log(territories.length)
+        territories.forEach(territory => {
+          territory.properties = {
+            ...cluster.properties
+          }
+          allTerritories.push(territory)
+        })
+        console.log('succeeded')
+        numClustersSucceeded++
+      } catch (e) {
+        // console.log(e)
+        console.log('failed')
       }
-      allTerritories.push(territory)
-    })
+      numClustersDone++
+    }
   } else {
     const authorId = cluster.properties.id
     authors = [authorsDict[authorId]]
@@ -114,7 +132,10 @@ filteredClusters.forEach(cluster => {
   // console.log(layouted_id, meta, island)
 
   // Collect books for author
-  const authorsBooks = authors.map(author => getBooks(author))
+  const authorsBooks = authors.map(author => ({
+    author: author.id,
+    books: getBooks(author)
+  }))
 
   authorsBooks.forEach((authorBooks, i) => {
     // // TODO collect + transpose real features (+ use checkCityInTerritory)
@@ -123,7 +144,7 @@ filteredClusters.forEach(cluster => {
     if (island === undefined) {
       console.log(meta)
     }
-    authorBooks.forEach(book => {
+    authorBooks.books.forEach(book => {
       const coords = island.geometry.coordinates[0]
       let city
       while (!city) {
@@ -133,6 +154,8 @@ filteredClusters.forEach(cluster => {
           city = turf.point(randomPt)
           city.properties = {
             ...book,
+            // remove below for final dataset
+            author: authorBooks.author,
             cluster_r: cluster.properties.cluster_r,
             cluster_g: cluster.properties.cluster_g,
             cluster_b: cluster.properties.cluster_b,
