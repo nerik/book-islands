@@ -38,7 +38,8 @@ const clustersFiltered = clusters.features
 // give them a layout priority (popularity + numbooks)
 clustersFiltered.forEach(cluster => {
   const numBooksMult = 1 + (cluster.properties.books_count - 1) * .1
-  const layoutPriorityScore = cluster.properties.sum_popularity * numBooksMult
+  const popMult = 1 + cluster.properties.sum_popularity * .0001
+  const layoutPriorityScore = popMult * numBooksMult
   cluster.properties.layoutPriorityScore = layoutPriorityScore
 })
 
@@ -153,13 +154,24 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
 
   const layoutPriorityScore = cluster.properties.layoutPriorityScore
 
-  // TODO what is the magic ratio here??
-  const maxArea = layoutPriorityScore * 100
-
+  // how much scale must be decreased at each iteration to try to fit with target area
   const STEP_INCREMENT = .01
-  const MAX_SCALE = .3
+
+  // at which scale should we start with (tends to decrease size of big islands)
+  const MAX_SCALE = .2
+
+  // how to map priority score (composite of nym books and popularity) to target max area
+  // smaller means more risk of running out of iterations and picking lowest possible scale
+  // for small islands
+  const MAP_PRIORITY_SCORE_WITH_AREA = 10000000
+  const maxArea = layoutPriorityScore * MAP_PRIORITY_SCORE_WITH_AREA
+
+  // scale down everything by this factor
+  const OVERALL_SCALE_FACTOR = .5
+
   const maxNumIterations = Math.ceil(MAX_SCALE/STEP_INCREMENT) - 1
   let currentScale = MAX_SCALE
+  let n = 0
 
   for (let i = 0; i < maxNumIterations; i++) {
     if(!clusterCenterMrct || !islandMrct) {
@@ -167,18 +179,18 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
     }
     const islandAtScaleMrct = transposeAndScale(clusterCenterMrct, islandMrct, currentScale)
     const islandAtScaleArea = turf.area(turf.toWgs84(islandAtScaleMrct))
-    // console.log(islandAtScaleArea, '<' , maxArea)
-
+    n++
     if (islandAtScaleArea <= maxArea) {
       break
     }
     currentScale -= STEP_INCREMENT
   }
+  // console.log(n)
 
   // console.log(currentScale, islandMrct.properties.island_id)
   // return scale and island id
   return {
-    newScale: currentScale,
+    newScale: currentScale * OVERALL_SCALE_FACTOR,
     island_id: islandMrct.properties.island_id
   }
 }

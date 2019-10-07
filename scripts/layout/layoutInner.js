@@ -99,7 +99,8 @@ filteredClusters.forEach(cluster => {
 
     // for now just generate "dirty" territories ovelapping islands
     // will then have to generate "borders"
-    territories = getClusterTerritories(clusterPoints, island)
+    const clusterWeights = clusterPoints.map(p => 1)
+    territories = getClusterTerritories(clusterPoints, clusterWeights, island)
     territories.forEach(territory => {
       territory.properties = {
         ...cluster.properties
