@@ -52,7 +52,7 @@ const filteredClusters = clusters.features
   })
 // First just with single point islands
   // .filter(cluster => {
-  //   return cluster.properties.cluster_id === undefined
+  //   return cluster.properties.cluster_id !== undefined
   // })
 
 // Checks if random point is not too close to another city
@@ -61,10 +61,10 @@ const checkRandomCity = (randomPt, cities) => {
 }
 
 const checkCityInTerritory = (pt, territory = null) => {
-  // if (territory === null) {
-  //   return true
-  // }
-  return true
+  if (territory === null) {
+    return true
+  }
+  return turf.booleanPointInPolygon(pt, territory)
 }
 
 const getBooks = (author) => {
@@ -100,6 +100,7 @@ filteredClusters.forEach(cluster => {
     // collect cluster points
     const clusterId = cluster.properties.cluster_id
     const clusterPoints = clusters.features.filter(f => f.properties.cluster_id === clusterId)
+
     const authorIds = cluster.properties.cluster_leaves
     authors = authorIds.map(authorId => authorsDict[authorId])
 
@@ -107,24 +108,31 @@ filteredClusters.forEach(cluster => {
     // will then have to generate "borders"
     const clusterWeights = clusterPoints.map(p => 1)
     console.log('Clustering:', numClustersDone, '/', numClusters)
-    if (numClustersDone < 10) {
+    // console.log(JSON.stringify(turf.featureCollection(clusterPoints)))
+    // console.log(JSON.stringify(island))
+
+    const NUM_TRIES = 20
+    for (let i = 0; i <= NUM_TRIES; i++) {
       try {
         territories = getClusterTerritories(clusterPoints, clusterWeights, island)
-        console.log(territories.length)
-        territories.forEach(territory => {
+        territories.forEach((territory, i) => {
           territory.properties = {
-            ...cluster.properties
+            ...clusterPoints[i].properties
           }
           allTerritories.push(territory)
         })
-        console.log('succeeded')
+        console.log('succeeded for', numClustersDone)
         numClustersSucceeded++
+        break
       } catch (e) {
-        // console.log(e)
+        console.log(e)
         console.log('failed')
       }
-      numClustersDone++
+      if (i === NUM_TRIES) {
+        console.log('failed for', numClustersDone)
+      }
     }
+    numClustersDone++
   } else {
     const authorId = cluster.properties.id
     authors = [authorsDict[authorId]]
@@ -147,19 +155,26 @@ filteredClusters.forEach(cluster => {
     authorBooks.books.forEach(book => {
       const coords = island.geometry.coordinates[0]
       let city
+      let tries = 0
       while (!city) {
+        tries++
         const rd = Math.floor(Math.random() * coords.length)
         const randomPt = coords[rd]
-        if (checkRandomCity(randomPt, cities) && checkCityInTerritory(randomPt, territories[i])) {
-          city = turf.point(randomPt)
-          city.properties = {
-            ...book,
-            // remove below for final dataset
-            author: authorBooks.author,
-            cluster_r: cluster.properties.cluster_r,
-            cluster_g: cluster.properties.cluster_g,
-            cluster_b: cluster.properties.cluster_b,
+        if (!checkRandomCity(randomPt, cities) || !checkCityInTerritory(randomPt, territories[i])) {
+          if (tries < 100) {
+            continue
+          } else {
+            console.log('Cant fit cities in this terriotery')
           }
+        }
+        city = turf.point(randomPt)
+        city.properties = {
+          ...book,
+          // remove below for final dataset
+          author: authorBooks.author,
+          cluster_r: cluster.properties.cluster_r,
+          cluster_g: cluster.properties.cluster_g,
+          cluster_b: cluster.properties.cluster_b,
         }
       }
       bookPoints.push(city)

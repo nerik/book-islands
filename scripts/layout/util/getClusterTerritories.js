@@ -70,6 +70,84 @@ const getNeighbors = (d, index, cells) => {
   return filteredNeighbors
 }
 
+
+
+
+
+const drawPreview = (cells, territoriesSegments, territoriesBorderSegments, isMulti) => {
+  console.log('draw prev')
+  const { createCanvas } = require('canvas')
+  var fs = require('fs')
+
+  var canvas = createCanvas(1000, 1000, 'png')
+  var context = canvas.getContext('2d')
+
+
+  const drawCell = (cell) => {
+    const poly = cell.poly
+  
+    // console.log(cell.territory !== null && allFrontierCells[cell.territory])
+    // const isFrontier = cell.territory !== null && allFrontierCells[cell.territory].map(c => c.index).includes(cell.index)
+    // context.lineWidth = (isFrontier) ? 2 : 1
+    // context.strokeStyle = (isFrontier) ? 'blue' : 'grey'
+    context.strokeStyle = 'gray'
+  
+    context.beginPath()
+    let color = 'lightgrey'
+
+    context.fillStyle = color
+    context.moveTo(poly[0][0], poly[0][1])
+    for (let k = 0; k < poly.length - 1; k++) {
+      context.lineTo(poly[k][0], poly[k][1])
+    }
+    context.stroke()
+    context.fill()
+    context.closePath()
+  }
+  
+  
+  cells.filter(c => c !== null).forEach(cell => drawCell(cell))
+  console.log(isMulti)
+  context.lineWidth = 2
+  territoriesSegments
+    .filter(($, i) => isMulti.includes(i))
+    .forEach((polygonsSegs) => {
+      polygonsSegs.forEach((polygonSegs) => {
+        context.beginPath()
+        // const color = clusterColors[i]
+        // context.strokeStyle = color
+        context.strokeStyle = 'red'
+        polygonSegs.forEach(seg => {
+          context.moveTo(seg[0][0], seg[0][1])
+          context.lineTo(seg[1][0], seg[1][1])
+        })
+        context.closePath()
+        context.stroke()
+      })
+    })
+
+  // context.lineWidth = 2
+  // territoriesBorderSegments.forEach((territorySegs, i) => {
+  //   context.beginPath()
+  //   // const color = clusterColors[i]
+  //   // context.strokeStyle = color
+  //   context.strokeStyle = 'green'
+  //   territorySegs.forEach(seg => {
+  //     context.moveTo(seg[0][0], seg[0][1])
+  //     context.lineTo(seg[1][0], seg[1][1])
+  //   })
+  //   context.closePath()
+  //   context.stroke()
+  // })
+
+  var buf = canvas.toBuffer()
+  fs.writeFileSync('./test2.png', buf)
+}
+
+
+
+
+
 const isPtInBorder = (pt, rangeX, rangeY) => {
   return (
     pt[0] === rangeX[0] ||
@@ -84,10 +162,14 @@ module.exports = (clusterPoints, clusterWeights, island) => {
   const islandBbox = turf.bbox(island)
   const islandW = islandBbox[2] - islandBbox[0]
   const islandH = islandBbox[3] - islandBbox[1]
-  const rangeX = [1, islandW * 10000]
-  const rangeY = [1, islandH * 10000]
-  const totalPoints = Math.max(1000, Math.round(rangeX[1] * rangeY[1] * .005))
+  // const rangeX = [1, islandW * 10000]
+  // const rangeY = [1, islandH * 10000]
+  const rangeX = [1, 1000]
+  const rangeY = [1, 1000]
+  // const totalPoints = Math.max(1000, Math.round(islandW * islandH * .005))
+  const totalPoints = Math.max(3000, Math.round(islandW * islandH * 200000))
   console.log(totalPoints)
+  // console.log(totalPoints, rangeX, rangeY)
 
   const islandCoords = island.geometry.coordinates[0]
 
@@ -95,6 +177,7 @@ module.exports = (clusterPoints, clusterWeights, island) => {
   const xMax = d3.max(islandCoords.map(p => p[0]))
   const yMin = d3.min(islandCoords.map(p => p[1]))
   const yMax = d3.max(islandCoords.map(p => p[1]))
+  // console.log(xMin, xMax, yMin, yMax)
 
   const scaleX = d3.scaleLinear()
     .domain([xMin, xMax])
@@ -171,7 +254,7 @@ module.exports = (clusterPoints, clusterWeights, island) => {
     cell.neighbors = getNeighbors(delaunay, cell.index, cells)
   })
   
-  console.log('Delaunay done in ', performance.now() - t)
+  // console.log('Delaunay done in ', performance.now() - t)
 
 
   // Conquest ---
@@ -264,18 +347,18 @@ module.exports = (clusterPoints, clusterWeights, island) => {
     }
   
     if (freeLandCellsIndexes.length === 0) {
-      console.log('Stopping at', i, 'iterations')
+      // console.log('Stopping at', i, 'iterations')
       break
     }
   
     // Sometimes, territories might be completely drawn but somehow free land cells counter is not === 0 
     // so it gets stuck at max iterations. 
     if (iterationsSinceSuccess >= 1000) {
-      console.log('Couldnt find cells after trying ', iterationsSinceSuccess, 'times, aborting')
+      // console.log('Couldnt find cells after trying ', iterationsSinceSuccess, 'times, aborting')
       break
     }
   }
-  console.log('Conquest done in ', performance.now() - t)
+  // console.log('Conquest done in ', performance.now() - t)
 
 
 
@@ -309,10 +392,12 @@ module.exports = (clusterPoints, clusterWeights, island) => {
     })
   })
 
-
+  const territoriesBorderSegments = []
+  const isMulti = []
   const territoriesSegments = territories.map(territory => {
 
     const segments = []
+    const borderSegments = []
 
     // collect frontier segs
     territory.frontierCells.forEach(frontierCell => {
@@ -329,46 +414,61 @@ module.exports = (clusterPoints, clusterWeights, island) => {
     territory.borderCells.forEach(edgeCell => {
       const borderPts = [] 
       edgeCell.poly.forEach(pt => {
+        const rdpt = pt
+        if(rangeX[1] - rdpt[0] < .1 && rdpt[0] !== rangeX[1]) {
+          console.log(rdpt)
+        }
         if (isPtInBorder(pt, rangeX, rangeY)) {
           borderPts.push(pt)
         }
       })
       if (borderPts.length) {
-        segments.push(_.uniqBy(borderPts, v => v.join(',')))
+        const uniqBorderPts = _.uniqBy(borderPts, v => v.join(','))
+        borderSegments.push(uniqBorderPts)
+        segments.push(uniqBorderPts)
       }
     })
+    territoriesBorderSegments[territory.index] = borderSegments
     const uniqSegments = _.uniqBy(segments, v => v.join(','))
 
     // Now to create ordered (ie segemnts follow in order) polygons
-    const firstSeg = uniqSegments.splice(0, 1)[0]
-    const polygonOrderedSegs = [firstSeg]
+    const polygonsOrderedSegs = []
+
+    let firstSeg = uniqSegments.splice(0, 1)[0]
+    let currentPolygonOrderedSegs = [firstSeg]
     let currentEnd = firstSeg[1]
 
     let cnt = 0
+
     while (uniqSegments.length) {
-    // console.log(lastOpenLine.end)
     // try to find next seg for lastOpenLine
       const nextSegFromEndIndex = uniqSegments.findIndex(seg =>
         (seg[0][0] === currentEnd[0] && seg[0][1] === currentEnd[1]) ||
       (seg[1][0] === currentEnd[0] && seg[1][1] === currentEnd[1])
       )
-      // console.log(nextSegFromEndIndex, uniqSegments.length)
       if (nextSegFromEndIndex > -1) {
         const nextSeg = uniqSegments.splice(nextSegFromEndIndex, 1)[0]
-        // console.log(nextSeg)
-        const nextSegReordered = (nextSeg[0][0] === currentEnd[0]) ? 
+        const nextSegReordered = (nextSeg[0][0] === currentEnd[0] && nextSeg[0][1] === currentEnd[1]) ? 
           [nextSeg[0], nextSeg[1]] :
           [nextSeg[1], nextSeg[0]]
-        // console.log(nextSegReordered)
-        polygonOrderedSegs.push(nextSegReordered)
+        currentPolygonOrderedSegs.push(nextSegReordered)
         currentEnd = nextSegReordered[1]
       }
 
-      if (nextSegFromEndIndex === -1 || !uniqSegments.length) {
-      // console.log(polygonOrderedSegs, uniqSegments.length)
+      if (!uniqSegments.length || (nextSegFromEndIndex === -1 && uniqSegments.length)) {
+        polygonsOrderedSegs.push(currentPolygonOrderedSegs)
+      }
+
+      if (nextSegFromEndIndex === -1) {
+        firstSeg = uniqSegments.splice(0, 1)[0]
+        currentPolygonOrderedSegs = [firstSeg]
+        currentEnd = firstSeg[1]
+        isMulti.push(territory.index)
+      }
+
+      if (!uniqSegments.length) {
         break
       }
-      // if not found, create new line with any 
 
       cnt++
       if (cnt > 10000) {
@@ -376,38 +476,49 @@ module.exports = (clusterPoints, clusterWeights, island) => {
         break
       }
     }
-    return polygonOrderedSegs
+    return polygonsOrderedSegs
   })
 
 
 
   const geoJSONIsland = turf.buffer((island), 0.05)
-  const geoJSONPolygons = territoriesSegments.map((orderedSegs, i) => {
-    const pts = []
-    for (let i = 0; i < orderedSegs.length; i++) {
-    // p => [scaleX(p[0]), scaleY(p[1])]
-      const segStart = orderedSegs[i][0]
-      // const pt = turf.point([scaleX.invert(segStart[0]), scaleY.invert(segStart[1])])
-      const pt = [scaleX.invert(segStart[0]), scaleY.invert(segStart[1])]
-      pts.push(pt)
+  const geoJSONPolygons = territoriesSegments.map((polygonsOrderedSegs, i) => {
+    const polygons = polygonsOrderedSegs.map((polygonOrderedSegs) => {
+      const pts = []
+      for (let i = 0; i < polygonOrderedSegs.length; i++) {
+        const segStart = polygonOrderedSegs[i][0]
+        const pt = [scaleX.invert(segStart[0]), scaleY.invert(segStart[1])]
+        pts.push(pt)
+      }
+      const lineString = turf.lineString(pts)
+      const poly = turf.lineToPolygon(lineString)
+      return poly
+    })
+
+    const multiPoly = {
+      type: 'Feature',
+      properties: {},
+      geometry: { type: 'MultiPolygon', coordinates: polygons.map(p => p.geometry.coordinates) }
     }
-    const lineString = turf.lineString(pts)
-    const poly = turf.lineToPolygon(lineString)
-    const intersectedPoly = turf.intersect(poly, geoJSONIsland)
+    // return multiPoly
+
+    const intersectedPoly = turf.intersect(multiPoly, geoJSONIsland)
     if (!intersectedPoly) {
-      // console.warn('Territory does not intersect with island')
       throw new Error('Territory does not intersect with island')
     }
     intersectedPoly.properties.id = i
     return intersectedPoly
-  // return JSON.stringify(turf.featureCollection([poly]))
+
   })
 
   const polygons = geoJSONPolygons.filter(p => p !== null)
   // const geoJSON = turf.featureCollection(geoJSONPolygons.filter(p => p !== null))
   // console.log(JSON.stringify(geoJSON))
 
-  console.log('Segmenting done in ', performance.now() - t)
-
+  // console.log('Segmenting done in ', performance.now() - t)
+  if (isMulti.length) {
+    drawPreview(cells, territoriesSegments, territoriesBorderSegments, isMulti)
+    console.log('look')
+  }
   return polygons
 }
