@@ -4,7 +4,7 @@ const exec = require('child_process').execSync
 const fs = require('fs')
 const rimraf = require('rimraf')
 
-const { TERRITORY_LABELS, POINTS_TILES } = require('../constants')
+const { TERRITORY_LABELS, BOOKS_POINTS, POINTS_TILES } = require('../constants')
 const p = `${POINTS_TILES}/main`
 const t = `${POINTS_TILES}/tiles`
 
@@ -20,6 +20,6 @@ console.log('Tippecanoe')
 // exec(`tippecanoe -o ${p}_4.mbtiles -zg --drop-densest-as-needed --extend-zooms-if-still-dropping -l territory_labels ${TERRITORY_LABELS}_4`)
 // exec(`tile-join -o ${p}.mbtiles ${p}_1.mbtiles ${p}_2.mbtiles ${p}_3.mbtiles ${p}_4.mbtiles`)
 
-exec(`tippecanoe -o ${p}.mbtiles -zg --drop-densest-as-needed --extend-zooms-if-still-dropping -l territory_labels ${TERRITORY_LABELS}`)
+exec(`tippecanoe -o ${p}.mbtiles -zg --drop-densest-as-needed --extend-zooms-if-still-dropping --named-layer='author_labels':${TERRITORY_LABELS} --named-layer='books_labels':${BOOKS_POINTS}`)
 
 const pbf = exec(`mb-util --image_format=pbf ${p}.mbtiles ${t} --silent`)
