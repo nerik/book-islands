@@ -2,10 +2,7 @@ const turf = require('@turf/turf')
 const _ = require('lodash')
 const d3 = require('d3')
 const d3Delaunay = require('d3-delaunay')
-const {
-  performance,
-
-} = require('perf_hooks')
+const { performance } = require('perf_hooks')
 
 const pip = function (point, vs) {
   // ray-casting algorithm based on
@@ -107,7 +104,6 @@ const drawPreview = (cells, territoriesSegments, territoriesBorderSegments, isMu
   
   
   cells.filter(c => c !== null).forEach(cell => drawCell(cell))
-  console.log(isMulti)
   context.lineWidth = 2
   territoriesSegments
     .filter(($, i) => isMulti.includes(i))
@@ -168,8 +164,6 @@ module.exports = (clusterPoints, clusterWeights, island) => {
   const rangeY = [1, 1000]
   // const totalPoints = Math.max(1000, Math.round(islandW * islandH * .005))
   const totalPoints = Math.max(3000, Math.round(islandW * islandH * 200000))
-  console.log(totalPoints)
-  // console.log(totalPoints, rangeX, rangeY)
 
   const islandCoords = island.geometry.coordinates[0]
 
@@ -229,7 +223,9 @@ module.exports = (clusterPoints, clusterWeights, island) => {
     try {
       poly = getPoly(voronoi, j, bbox)
     }  catch(e) { 
-      console.log('Faulty voronoi')
+      throw new Error('Faulty voronoi')
+      // TODO Overwhelmingly happens that there is just one missing polygon.
+      //    We might be getting away with this by recreating it 
       cells.push(null)
       continue
     }
@@ -414,10 +410,6 @@ module.exports = (clusterPoints, clusterWeights, island) => {
     territory.borderCells.forEach(edgeCell => {
       const borderPts = [] 
       edgeCell.poly.forEach(pt => {
-        const rdpt = pt
-        if(rangeX[1] - rdpt[0] < .1 && rdpt[0] !== rangeX[1]) {
-          console.log(rdpt)
-        }
         if (isPtInBorder(pt, rangeX, rangeY)) {
           borderPts.push(pt)
         }
@@ -476,7 +468,18 @@ module.exports = (clusterPoints, clusterWeights, island) => {
         break
       }
     }
-    return polygonsOrderedSegs
+
+    // only keep biggest polygon. If second size polygon is not an imperfection
+    // (ie its really small, means we will have a broken frontier)
+    if (polygonsOrderedSegs.length === 1) {
+      return polygonsOrderedSegs
+    }
+    const polygonSizes = polygonsOrderedSegs.map(ps => ps.length).sort((a, b) => b - a)
+    if (polygonSizes[1] > 6) {
+      throw new Error('I removed a big polygon' + polygonSizes[1])
+    }
+    const biggestPolygon = _.maxBy(polygonsOrderedSegs, ps => ps.length)
+    return [biggestPolygon]
   })
 
 
@@ -495,14 +498,14 @@ module.exports = (clusterPoints, clusterWeights, island) => {
       return poly
     })
 
-    const multiPoly = {
-      type: 'Feature',
-      properties: {},
-      geometry: { type: 'MultiPolygon', coordinates: polygons.map(p => p.geometry.coordinates) }
-    }
+    // const multiPoly = {
+    //   type: 'Feature',
+    //   properties: {},
+    //   geometry: { type: 'MultiPolygon', coordinates: polygons.map(p => p.geometry.coordinates) }
+    // }
     // return multiPoly
 
-    const intersectedPoly = turf.intersect(multiPoly, geoJSONIsland)
+    const intersectedPoly = turf.intersect(polygons[0], geoJSONIsland)
     if (!intersectedPoly) {
       throw new Error('Territory does not intersect with island')
     }
@@ -516,9 +519,8 @@ module.exports = (clusterPoints, clusterWeights, island) => {
   // console.log(JSON.stringify(geoJSON))
 
   // console.log('Segmenting done in ', performance.now() - t)
-  if (isMulti.length) {
-    drawPreview(cells, territoriesSegments, territoriesBorderSegments, isMulti)
-    console.log('look')
-  }
+  // if (isMulti.length) {
+  //   drawPreview(cells, territoriesSegments, territoriesBorderSegments, isMulti)
+  // }
   return polygons
 }

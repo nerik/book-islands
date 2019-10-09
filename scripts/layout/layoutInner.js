@@ -4,8 +4,10 @@
 // First just with random coastal cities
 
 const fs = require('fs')
+const { performance } = require('perf_hooks')
 const _ = require('lodash')
 const turf = require('@turf/turf')
+const d3 = require('d3')
 const getClusterTerritories = require('./util/getClusterTerritories')
 
 const {
@@ -56,7 +58,13 @@ const filteredClusters = clusters.features
   // })
 
 // Checks if random point is not too close to another city
-const checkRandomCity = (randomPt, cities) => {
+const isCityIsolatedEnough = (city, cities) => {
+  cities.forEach(otherCity => {
+    const dist = turf.distance(city, otherCity, {units: 'kilometers'})
+    if (dist < 2) {
+      return false
+    }
+  })
   return true
 }
 
@@ -79,19 +87,33 @@ const getBooks = (author) => {
   return _.orderBy(books, ['popularity'], ['desc'])
 }
 
+
+// compute territories / cities ranks bins 
+const citiesRankScale = d3.scaleThreshold()
+  .domain([0, 1, 100, 1000])
+  .range([4,4,3,2,1])
+
+const territoriesRankScale = d3.scaleThreshold()
+  .domain([0, 1, 200, 2000])
+  .range([4,4,3,2,1])
+
+
 const numClusters = filteredClusters.filter(c => c.properties.is_cluster).length
 
 console.log('Will do inner layout for:', filteredClusters.length, 'islands')
 console.log('Will do inner layout for:', numClusters, ' clusters')
+const t = performance.now()
 
-let numClustersSucceeded = 0
+
 let numClustersDone = 0
+let numClustersSucceeded = 0
 const bookPoints = []
 const allTerritories = []
-filteredClusters.forEach(cluster => {
+const territoryLabels = []
 
+filteredClusters.forEach(cluster => {
   const layouted_id = cluster.properties.layouted_id
-  const meta = islandsMeta[layouted_id]
+  // const meta = islandsMeta[layouted_id]
   const island = islandsDict[layouted_id]
 
   let authors
@@ -99,25 +121,25 @@ filteredClusters.forEach(cluster => {
   if (cluster.properties.is_cluster === true) {
     // collect cluster points
     const clusterId = cluster.properties.cluster_id
-    const clusterPoints = clusters.features.filter(f => f.properties.cluster_id === clusterId)
+    const clusterPoints = clusters.features
+      .filter(f => f.properties.is_cluster === false &&f.properties.cluster_id === clusterId)
 
-    const authorIds = cluster.properties.cluster_leaves
-    authors = authorIds.map(authorId => authorsDict[authorId])
+    authors = clusterPoints.map(p => authorsDict[p.properties.id])
 
     // for now just generate "dirty" territories ovelapping islands
     // will then have to generate "borders"
     const clusterWeights = clusterPoints.map(p => 1)
     console.log('Clustering:', numClustersDone, '/', numClusters)
-    // console.log(JSON.stringify(turf.featureCollection(clusterPoints)))
-    // console.log(JSON.stringify(island))
-
-    const NUM_TRIES = 20
+    const NUM_TRIES = 10
     for (let i = 0; i <= NUM_TRIES; i++) {
       try {
         territories = getClusterTerritories(clusterPoints, clusterWeights, island)
         territories.forEach((territory, i) => {
           territory.properties = {
-            ...clusterPoints[i].properties
+            id: clusterPoints[i].properties.id,
+            cluster_r: clusterPoints[i].properties.cluster_r,
+            cluster_g: clusterPoints[i].properties.cluster_g,
+            cluster_b: clusterPoints[i].properties.cluster_b,
           }
           allTerritories.push(territory)
         })
@@ -125,8 +147,8 @@ filteredClusters.forEach(cluster => {
         numClustersSucceeded++
         break
       } catch (e) {
-        console.log(e)
-        console.log('failed')
+        // console.log(e.message)
+        // console.log('failed')
       }
       if (i === NUM_TRIES) {
         console.log('failed for', numClustersDone)
@@ -141,52 +163,89 @@ filteredClusters.forEach(cluster => {
 
   // Collect books for author
   const authorsBooks = authors.map(author => ({
-    author: author.id,
+    author,
     books: getBooks(author)
   }))
 
   authorsBooks.forEach((authorBooks, i) => {
-    // // TODO collect + transpose real features (+ use checkCityInTerritory)
-    // generate random coastal cities
-    const cities = []
-    if (island === undefined) {
-      console.log(meta)
-    }
+    // generate polygon center
+    const authorPop = authorBooks.author.sum_popularity
+    const territory = territories[i] || island
+    const labelCenter = turf.centroid(territory)
+    labelCenter.properties.id = authorBooks.author.id
+    labelCenter.properties.rank = territoriesRankScale(authorPop)
+    territoryLabels.push(labelCenter)
+
+
+    // generate available points for terr
+    // TODO sort real points by territory
+    // TODO take real points randomly until exhausted
+    const territoryCoastalPoints = island.geometry.coordinates[0].filter(coords => {
+      return checkCityInTerritory(coords, territory)
+    })
+    const territoryBbox = turf.bbox(territory)
+
+    
+    const islandCities = []
+    // if (island === undefined) {
+    //   // console.log(meta)
+    // }
     authorBooks.books.forEach(book => {
-      const coords = island.geometry.coordinates[0]
       let city
-      let tries = 0
       while (!city) {
-        tries++
-        const rd = Math.floor(Math.random() * coords.length)
-        const randomPt = coords[rd]
-        if (!checkRandomCity(randomPt, cities) || !checkCityInTerritory(randomPt, territories[i])) {
-          if (tries < 100) {
-            continue
-          } else {
-            console.log('Cant fit cities in this terriotery')
+        if (territoryCoastalPoints.length) {
+          const rd = Math.floor(Math.random() * territoryCoastalPoints.length)
+          const randomPt = turf.point(territoryCoastalPoints.splice(rd, 1)[0])
+          if (isCityIsolatedEnough(randomPt, islandCities)) {
+            // console.log('adding coastal pt')
+            city = randomPt
+          }
+        } else {
+          // console.log('no more coastal pt')
+          const randomPt = turf.randomPoint(1, { bbox: territoryBbox }).features[0]
+          if (turf.booleanPointInPolygon(randomPt, territory) && isCityIsolatedEnough(randomPt, islandCities)) {
+            // console.log('adding rd pt')
+            city = randomPt
           }
         }
-        city = turf.point(randomPt)
-        city.properties = {
-          ...book,
-          // remove below for final dataset
-          author: authorBooks.author,
-          cluster_r: cluster.properties.cluster_r,
-          cluster_g: cluster.properties.cluster_g,
-          cluster_b: cluster.properties.cluster_b,
-        }
+      }
+      islandCities.push(city)
+      const rank = citiesRankScale(book.popularity)
+      city.properties = {
+        ...book,
+        rank,
+        // remove below for final dataset
+        author_id: authorBooks.author.id,
+        cluster_r: cluster.properties.cluster_r,
+        cluster_g: cluster.properties.cluster_g,
+        cluster_b: cluster.properties.cluster_b,
       }
       bookPoints.push(city)
     })
   })
 })
+console.log('Done in', Math.round((performance.now() - t) / 1000), 's')
 
-console.log('Created ', bookPoints.length, 'bookPoints')
+console.log('Cluster success ', numClustersSucceeded, '/', numClustersDone)
+
 console.log('Created ', allTerritories.length, 'territories')
 
+console.log('Created ', bookPoints.length, 'bookPoints - with distribution')
+console.log('1:', bookPoints.filter(f => f.properties.rank === 1).length)
+console.log('2:', bookPoints.filter(f => f.properties.rank === 2).length)
+console.log('3:', bookPoints.filter(f => f.properties.rank === 3).length)
+console.log('4:', bookPoints.filter(f => f.properties.rank === 4).length)
+
+console.log('Created ', territoryLabels.length, 'territory labels - with distribution:')
+console.log('1:', territoryLabels.filter(f => f.properties.rank === 1).length)
+console.log('2:', territoryLabels.filter(f => f.properties.rank === 2).length)
+console.log('3:', territoryLabels.filter(f => f.properties.rank === 3).length)
+console.log('4:', territoryLabels.filter(f => f.properties.rank === 4).length)
+
+fs.writeFileSync(TERRITORY_LABELS, JSON.stringify(turf.featureCollection(territoryLabels)))
 fs.writeFileSync(BOOKS_POINTS, JSON.stringify(turf.featureCollection(bookPoints)))
 fs.writeFileSync(TERRITORY_FRONTIERS, JSON.stringify(turf.featureCollection(allTerritories)))
 
+console.log ('Wrote', TERRITORY_LABELS)
 console.log ('Wrote', BOOKS_POINTS)
 console.log ('Wrote', TERRITORY_FRONTIERS)
