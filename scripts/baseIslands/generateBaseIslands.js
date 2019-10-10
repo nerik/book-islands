@@ -40,6 +40,7 @@ const filteredFeatures = islands.features.filter(feature => {
   }
 })
 
+// const islets = 
 
 console.log(filteredFeatures.length, ' features meet size rquirements out of ', islands.features.length, '\n\n')
 
@@ -84,7 +85,9 @@ geoJSON.features = filteredFeatures.map((feature, i) => {
   featureLowdefMrct.properties.wsg84Area = featureLowdef.properties.area
 
   // Copy island id
-  feature.properties.island_id = featureLowdef.properties.island_id = featureLowdefMrct.properties.island_id = i
+  const island_id = i
+  featureLowdef.properties.island_id = featureLowdefMrct.properties.island_id = island_id
+  feature.properties = { island_id }
 
   geoJSONLowdef.features.push(featureLowdef)
   geoJSONLowdefMrct.features.push(featureLowdefMrct)

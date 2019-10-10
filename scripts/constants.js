@@ -14,7 +14,8 @@ module.exports = {
   UMAP_CAT_STATS: 'out/umap/umap_cat_stats.json',
   UMAP_GEO: 'out/umap/umap.geo.json',
   CLUSTERS: 'out/layout/clusters.geo.json',
-  BASE_ISLANDS_META: 'out/layout/baseIslandsMeta.json',
+  BASE_ISLANDS_META: 'out/layout/baseIslands.meta.json',
+  ISLANDS: 'out/layout/islands.geo.json',
   ISLANDS_LOWDEF: 'out/layout/islands_lowdef.geo.json',
   ISLANDS_META: 'out/layout/islands.meta.json',
   BOOKS_POINTS: 'out/layout/books_points.geo.json',
@@ -23,11 +24,23 @@ module.exports = {
   ISLANDS_TILES: 'tiles/islands',
   TERRITORIES_TILES: 'tiles/territories',
   POINTS_TILES: 'tiles/points',
+  // TEST_BBOX: {
+  //   minX: -10,
+  //   minY: -10,
+  //   maxX: 0,
+  //   maxY: 0
+  // },
   TEST_BBOX: {
-    minX: -10,
-    minY: -10,
-    maxX: 0,
-    maxY: 0
+    minX: -180,
+    minY: -80,
+    maxX: 180,
+    maxY: 80
   },
+  BBOX_CHUNKS:[
+    [-180, -80, 0  , 0],
+    [-180, 0  , 0  , 80],
+    [0   , 0  , 180, 80],
+    [0   , -80, 180, 0]
+  ],
   MAX_BASE_ISLAND_SCALE_UP: 2
 }

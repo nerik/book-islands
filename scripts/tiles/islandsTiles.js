@@ -4,17 +4,24 @@ const exec = require('child_process').execSync
 const fs = require('fs')
 const rimraf = require('rimraf')
 
-const { ISLANDS_LOWDEF, ISLANDS_TILES } = require('../constants')
-const p = `${ISLANDS_TILES}/main.mbtiles`
-const t = `${ISLANDS_TILES}/tiles`
+const { ISLANDS_LOWDEF, ISLANDS, ISLANDS_TILES } = require('../constants')
+const mbtiles = `${ISLANDS_TILES}/main.mbtiles`
+const tiles = `${ISLANDS_TILES}/tiles`
+const mbtilesLowdef = `${ISLANDS_TILES}/main_lowdef.mbtiles`
+const tilesLowdef = `${ISLANDS_TILES}/tiles_lowdef`
 
 
 rimraf.sync(ISLANDS_TILES)
 fs.mkdirSync(ISLANDS_TILES)
-try { fs.unlinkSync(p) } catch(e) {}
+// try { fs.unlinkSync(mbtiles); fs.unlinkSync(mbtiles) } catch(e) {}
 
-console.log('Tippecanoe')
-const tippecanoe = exec(`tippecanoe -o ${p} -zg --drop-densest-as-needed -l islands ${ISLANDS_LOWDEF}`)
-// tippecanoe.stdout.pipe(process.stdout)
+const cmdLowdef = `tippecanoe -o ${mbtilesLowdef} -zg --drop-densest-as-needed -l islands ${ISLANDS_LOWDEF}`
+console.log(cmdLowdef)
+exec(cmdLowdef)
+exec(`mb-util --image_format=pbf ${mbtilesLowdef} ${tilesLowdef} --silent`)
 
-const pbf = exec(`mb-util --image_format=pbf ${p} ${t} --silent`)
+const cmd = `tippecanoe -o ${mbtiles} -zg --drop-densest-as-needed -l islands ${ISLANDS}`
+console.log(cmd)
+exec(cmd)
+exec(`mb-util --image_format=pbf ${mbtiles} ${tiles} --silent`)
+

@@ -3,13 +3,16 @@ const fs = require('fs')
 const turf = require('@turf/turf')
 const progressBar = require('../util/progressBar')
 const transposeAndScale = require('../util/transposeAndScale')
+const pointWithinBBox = require('../util/pointWithinBBox')
 
-const { CLUSTERS, BASE_ISLANDS_LOWDEF_MRCT, BASE_ISLANDS_META, ISLANDS_META, ISLANDS_LOWDEF, TEST_BBOX } = require('../constants')
+const {
+  CLUSTERS, BASE_ISLANDS_LOWDEF_MRCT, BASE_ISLANDS_META, ISLANDS_META, ISLANDS_LOWDEF,
+  TEST_BBOX, BBOX_CHUNKS
+} = require('../constants')
 
 const MIN_DISTANCE_SIMILAR_DEGREES = 3
 
 const baseIslandsMrct = JSON.parse(fs.readFileSync(BASE_ISLANDS_LOWDEF_MRCT, 'utf-8'))
-const baseIslandsMeta = JSON.parse(fs.readFileSync(BASE_ISLANDS_META, 'utf-8'))
 const clusters = JSON.parse(fs.readFileSync(CLUSTERS, 'utf-8'))
 
 
@@ -17,14 +20,6 @@ const clustersFiltered = clusters.features
   // Remove clustered points (but keep clusters + standalone points)
   .filter(cluster => {
     return cluster.properties.is_cluster || cluster.properties.cluster_id === undefined
-  })
-  // Get rid of whatever clusters did not get a score in the score step
-  // This happens when running score on a subset
-  .filter(cluster => {
-    if (cluster.properties.cluster_id === undefined) return true
-    const clusterId = cluster.properties.cluster_id.toString()
-    const islandCandidatesForCluster = baseIslandsMeta[clusterId]
-    return islandCandidatesForCluster
   })
   .filter(
     cluster => 
@@ -108,8 +103,6 @@ const getIslandAtFinalScale = (clusterCenterMrct, islandMrct, startScale, island
     islandAtFinalScale: islandAtScaleMrct
   }
 }
-
-
 
 
 const getClusterBestIsland = (cluster, islandsAroundIds) => {
@@ -197,75 +190,96 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
 
 console.log('Will layout' , clustersByPop.length , 'clusters')
 
-let numFallbacked = 0
-let numDidntFit = 0
-const islands = []
-const finalTransformations = {}
-const pb = progressBar(clustersByPop.length)
-for (let clusterIndex = 0; clusterIndex < clustersByPop.length; clusterIndex++) {
-// for (let clusterIndex = 0; clusterIndex < 10000; clusterIndex++) {
-  const cluster = clustersByPop[clusterIndex]
+BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
+  console.log('Current chunk:', bboxChunk)
+
+  const baseIslandsMetaPath = BASE_ISLANDS_META.replace('.json', `_${chunkIndex}.json`)
+  const baseIslandsMeta = JSON.parse(fs.readFileSync(baseIslandsMetaPath, 'utf-8'))
   
-  pb.increment()
-
+  const bboxFilteredClusters = clustersByPop
+    // Get rid of whatever clusters did not get a score in the score step
+    // This happens when running score on a subset
+    .filter(cluster => {
+      if (cluster.properties.cluster_id === undefined) return true
+      const clusterId = cluster.properties.cluster_id.toString()
+      const islandCandidatesForCluster = baseIslandsMeta[clusterId]
+      return islandCandidatesForCluster
+    })
+    .filter(cluster => {
+      return (pointWithinBBox(cluster, bboxChunk))
+    })
   
-  // Gather islands within bbox around cluster center (cheap: large bbox/buffer and pick a polygon point)
-  const islandsAround = islands.filter(island => cheapDistance(cluster, island) < MIN_DISTANCE_SIMILAR_DEGREES)
-  // console.log('Found', islandsAround.length, ' islands around')
-  const islandsAroundIds = islandsAround.map(island => island.properties.island_id)
-  const clusterCenterMrct = turf.toMercator(cluster)
+  console.log('Will layout', bboxFilteredClusters.length, '/', clustersByPop.length)
 
-  const bestIslandCandidate = (cluster.properties.is_cluster) 
-    ? getClusterBestIsland(cluster, islandsAroundIds)
-    : getStandalonePointBestIsland(cluster, islandsAroundIds, clusterCenterMrct)
+  let numFallbacked = 0
+  let numDidntFit = 0
+  const islands = []
+  const finalTransformations = {}
+  const pb = progressBar(bboxFilteredClusters.length)
+  for (let clusterIndex = 0; clusterIndex < bboxFilteredClusters.length; clusterIndex++) {
+  // for (let clusterIndex = 0; clusterIndex < 10000; clusterIndex++) {
+    const cluster = bboxFilteredClusters[clusterIndex]
+    
+    pb.increment()
 
-  // console.log(bestIslandCandidate)
+    
+    // Gather islands within bbox around cluster center (cheap: large bbox/buffer and pick a polygon point)
+    const islandsAround = islands.filter(island => cheapDistance(cluster, island) < MIN_DISTANCE_SIMILAR_DEGREES)
+    // console.log('Found', islandsAround.length, ' islands around')
+    const islandsAroundIds = islandsAround.map(island => island.properties.island_id)
+    const clusterCenterMrct = turf.toMercator(cluster)
 
-  const islandMrct = baseIslandsMrct.features.find(i => i.properties.island_id === bestIslandCandidate.island_id)
-  // console.log(bestIslandCandidate)
+    const bestIslandCandidate = (cluster.properties.is_cluster) 
+      ? getClusterBestIsland(cluster, islandsAroundIds)
+      : getStandalonePointBestIsland(cluster, islandsAroundIds, clusterCenterMrct)
 
-  const { finalScale, islandAtFinalScale, error } = getIslandAtFinalScale(
-    clusterCenterMrct, islandMrct, bestIslandCandidate.newScale, islandsAround
-  )
+    // console.log(bestIslandCandidate)
 
-  const layouted_id = cluster.properties.layouted_id
+    const islandMrct = baseIslandsMrct.features.find(i => i.properties.island_id === bestIslandCandidate.island_id)
+    // console.log(bestIslandCandidate)
 
-  if (error) {
-    numDidntFit++
+    const { finalScale, islandAtFinalScale, error } = getIslandAtFinalScale(
+      clusterCenterMrct, islandMrct, bestIslandCandidate.newScale, islandsAround
+    )
+
+    const layouted_id = cluster.properties.layouted_id
+
+    if (error) {
+      numDidntFit++
+      finalTransformations[layouted_id] = {
+        error
+      }
+      continue
+    }
+
+
+    const island = turf.toWgs84(islandAtFinalScale)
+    island.properties = {
+      ...cluster.properties,
+      layouted_id
+    }
+    island.properties.island_id = bestIslandCandidate.island_id
+
+    islands.push(island)
+
     finalTransformations[layouted_id] = {
-      error
-    }
-    continue
-  }
-
-
-  const island = turf.toWgs84(islandAtFinalScale)
-  island.properties = {
-    ...cluster.properties,
-    layouted_id
-  }
-  island.properties.island_id = bestIslandCandidate.island_id
-
-  islands.push(island)
-
-
-  finalTransformations[layouted_id] = {
-    scoringScale: bestIslandCandidate.newScale,
-    layoutScale: finalScale,
-    center: {
-      properties: {},
-      geometry: cluster.geometry
+      scoringScale: bestIslandCandidate.newScale,
+      island_id: bestIslandCandidate.island_id,
+      layoutScale: finalScale,
+      center: cluster.geometry.coordinates
     }
   }
-}
 
-console.log('Layouted ', islands.length, 'islands')
-console.log('Had to fallback with ', numFallbacked, 'islands (couldnt find different enough neighbour)')
-console.log('Islands didnt fit ', numDidntFit)
+  console.log('Layouted ', islands.length, 'islands')
+  console.log('Had to fallback with ', numFallbacked, 'islands (couldnt find different enough neighbour)')
+  console.log('Islands didnt fit ', numDidntFit)
 
+  const islandsLowdefPath = ISLANDS_LOWDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
+  const islandsMetaPath = ISLANDS_LOWDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
 
-fs.writeFileSync(ISLANDS_LOWDEF, JSON.stringify(turf.featureCollection(islands)))
-fs.writeFileSync(ISLANDS_META, JSON.stringify(finalTransformations))
+  fs.writeFileSync(islandsLowdefPath, JSON.stringify(turf.featureCollection(islands)))
+  fs.writeFileSync(islandsMetaPath, JSON.stringify(finalTransformations))
 
-console.log ('Wrote', ISLANDS_LOWDEF)
-console.log ('Wrote', ISLANDS_META)
+  console.log ('Wrote', islandsLowdefPath)
+  console.log ('Wrote', islandsMetaPath)
+})

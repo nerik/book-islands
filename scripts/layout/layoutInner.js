@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 
 
-// First just with random coastal cities
-
 const fs = require('fs')
 const { performance } = require('perf_hooks')
 const _ = require('lodash')
