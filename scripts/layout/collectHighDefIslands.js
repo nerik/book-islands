@@ -2,6 +2,7 @@
 
 const fs = require('fs')
 const turf = require('@turf/turf')
+const JSONStream = require( 'JSONStream')
 const progressBar = require('../util/progressBar')
 const transposeToWorldCenter = require('../util/transposeToWorldCenter')
 const transposeAndScale = require('../util/transposeAndScale')
@@ -10,6 +11,7 @@ const { BASE_ISLANDS, ISLANDS_META, ISLANDS, BBOX_CHUNKS } = require('../constan
 
 const baseIslands = JSON.parse(fs.readFileSync(BASE_ISLANDS, 'utf-8'))
 const islandsMeta = JSON.parse(fs.readFileSync(ISLANDS_META, 'utf-8'))
+
 
 const baseIslandsDict = {}
 baseIslands.features.forEach(baseIsland => {
@@ -26,10 +28,14 @@ const inBBox = (pt, bbox) => {
 const allIslandsLayoutedIds = Object.keys(islandsMeta)
 
 BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
+  // if (chunkIndex >= 3) {
+  //   return
+  // }
   console.log('Current chunk:', bboxChunk)
   const islandsLayoutedIds = allIslandsLayoutedIds
     .filter(islandLayoutedId => {
       const meta = islandsMeta[islandLayoutedId]
+      if (!meta || meta.error) return false
       const center = meta.center
       return (inBBox(center, bboxChunk))
     })
@@ -61,9 +67,16 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
 
   const path = ISLANDS.replace('.geo.json', `_${chunkIndex}.geo.json`)
 
-  fs.writeFileSync(path, JSON.stringify(turf.featureCollection(islands)))
-
-  console.log('Wrote', path)
+  // fs.writeFileSync(path, JSON.stringify(turf.featureCollection(islands)))
+  
+  const transformStream = JSONStream.stringify('{"type":"FeatureCollection","features":[', '\n,\n', ']}')
+  const outputStream = fs.createWriteStream(path)
+  transformStream.pipe(outputStream)
+  islands.forEach( transformStream.write )
+  outputStream.on('finish', () => {
+    console.log('Wrote', path)
+  })
+  transformStream.end()
 })
 
 

@@ -148,7 +148,7 @@ console.log('Fitting/scoring', filteredClusters.length, ' clusters')
 
 
 BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
-  console.log('Current chunk:', bboxChunk)
+  console.log('Current chunk:', bboxChunk, chunkIndex)
     
   const testFeatures = []
   const scores = {}
@@ -211,8 +211,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
         newScale,
         islandAtScale,
         fitScore,
-        clusterCanHaveScore,
-        islandArea
+        // clusterCanHaveScore,º
       }
     })
 
@@ -228,7 +227,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
     }
 
     const ordered = _.orderBy(fitScores, ['fitScore'], ['desc'])
-    // .slice(0, 50)
+      .slice(0, 100)
 
     // console.log(ordered.filter(f => f.fitScore > 0).map(f => f.fitScore))
     scores[clusterId] = ordered.map(fs => {

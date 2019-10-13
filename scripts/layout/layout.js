@@ -15,11 +15,32 @@ const MIN_DISTANCE_SIMILAR_DEGREES = 3
 const baseIslandsMrct = JSON.parse(fs.readFileSync(BASE_ISLANDS_LOWDEF_MRCT, 'utf-8'))
 const clusters = JSON.parse(fs.readFileSync(CLUSTERS, 'utf-8'))
 
+let baseIslandsMeta = {}
+BBOX_CHUNKS.forEach((bbox, chunkIndex) => {
+  // if (chunkIndex === 3) {
+  //   return
+  // }
+  console.log('Adding meta for bbox', bbox)
+  const path = BASE_ISLANDS_META.replace('.json', `_${chunkIndex}.json`)
+  const bboxMeta = JSON.parse(fs.readFileSync(path, 'utf-8'))
+  baseIslandsMeta = {
+    ...baseIslandsMeta,
+    ...bboxMeta
+  }
+})
 
 const clustersFiltered = clusters.features
   // Remove clustered points (but keep clusters + standalone points)
   .filter(cluster => {
     return cluster.properties.is_cluster || cluster.properties.cluster_id === undefined
+  })
+  // Get rid of whatever clusters did not get a score in the score step
+  // This happens when running score on a subset
+  .filter(cluster => {
+    if (cluster.properties.cluster_id === undefined) return true
+    const clusterId = cluster.properties.cluster_id.toString()
+    const islandCandidatesForCluster = baseIslandsMeta[clusterId]
+    return islandCandidatesForCluster
   })
   .filter(
     cluster => 
@@ -105,6 +126,8 @@ const getIslandAtFinalScale = (clusterCenterMrct, islandMrct, startScale, island
 }
 
 
+
+
 const getClusterBestIsland = (cluster, islandsAroundIds) => {
   // Gather islands sorted by score for cluster (baseIslandsMeta)
   const clusterId = cluster.properties.cluster_id.toString()
@@ -117,7 +140,7 @@ const getClusterBestIsland = (cluster, islandsAroundIds) => {
   )
   if (!bestIslandCandidate || bestIslandCandidate.fitScore === 0) {
     console.log('No good candidate found, fallback to the one with best fitScore')
-    numFallbacked++
+    // numFallbacked++
     bestIslandCandidate = islandCandidatesForCluster[0]
   }
   return bestIslandCandidate
@@ -139,7 +162,7 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
     const rd = Math.floor(Math.random() * islandsNotAround.length)
     islandMrct = islandsNotAround[rd]
   } else {
-    console.log('Warning: cant find any different island around')
+    // console.log('Warning: cant find any different island around')
     // fall back to just picking a random island
     const rd = Math.floor(Math.random() * baseIslandsMrct.features.length)
     islandMrct = baseIslandsMrct.features[rd]
@@ -190,34 +213,24 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
 
 console.log('Will layout' , clustersByPop.length , 'clusters')
 
-BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
-  console.log('Current chunk:', bboxChunk)
+// TODO move main thinng out of chunks things and only split file writing
 
-  const baseIslandsMetaPath = BASE_ISLANDS_META.replace('.json', `_${chunkIndex}.json`)
-  const baseIslandsMeta = JSON.parse(fs.readFileSync(baseIslandsMetaPath, 'utf-8'))
-  
+BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
+  console.log('Current chunk:', bboxChunk, chunkIndex)
+
   const bboxFilteredClusters = clustersByPop
-    // Get rid of whatever clusters did not get a score in the score step
-    // This happens when running score on a subset
-    .filter(cluster => {
-      if (cluster.properties.cluster_id === undefined) return true
-      const clusterId = cluster.properties.cluster_id.toString()
-      const islandCandidatesForCluster = baseIslandsMeta[clusterId]
-      return islandCandidatesForCluster
-    })
     .filter(cluster => {
       return (pointWithinBBox(cluster, bboxChunk))
     })
-  
-  console.log('Will layout', bboxFilteredClusters.length, '/', clustersByPop.length)
 
-  let numFallbacked = 0
+
+  // let numFallbacked = 0
   let numDidntFit = 0
   const islands = []
   const finalTransformations = {}
   const pb = progressBar(bboxFilteredClusters.length)
+  
   for (let clusterIndex = 0; clusterIndex < bboxFilteredClusters.length; clusterIndex++) {
-  // for (let clusterIndex = 0; clusterIndex < 10000; clusterIndex++) {
     const cluster = bboxFilteredClusters[clusterIndex]
     
     pb.increment()
@@ -271,15 +284,15 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   }
 
   console.log('Layouted ', islands.length, 'islands')
-  console.log('Had to fallback with ', numFallbacked, 'islands (couldnt find different enough neighbour)')
-  console.log('Islands didnt fit ', numDidntFit)
+  // console.log('Had to fallback with ', numFallbacked, 'islands (couldnt find different enough neighbour)')
+  console.log('Islands didnt fit:', numDidntFit)
 
-  const islandsLowdefPath = ISLANDS_LOWDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
-  const islandsMetaPath = ISLANDS_LOWDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
+  const islandsLowDefPath = ISLANDS_LOWDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
+  const islandsMetaPath = ISLANDS_META.replace('.json', `_${chunkIndex}.json`)
 
-  fs.writeFileSync(islandsLowdefPath, JSON.stringify(turf.featureCollection(islands)))
+  fs.writeFileSync(islandsLowDefPath, JSON.stringify(turf.featureCollection(islands)))
   fs.writeFileSync(islandsMetaPath, JSON.stringify(finalTransformations))
 
-  console.log ('Wrote', islandsLowdefPath)
+  console.log ('Wrote', islandsLowDefPath)
   console.log ('Wrote', islandsMetaPath)
 })
