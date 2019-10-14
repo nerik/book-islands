@@ -31,7 +31,8 @@ function getDownloadLinks({ lat, lng }) {
             fs.writeFileSync(cachePath, JSON.stringify(downloadLinksCache))
             resolve(links)
           } catch (e) {
-            reject('Could not parse response from imagico: ' + body)
+            reject('Could not parse response from imagico: ' + e)
+            console.count('links generation failed')
           }
         } else {
           reject(err || response)
@@ -44,13 +45,12 @@ function getDownloadLinks({ lat, lng }) {
 async function generateDownloadLinks (tile) {
   const tileCoordinates = getTileCoordinates(tile)
 
-  const tileCoordinatesLatLng = _.uniqWith(
+  const tileCoordinatesLatLng = tileCoordinates ? _.uniqWith(
     tileCoordinates
       .filter(({ lat, lng }) => lat && lng)
-      // .map(({ lat, lng }) => ({ lat, lng, key: converSNWE({ lat, lng }) })),
       .map(({ lat, lng }) => ({ lat: Math.round(lat), lng: Math.round(lng) })),
     _.isEqual
-  )
+  ) : []
   const links = []
   for (let i = 0; i < tileCoordinatesLatLng.length; i++) {
     const tile = tileCoordinatesLatLng[i]
@@ -95,6 +95,7 @@ async function prepareOfflineTiles(tiles) {
       downloadLinks =  downloadLinks.concat(links)
       pb.increment()
     }
+    downloadLinks = _.uniqBy(downloadLinks, 'link')
     downloadLinks = downloadLinks.map(l => ({ ...l, downloaded: false }))
     fs.writeFileSync(linksPath, JSON.stringify(downloadLinks))
     console.log(`File links to download generated in ${linksPath}`)
