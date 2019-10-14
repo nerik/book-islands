@@ -14,6 +14,9 @@ SCRIPTS
 ./scripts/layout/layout.js
 ./scripts/tiles/islandsTiles.js
 
+./scripts/tiles/height/download.js
+./scripts/tiles/height/produceTiles.js
+
 RUN
 yarn serve
 yarn start

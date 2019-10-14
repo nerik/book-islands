@@ -8,13 +8,15 @@ const PORT = 9090
 console.log(`on port ${PORT}`)
 
 app.use(cors())
-app.use(express.static(path.join(__dirname, '../tiles'), {
-  // TODO Put back for PBF tiles
-  setHeaders: (res) => {
-    // console.log(res)
-    res.set('Content-Encoding', 'gzip')
-  },
-  // fallthrough: false
-}))
+app.use(function(req, res, next) {
+  var ext = path.extname(req.url)
+  if (ext !== '.png') {
+    res.setHeader('Content-Encoding', 'gzip')
+  }
+  next()
+})
+app.use(
+  express.static(path.join(__dirname, '../tiles'))
+)
 
 app.listen(PORT)
