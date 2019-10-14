@@ -3,7 +3,7 @@ const turf = require('@turf/turf')
 const _ = require('lodash')
 const fs = require('fs')
 const fse = require('fs-extra')
-const Jimp = require('Jimp')
+const Jimp = require('jimp')
 const { converSNWE } = require('./utils')
 const { Hgt } = require('node-hgt')
 const { HGT_DATA, BASE_ISLANDS, ISLANDS_LOWDEF, HEIGHT_TILES } = require('../../constants')
@@ -96,7 +96,9 @@ async function renderTile(tile, tileSize = TILE_SIZE_PX) {
   const tilePath = `${HEIGHT_TILES}/${tileZ}/${tileX}/${tileY}.png`
   const coordinates = getTileCoordinates(tile, tileSize)
   if (coordinates) {
-    const image = await new Jimp(tileSize, tileSize)
+    const { r, g, b } = heightToRGB(0)
+    const defaultColor = Jimp.rgbaToInt(r, g, b, 255)
+    const image = await new Jimp(tileSize, tileSize, defaultColor)
     for (let i = 0; i < coordinates.length; i++) {
       const { x, y, lat, lng } = coordinates[i]
       let elevation = 0
@@ -106,22 +108,15 @@ async function renderTile(tile, tileSize = TILE_SIZE_PX) {
           const floorCoordinates = { lat: Math.floor(lat), lng: Math.floor(lng) }
           const hgt = new Hgt(`${HGT_DATA}/${srtmCoordinatesString}.hgt`, floorCoordinates)
           elevation = hgt.getElevation([lat, lng])
-          // const hgt = new Hgt(`/Volumes/MacOS1TB/GOOGLEBOOKS/in/heights/${srtmCoordinatesString}.hgt`, [lat, lng])
-          // elevation = getElevation(tileset, [lat, lng]).then((elevation) => {
-          //   console.log(elevation)
-          // })
-          // console.log('TCL: renderTile -> elevation', elevation)
+          const { r, g, b } = heightToRGB(elevation)
+          const color = Jimp.rgbaToInt(r, g, b, 255)
+          image.setPixelColor(color, x, tileSize - 1 - y)
         } catch(e) {
-          // console.log(e)
+          console.log(e)
         }
       }
-      const { r, g, b } = heightToRGB(elevation)
-      const color = Jimp.rgbaToInt(r, g, b, 255)
-      image.setPixelColor(color, x, tileSize - y)
     }
     try {
-
-      // await image.write(`out/${tileZ}-${tileX}-${tileY}.png`)
       await image.write(tilePath)
       return true
     } catch(e) {

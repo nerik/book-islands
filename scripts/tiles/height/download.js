@@ -131,9 +131,9 @@ async function prepareOffline(zooms = [8, 9]) {
     const tiles = getBboxTiles(BBOX, zoom)
     await prepareOfflineTiles(tiles)
 
-    console.log(`${zoom} done in ${(performance.now() - t) / 1000}s`)
+    console.log(`${zoom} done in ${Math.floor((performance.now() - t) / 1000)} s`)
   }
-  console.log(`Total time downloading ${(performance.now() - tt) / 1000}`)
+  console.log(`Total time downloading ${Math.floor((performance.now() - tt)) / 1000} s`)
   process.exit()
 }
 

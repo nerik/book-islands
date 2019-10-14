@@ -13,9 +13,9 @@ const style = {
     },
     'heightmap-generated': {
       // 'url': 'mapbox://mapbox.terrain-rgb',
-      'tiles': ['http://localhost:9090/height/{z}/{x}/{y}.png'],
+      'tiles': ['https://storage.googleapis.com/books-detail-data/heights/{z}/{x}/{y}.png'],
       'type': 'raster-dem',
-      'tileSize': 64
+      'tileSize': 256
     },
     'islands': {
       'type': 'vector',
