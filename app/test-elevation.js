@@ -24,16 +24,16 @@ var style = {
     },
     'heightmap-generated': {
       // 'url': 'mapbox://mapbox.terrain-rgb',
-      'tiles': ['http://localhost:9090/heightmap-test/{z}-{x}-{y}.png'],
+      'tiles': ['http://localhost:9090/height/{z}/{x}/{y}.png'],
       'type': 'raster-dem',
       'tileSize': 256
     },
-    'heightmap-mapbox': {
-      // 'url': 'mapbox://mapbox.terrain-rgb',
-      'tiles': ['http://localhost:9090/heightmap-test/{z}-{x}-{y}_.png'],
-      'type': 'raster-dem',
-      'tileSize': 256
-    },
+    // 'heightmap-mapbox': {
+    //   // 'url': 'mapbox://mapbox.terrain-rgb',
+    //   'tiles': ['http://localhost:9090/heightmap-test/{z}-{x}-{y}_.png'],
+    //   'type': 'raster-dem',
+    //   'tileSize': 256
+    // },
   },
   'sprite': 'mapbox://sprites/satellitestudio-nerik/ck06nclj82czw1crdlt5l2m9y/ck2u8j60r58fu0sgyxrigm3cu',
   'glyphs': 'mapbox://fonts/satellitestudio-nerik/{fontstack}/{range}.pbf',
@@ -52,13 +52,13 @@ var style = {
       'layout': {},
       'paint': {'fill-color': 'hsl(214, 58%, 78%)'}
     },
-    {
-      'id': 'mapbox-terrain-mapbox',
-      'type': 'hillshade',
-      'source': 'heightmap-mapbox',
-      'layout': {},
-      'paint': {}
-    },
+    // {
+    //   'id': 'mapbox-terrain-mapbox',
+    //   'type': 'hillshade',
+    //   'source': 'heightmap-mapbox',
+    //   'layout': {},
+    //   'paint': {}
+    // },
     {
       'id': 'mapbox-terrain-generated',
       'type': 'hillshade',
@@ -66,7 +66,7 @@ var style = {
       'layout': {},
       'paint': {}
     },
-   
+
   ],
   'created': '2019-09-05T12:08:17.941Z',
   'id': 'ck06nclj82czw1crdlt5l2m9y',

@@ -11,6 +11,12 @@ const style = {
       'url': 'mapbox://satellitestudio-nerik.91lr70mc',
       'type': 'vector'
     },
+    'heightmap-generated': {
+      // 'url': 'mapbox://mapbox.terrain-rgb',
+      'tiles': ['http://localhost:9090/height/{z}/{x}/{y}.png'],
+      'type': 'raster-dem',
+      'tileSize': 64
+    },
     'islands': {
       'type': 'vector',
       tiles: ['http://localhost:9090/islands/tiles/{z}/{x}/{y}.pbf'],
@@ -131,6 +137,14 @@ const style = {
       'paint': {}
     },
 
+
+    {
+      'id': 'mapbox-terrain-generated',
+      'type': 'hillshade',
+      'source': 'heightmap-generated',
+      'layout': {},
+      'paint': {}
+    },
 
   ],
 }
