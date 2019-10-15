@@ -112,7 +112,7 @@ async function renderTile(tile, tileSize = TILE_SIZE_PX) {
           const color = Jimp.rgbaToInt(r, g, b, 255)
           image.setPixelColor(color, x, tileSize - 1 - y)
         } catch(e) {
-          console.log(e)
+          // console.log(e)
         }
       }
     }
