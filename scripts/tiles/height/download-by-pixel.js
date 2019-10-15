@@ -2,36 +2,26 @@
 const fs = require('fs')
 const path = require('path')
 const os = require('os')
-const turf = require('@turf/turf')
 const _ = require('lodash')
 const request = require('request')
 const { performance } = require('perf_hooks')
+const { getTileCoordinates } = require('./renderTile')
 const progressBar = require('../../util/progressBar')
-const { downloadFile, unZip } = require('./utils')
-const { HGT_DATA, BASE_ISLANDS } = require('../../constants')
+const { getBboxTiles, downloadFile, unZip } = require('./utils')
+const { TEST_BBOX, HGT_DATA } = require('../../constants')
 
 const linksPath = `${HGT_DATA}/download-links.json`
 const cachePath = `${HGT_DATA}/download-links-cache.json`
 
-const baseIslands = JSON.parse(fs.readFileSync(BASE_ISLANDS, 'utf-8'))
-const baseIslandsBboxs = baseIslands.features.map((feature) => ({
-  id: feature.properties.island_id,
-  bbox: turf.bbox(feature),
-}))
-
-if (!fs.existsSync(HGT_DATA)) {
-  fs.mkdirSync(HGT_DATA)
-}
 const downloadLinksCache = fs.existsSync(cachePath) ? JSON.parse(fs.readFileSync(cachePath, 'utf-8')) : {}
-function getDownloadLinks(bbox) {
+function getDownloadLinks({ lat, lng }) {
   return new Promise(function(resolve, reject) {
-    const [minX, minY, maxX, maxY] = bbox
-    const key = bbox.toString()
+    const key = `${lat}-${lng}`
     if (downloadLinksCache[key]) {
       resolve(downloadLinksCache[key])
     }
     request(
-      `http://www.imagico.de/map/dem_json.php?date=&lon=${minX}&lat=${minY}&lonE=${maxX}&latE=${maxY}&vf=1`,
+      `http://www.imagico.de/map/dem_json.php?date=&lon=${lng}&lat=${lat}&lonE=${lng}&latE=${lat}&vf=1`,
       function(err, response, body) {
         if (!err && response.statusCode === 200) {
           try {
@@ -52,13 +42,27 @@ function getDownloadLinks(bbox) {
   })
 }
 
-async function generateDownloadLinks (bbox) {
-  try {
-    const links = await getDownloadLinks(bbox)
-    return _.uniqBy(_.flatMap(links), 'link')
-  } catch(e) {
-    console.log('Failed generating link', e)
+async function generateDownloadLinks (tile) {
+  const tileCoordinates = getTileCoordinates(tile)
+
+  const tileCoordinatesLatLng = tileCoordinates ? _.uniqWith(
+    tileCoordinates
+      .filter(({ lat, lng }) => lat && lng)
+      .map(({ lat, lng }) => ({ lat: Math.round(lat), lng: Math.round(lng) })),
+    _.isEqual
+  ) : []
+  const links = []
+  for (let i = 0; i < tileCoordinatesLatLng.length; i++) {
+    const tile = tileCoordinatesLatLng[i]
+    try {
+      const link = await getDownloadLinks(tile)
+      links.push(link)
+    } catch(e) {
+      console.log('Failed generating link', e)
+    }
   }
+
+  return _.uniqBy(_.flatMap(links), 'link')
 }
 
 async function downloadAndUnzip(link) {
@@ -80,18 +84,15 @@ async function downloadAndUnzip(link) {
 }
 
 let downloadLinks = []
-async function prepareOffline(islandsBbox = baseIslandsBboxs) {
-  const tt = performance.now()
+async function prepareOfflineTiles(tiles) {
   const hasLinksReady = fs.existsSync(linksPath)
   if (!hasLinksReady) {
     console.log('Preparing links to download')
-    const pb = progressBar(islandsBbox.length)
-    for (let i = 0; i < islandsBbox.length; i++) {
-      const t = performance.now()
-      const island = islandsBbox[i]
-      const links = await generateDownloadLinks(island.bbox)
+    const pb = progressBar(tiles.length)
+    for (let i = 0; i < tiles.length; i++) {
+      const tile = tiles[i]
+      const links = await generateDownloadLinks(tile)
       downloadLinks =  downloadLinks.concat(links)
-      console.log(`${island.id} done in ${(performance.now() - t)} ms`)
       pb.increment()
     }
     downloadLinks = _.uniqBy(downloadLinks, 'link')
@@ -117,8 +118,22 @@ async function prepareOffline(islandsBbox = baseIslandsBboxs) {
   }
   console.log('\n')
   console.log(`Data ready in ${HGT_DATA} path`)
-  console.log(`Total time downloading ${Math.floor((performance.now() - tt)) / 1000} s`)
   pb.stop()
+}
+
+const BBOX = [TEST_BBOX.minX, TEST_BBOX.minY, TEST_BBOX.maxX, TEST_BBOX.maxY]
+async function prepareOffline(zooms = [8, 9]) {
+  const tt = performance.now()
+  for (let i = 0; i < zooms.length; i++) {
+    const zoom = zooms[i]
+    console.log('Starting zoom level', zoom)
+    const t = performance.now()
+    const tiles = getBboxTiles(BBOX, zoom)
+    await prepareOfflineTiles(tiles)
+
+    console.log(`${zoom} done in ${Math.floor((performance.now() - t) / 1000)} s`)
+  }
+  console.log(`Total time downloading ${Math.floor((performance.now() - tt)) / 1000} s`)
   process.exit()
 }
 
