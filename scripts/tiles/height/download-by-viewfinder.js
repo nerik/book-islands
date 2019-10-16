@@ -4,12 +4,14 @@ const path = require('path')
 const os = require('os')
 const turf = require('@turf/turf')
 const _ = require('lodash')
+const request = require('request')
 const { performance } = require('perf_hooks')
 const progressBar = require('../../util/progressBar')
-const { downloadFile, unZip, converSNWE } = require('./utils')
+const { downloadFile, unZip } = require('./utils')
 const { HGT_DATA, BASE_ISLANDS } = require('../../constants')
 
 const linksPath = `${HGT_DATA}/download-links.json`
+const cachePath = `${HGT_DATA}/download-links-cache.json`
 
 const baseIslands = JSON.parse(fs.readFileSync(BASE_ISLANDS, 'utf-8'))
 const baseIslandsBboxs = baseIslands.features.map((feature) => ({
@@ -20,21 +22,43 @@ const baseIslandsBboxs = baseIslands.features.map((feature) => ({
 if (!fs.existsSync(HGT_DATA)) {
   fs.mkdirSync(HGT_DATA)
 }
-const baseUrl = 'http://rmd.neoknet.com/srtm3'
+const downloadLinksCache = fs.existsSync(cachePath) ? JSON.parse(fs.readFileSync(cachePath, 'utf-8')) : {}
 function getDownloadLinks(bbox) {
-  const [minX, minY, maxX, maxY] = bbox
-  const startX = Math.floor(minX)
-  const endX = Math.floor(maxX) + 1
-  const startY = Math.floor(minY)
-  const endY = Math.floor(maxY) + 1
-  const links = []
-  for (let lat = startY; lat < endY; lat++) {
-    for (let lng = startX; lng < endX; lng++) {
-      const coordinates = converSNWE({ lat, lng })
-      links.push({ name: coordinates, link: `${baseUrl}/${coordinates}.hgt.zip`})
+  return new Promise(function(resolve, reject) {
+    const [minX, minY, maxX, maxY] = bbox
+    const key = bbox.toString()
+    if (downloadLinksCache[key]) {
+      resolve(downloadLinksCache[key])
     }
+    request(
+      `http://www.imagico.de/map/dem_json.php?date=&lon=${minX}&lat=${minY}&lonE=${maxX}&latE=${maxY}&vf=1`,
+      function(err, response, body) {
+        if (!err && response.statusCode === 200) {
+          try {
+            var data = JSON.parse(body)
+            const links = data.map((d) => ({ name: d.name, link: d.link }))
+            downloadLinksCache[key] = links
+            fs.writeFileSync(cachePath, JSON.stringify(downloadLinksCache))
+            resolve(links)
+          } catch (e) {
+            reject('Could not parse response from imagico: ' + e)
+            console.count('links generation failed')
+          }
+        } else {
+          reject(err || response)
+        }
+      }
+    )
+  })
+}
+
+async function generateDownloadLinks (bbox) {
+  try {
+    const links = await getDownloadLinks(bbox)
+    return _.uniqBy(_.flatMap(links), 'link')
+  } catch(e) {
+    console.log('Failed generating link', e)
   }
-  return links
 }
 
 async function downloadAndUnzip(link) {
@@ -63,9 +87,11 @@ async function prepareOffline(islandsBbox = baseIslandsBboxs) {
     console.log('Preparing links to download')
     const pb = progressBar(islandsBbox.length)
     for (let i = 0; i < islandsBbox.length; i++) {
+      const t = performance.now()
       const island = islandsBbox[i]
-      const links = getDownloadLinks(island.bbox)
+      const links = await generateDownloadLinks(island.bbox)
       downloadLinks =  downloadLinks.concat(links)
+      console.log(`${island.id} done in ${(performance.now() - t)} ms`)
       pb.increment()
     }
     downloadLinks = _.uniqBy(downloadLinks, 'link')
