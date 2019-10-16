@@ -24,6 +24,7 @@ module.exports = {
   ISLANDS_TILES: 'tiles/islands',
   POINTS_TILES: 'tiles/points',
   HEIGHT_TILES: 'tiles/height',
+  HEIGHT_EMPTY_TILE: 'scripts/tiles/height/blank.png',
   TEST_BBOX: {
     minX: -10,
     minY: -10,

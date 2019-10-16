@@ -4,9 +4,9 @@ const _ = require('lodash')
 const fs = require('fs')
 const fse = require('fs-extra')
 const Jimp = require('jimp')
-const { converSNWE } = require('./utils')
+const { heightToRGB, converSNWE } = require('./utils')
 const { Hgt } = require('node-hgt')
-const { HGT_DATA, BASE_ISLANDS, ISLANDS_LOWDEF, HEIGHT_TILES } = require('../../constants')
+const { HGT_DATA, BASE_ISLANDS, ISLANDS_LOWDEF, HEIGHT_TILES, HEIGHT_EMPTY_TILE } = require('../../constants')
 
 const islands = JSON.parse(fs.readFileSync(ISLANDS_LOWDEF, 'utf-8'))
 const islandsBbox = islands.features.map((feature) => turf.bbox(feature))
@@ -24,19 +24,6 @@ const bboxOverlaps = (tileBbox, islandBbox) => {
   if (islandMinX > tileMaxX || islandMaxX < tileMinX) return false
   if (islandMinY > tileMaxY || islandMaxY < tileMinY) return false
   return true
-}
-
-// https://github.com/mapbox/rio-rgbify/blob/master/rio_rgbify/encoders.py#L4
-const heightToRGB = (height, baseval = -10000, interval = 0.1) => {
-  let h = height
-  h -= baseval
-  h /= interval
-  const nh = h / 256
-  const f = Math.floor
-  const r = (f(f(nh) / 256) / 256 - f(f(f(nh) / 256) / 256)) * 256
-  const g = (f(nh) / 256 - f(f(nh) / 256)) * 256
-  const b = f((nh - f(nh)) * 256)
-  return { r, g, b }
 }
 
 const getTileCoordinates = (tile, tileSize = TILE_SIZE_PX) => {
@@ -127,7 +114,7 @@ async function renderTile(tile, tileSize = TILE_SIZE_PX) {
 
   // when there is no island overlap we dont need to create a new image, just copy the empty one
   try {
-    fse.copySync(__dirname + '/blank.png', tilePath)
+    fse.copySync(HEIGHT_EMPTY_TILE, tilePath)
     return true
   } catch(e) {
     console.log('Failed copying empty image', e)

@@ -5,10 +5,12 @@ const {
   TEST_BBOX
   /* BASE_ISLANDS */
 } = require('../../constants')
-const { getBboxTiles } = require('./utils')
+const fs = require('fs')
+const Jimp = require('jimp')
+const { getBboxTiles, heightToRGB } = require('./utils')
 const progressBar = require('../../util/progressBar')
 const { performance } = require('perf_hooks')
-// const renderTile = require('./renderTile')
+const { HEIGHT_EMPTY_TILE } = require('../../constants')
 
 const TILE_SIZE_PX = 256
 const BBOX = [TEST_BBOX.minX, TEST_BBOX.minY, TEST_BBOX.maxX, TEST_BBOX.maxY]
@@ -40,9 +42,20 @@ const produceHeightBitmap = (zoomLevel) => {
   })
 }
 
+
+async function blankImage(tileSize = TILE_SIZE_PX) {
+  const { r, g, b } = heightToRGB(0)
+  const defaultColor = Jimp.rgbaToInt(r, g, b, 255)
+  const image = await new Jimp(tileSize, tileSize, defaultColor)
+  await image.write(HEIGHT_EMPTY_TILE)
+}
+
 const zoomLevels = [8, 9, 10, 11, 12]
 async function generateHeightBitMap(zooms = zoomLevels) {
   const tt = performance.now()
+  if (!fs.existsSync(HEIGHT_EMPTY_TILE)) {
+    await blankImage()
+  }
   for (let i = 0; i < zooms.length; i++) {
     const zoom = zooms[i]
     const t = performance.now()
