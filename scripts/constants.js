@@ -7,6 +7,7 @@ module.exports = {
   BASE_ISLANDS: 'out/baseIslands/baseIslands.geo.json',
   BASE_ISLANDS_LOWDEF: 'out/baseIslands/baseIslands_lowdef.geo.json',
   BASE_ISLANDS_LOWDEF_MRCT: 'out/baseIslands/baseIslands_lowdef_mrct.geo.json',
+  ISLETS: 'out/baseIslands/islets.geo.json',
   GEONAMES_POP_PLACES: 'out/baseIslands/populated_places.csv',
   CITIES_REAL: 'out/baseIslands/cities.geo.json',
   CITIES_STATS: 'out/baseIslands/cities_stats.json',
@@ -37,7 +38,8 @@ module.exports = {
     maxY: 80
   },
   BBOX_CHUNKS:[
-    [-180, -80, 0  , 0],
+    [-180, -80, -10, 0],
+    [-10 , -80, 0  , 0],
     [-180, 0  , 0  , 80],
     [0   , 0  , 180, 80],
     [0   , -80, 10, 0],

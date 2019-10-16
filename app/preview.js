@@ -14,7 +14,7 @@ const style = {
     'islands': {
       'type': 'vector',
       tiles: ['http://localhost:9090/islands/tiles/{z}/{x}/{y}.pbf'],
-      maxzoom: 10
+      // maxzoom: 10
     },
     'territories': {
       'type': 'vector',

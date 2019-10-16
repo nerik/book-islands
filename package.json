@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "live-server --no-browser --port=9091",
+    "start": "live-server --no-browser --port=9091 ./app",
     "serve": "node server/"
   },
   "repository": {
@@ -42,6 +42,7 @@
     "rimraf": "^3.0.0",
     "sqlite3": "^4.1.0",
     "supercluster": "^6.0.2",
+    "tinyqueue": "^2.0.3",
     "transformation-matrix": "^2.1.0"
   }
 }

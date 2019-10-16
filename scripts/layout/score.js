@@ -148,6 +148,9 @@ console.log('Fitting/scoring', filteredClusters.length, ' clusters')
 
 
 BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
+  // if (chunkIndex >= 2) {
+  //   return
+  // }
   console.log('Current chunk:', bboxChunk, chunkIndex)
     
   const testFeatures = []
