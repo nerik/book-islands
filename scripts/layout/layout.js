@@ -17,7 +17,7 @@ const clusters = JSON.parse(fs.readFileSync(CLUSTERS, 'utf-8'))
 
 let baseIslandsMeta = {}
 BBOX_CHUNKS.forEach((bbox, chunkIndex) => {
-  // if (chunkIndex === 3) {
+  // if (chunkIndex >= 2) {
   //   return
   // }
   console.log('Adding meta for bbox', bbox)
@@ -213,9 +213,12 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
 
 console.log('Will layout' , clustersByPop.length , 'clusters')
 
-// TODO move main thinng out of chunks things and only split file writing
+const islands = []
 
 BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
+  // if (chunkIndex >= 2) {
+  //   return
+  // }
   console.log('Current chunk:', bboxChunk, chunkIndex)
 
   const bboxFilteredClusters = clustersByPop
@@ -226,8 +229,8 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
 
   // let numFallbacked = 0
   let numDidntFit = 0
-  const islands = []
   const finalTransformations = {}
+  const clusterIslands = []
   const pb = progressBar(bboxFilteredClusters.length)
   
   for (let clusterIndex = 0; clusterIndex < bboxFilteredClusters.length; clusterIndex++) {
@@ -274,6 +277,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
     island.properties.island_id = bestIslandCandidate.island_id
 
     islands.push(island)
+    clusterIslands.push(island)
 
     finalTransformations[layouted_id] = {
       scoringScale: bestIslandCandidate.newScale,
@@ -283,16 +287,18 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
     }
   }
 
-  console.log('Layouted ', islands.length, 'islands')
+  console.log('Layouted ', clusterIslands.length, 'islands')
   // console.log('Had to fallback with ', numFallbacked, 'islands (couldnt find different enough neighbour)')
   console.log('Islands didnt fit:', numDidntFit)
 
   const islandsLowDefPath = ISLANDS_LOWDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
   const islandsMetaPath = ISLANDS_META.replace('.json', `_${chunkIndex}.json`)
 
-  fs.writeFileSync(islandsLowDefPath, JSON.stringify(turf.featureCollection(islands)))
+  fs.writeFileSync(islandsLowDefPath, JSON.stringify(turf.featureCollection(clusterIslands)))
   fs.writeFileSync(islandsMetaPath, JSON.stringify(finalTransformations))
 
   console.log ('Wrote', islandsLowDefPath)
   console.log ('Wrote', islandsMetaPath)
 })
+
+console.log('All completed. Layouted ', islands.length, 'islands')
