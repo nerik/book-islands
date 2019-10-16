@@ -13,7 +13,7 @@ const style = {
     },
     'heightmap-generated': {
       // 'url': 'mapbox://mapbox.terrain-rgb',
-      'tiles': ['https://storage.googleapis.com/books-detail-data/heights/{z}/{x}/{y}.png'],
+      'tiles': ['https://storage.googleapis.com/books-detail-data/height3/{z}/{x}/{y}.png'],
       'type': 'raster-dem',
       'tileSize': 256
     },

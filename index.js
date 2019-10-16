@@ -4,7 +4,7 @@ const { renderTile } = require('./scripts/tiles/height/renderTile')
 
 async function doIt() {
   const tile = [121, 131, 8]
-  // await prepareOffline([tile])
+  // await prepareOffline()
   const TILE_SIZE_PX = 256
   try {
     const done = await renderTile(tile, TILE_SIZE_PX)
