@@ -25,6 +25,21 @@ function converSNWE ({ lat, lng }) {
   )
 }
 
+
+// https://github.com/mapbox/rio-rgbify/blob/master/rio_rgbify/encoders.py#L4
+function heightToRGB(height, baseval = -10000, interval = 0.1) {
+  let h = height
+  h -= baseval
+  h /= interval
+  const nh = h / 256
+  const f = Math.floor
+  const r = (f(f(nh) / 256) / 256 - f(f(f(nh) / 256) / 256)) * 256
+  const g = (f(nh) / 256 - f(f(nh) / 256)) * 256
+  const b = f((nh - f(nh)) * 256)
+  return { r, g, b }
+}
+
+
 function getBboxTiles(bbox, zoomLevel) {
   const limits = { min_zoom: zoomLevel, max_zoom: zoomLevel }
   const geom = turf.bboxPolygon(bbox).geometry
@@ -87,8 +102,9 @@ function unZip(zipPath, targetPath) {
 }
 
 module.exports = {
-  converSNWE: converSNWE,
-  getBboxTiles: getBboxTiles,
-  downloadFile: downloadFile,
+  converSNWE,
+  heightToRGB,
+  getBboxTiles,
+  downloadFile,
   unZip: unZip
 }
