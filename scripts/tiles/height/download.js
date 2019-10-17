@@ -50,7 +50,10 @@ async function downloadAndUnzip(link) {
     fs.unlinkSync(tempPath)
     return true
   } catch(e) {
-    console.log('Error downloading file', e)
+    if (e.toJSON) {
+      const errorCode = e.toJSON().statusCode
+      console.log(`Error downloading file ${link.name}`, errorCode)
+    }
     return false
   }
 }
@@ -59,23 +62,21 @@ let downloadLinks = []
 async function prepareOffline(islandsBbox = baseIslandsBboxs) {
   const tt = performance.now()
   const hasLinksReady = fs.existsSync(linksPath)
-  if (!hasLinksReady) {
-    console.log('Preparing links to download')
-    const pb = progressBar(islandsBbox.length)
-    for (let i = 0; i < islandsBbox.length; i++) {
-      const island = islandsBbox[i]
-      const links = getDownloadLinks(island.bbox)
-      downloadLinks =  downloadLinks.concat(links)
-      pb.increment()
-    }
-    downloadLinks = _.uniqBy(downloadLinks, 'link')
-    downloadLinks = downloadLinks.map(l => ({ ...l, downloaded: false }))
-    fs.writeFileSync(linksPath, JSON.stringify(downloadLinks))
-    console.log(`File links to download generated in ${linksPath}`)
-    pb.stop()
-  } else {
-    downloadLinks = JSON.parse(fs.readFileSync(linksPath, 'utf-8'))
+  console.log('Preparing links to download')
+  for (let i = 0; i < islandsBbox.length; i++) {
+    const island = islandsBbox[i]
+    const links = getDownloadLinks(island.bbox)
+    downloadLinks =  downloadLinks.concat(links)
   }
+  const prevDownloadLinks = hasLinksReady ? JSON.parse(fs.readFileSync(linksPath, 'utf-8')) : []
+  downloadLinks = _.uniqBy(downloadLinks, 'link')
+  downloadLinks = downloadLinks.map(l => {
+    const prevLink = prevDownloadLinks.find(prevL => prevL.link === l.link)
+    const downloaded = prevLink !== undefined && prevLink.downloaded
+    return { ...l, downloaded }
+  })
+  fs.writeFileSync(linksPath, JSON.stringify(downloadLinks))
+  console.log(`File links to download generated in ${linksPath}`)
 
   console.log('Downloading data')
   const linksToDownload = downloadLinks.filter(l => !l.downloaded)

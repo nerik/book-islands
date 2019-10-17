@@ -32,7 +32,7 @@ const getAuthors = (ids) => {
 }
 
 const filteredClusters = clusters.features
-  .filter(cluster => 
+  .filter(cluster =>
     cluster.geometry.coordinates[0] > TEST_BBOX.minX &&
     cluster.geometry.coordinates[0] < TEST_BBOX.maxX &&
     cluster.geometry.coordinates[1] > TEST_BBOX.minY &&
@@ -52,10 +52,10 @@ const filteredClusters = clusters.features
   //   return true
   // })
 
-// First just with single point islands
-// .filter(cluster => {
-//   return cluster.properties.is_cluster !== true
-// })
+  // First just with single point islands
+  .filter(cluster => {
+    return cluster.properties.is_cluster !== true
+  })
 
 // Checks if random point is not too close to another city
 const isCityIsolatedEnough = (city, cities) => {
@@ -88,7 +88,7 @@ const getBooks = (author) => {
 }
 
 
-// compute territories / cities ranks bins 
+// compute territories / cities ranks bins
 const citiesRankScale = d3.scaleThreshold()
   .domain([0, 1, 200, 6000])
   .range([4,4,3,2,1])
@@ -221,7 +221,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       })
       const territoryBbox = turf.bbox(territory)
 
-      
+
       const islandCities = []
       // if (island === undefined) {
       //   // console.log(meta)
@@ -269,7 +269,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   const territoryFrontiersPath = TERRITORY_FRONTIERS.replace('.geo.json', `_${chunkIndex}.geo.json`)
 
   fs.writeFileSync(territoryFrontiersPath, JSON.stringify(turf.featureCollection(allTerritories)))
-  
+
   console.log ('Wrote', territoryFrontiersPath)
 
 })
