@@ -25,6 +25,14 @@ function converSNWE ({ lat, lng }) {
   )
 }
 
+function bboxOverlaps(tileBbox, islandBbox) {
+  const [tileMinX, tileMinY, tileMaxX, tileMaxY] = tileBbox
+  const [islandMinX, islandMinY, islandMaxX, islandMaxY] = islandBbox
+
+  if (islandMinX > tileMaxX || islandMaxX < tileMinX) return false
+  if (islandMinY > tileMaxY || islandMaxY < tileMinY) return false
+  return true
+}
 
 // https://github.com/mapbox/rio-rgbify/blob/master/rio_rgbify/encoders.py#L4
 function heightToRGB(height, baseval = -10000, interval = 0.1) {
@@ -105,6 +113,7 @@ module.exports = {
   converSNWE,
   heightToRGB,
   getBboxTiles,
+  bboxOverlaps,
   downloadFile,
   unZip: unZip
 }
