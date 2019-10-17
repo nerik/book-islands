@@ -14,7 +14,8 @@ module.exports = (center, polygon, newScale = 1) => {
     geometry: {
       type: 'Polygon',
       coordinates: []
-    }
+    },
+    properties: polygon.properties
   }
   // TODO that [0] wont work with multipolygons
   newPolygon.geometry.coordinates[0] = applyToPoints(matrix, polygon.geometry.coordinates[0]) 
