@@ -12,6 +12,7 @@ module.exports = {
   CITIES_REAL: 'out/baseIslands/cities.geo.json',
   CITIES_STATS: 'out/baseIslands/cities_stats.json',
   UMAP_CAT: 'in/umap/cat',
+  HGT_DATA: 'in/hgt',
   UMAP_CAT_STATS: 'out/umap/umap_cat_stats.json',
   UMAP_GEO: 'out/umap/umap.geo.json',
   CLUSTERS: 'out/layout/clusters.geo.json',
@@ -25,12 +26,9 @@ module.exports = {
   ISLANDS_TILES: 'tiles/islands',
   TERRITORIES_TILES: 'tiles/territories',
   POINTS_TILES: 'tiles/points',
-  // TEST_BBOX: {
-  //   minX: -10,
-  //   minY: -10,
-  //   maxX: 0,
-  //   maxY: 0
-  // },
+  HEIGHT_TILES: 'tiles/height',
+  HEIGHT_TILE_SIZE: 256,
+  HEIGHT_EMPTY_TILE: 'scripts/tiles/height/blank.png',
   TEST_BBOX: {
     minX: -180,
     minY: -80,

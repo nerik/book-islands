@@ -3,12 +3,12 @@
 const hgt = require('node-hgt')
 const tilebelt = require('@mapbox/tilebelt')
 const _ = require('lodash')
-const Jimp = require('Jimp')
+const Jimp = require('jimp')
 
 
 // https://github.com/mapbox/rio-rgbify/blob/master/rio_rgbify/encoders.py#L4
 const BASEVAL = -10000
-const INTERVAL = .1 
+const INTERVAL = .1
 const heightToRGB = (height) => {
   let h = height
   h -= BASEVAL
@@ -79,16 +79,16 @@ const getElevation = (index) => {
       })
       const toLines = _.chunk(colors, TILE_SIZE_PX)
       console.log(toLines)
-      
+
       let image = new Jimp(TILE_SIZE_PX, TILE_SIZE_PX, function (err, image) {
         if (err) throw err
-      
+
         toLines.forEach((row, y) => {
           row.forEach((color, x) => {
             image.setPixelColor(color, x, y)
           })
         })
-      
+
         image.write('test.png', (err) => {
           if (err) throw err
         })
@@ -96,7 +96,7 @@ const getElevation = (index) => {
 
 
     }
-    
+
   })
 }
 getElevation(0)

@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/nerik/book-islands#readme",
   "devDependencies": {
+    "@mapbox/tile-cover": "^3.0.2",
     "@mapbox/tilebelt": "^1.0.1",
     "@turf/area": "^6.0.1",
     "@turf/turf": "^5.1.6",
@@ -32,6 +33,7 @@
     "d3-delaunay": "^5.1.6",
     "eslint": "^6.3.0",
     "express": "^4.17.1",
+    "fs-extra": "^8.1.0",
     "http-server": "^0.11.1",
     "jimp": "^0.6.8",
     "live-server": "^1.2.1",
@@ -41,8 +43,11 @@
     "paper": "^0.12.3",
     "rimraf": "^3.0.0",
     "sqlite3": "^4.1.0",
+    "srtm-elevation": "^1.0.3",
     "supercluster": "^6.0.2",
     "tinyqueue": "^2.0.3",
-    "transformation-matrix": "^2.1.0"
+    "transformation-matrix": "^2.1.0",
+    "workerpool": "^5.0.0",
+    "yauzl": "^2.10.0"
   }
 }
