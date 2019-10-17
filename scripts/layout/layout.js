@@ -3,15 +3,31 @@ const fs = require('fs')
 const turf = require('@turf/turf')
 const progressBar = require('../util/progressBar')
 const transposeAndScale = require('../util/transposeAndScale')
+const pointWithinBBox = require('../util/pointWithinBBox')
 
-const { CLUSTERS, BASE_ISLANDS_LOWDEF_MRCT, BASE_ISLANDS_META, ISLANDS_META, ISLANDS_LOWDEF, TEST_BBOX } = require('../constants')
+const {
+  CLUSTERS, BASE_ISLANDS_LOWDEF_MRCT, BASE_ISLANDS_META, ISLANDS_META, ISLANDS_LOWDEF,
+  TEST_BBOX, BBOX_CHUNKS
+} = require('../constants')
 
 const MIN_DISTANCE_SIMILAR_DEGREES = 3
 
 const baseIslandsMrct = JSON.parse(fs.readFileSync(BASE_ISLANDS_LOWDEF_MRCT, 'utf-8'))
-const baseIslandsMeta = JSON.parse(fs.readFileSync(BASE_ISLANDS_META, 'utf-8'))
 const clusters = JSON.parse(fs.readFileSync(CLUSTERS, 'utf-8'))
 
+let baseIslandsMeta = {}
+BBOX_CHUNKS.forEach((bbox, chunkIndex) => {
+  // if (chunkIndex >= 2) {
+  //   return
+  // }
+  console.log('Adding meta for bbox', bbox)
+  const path = BASE_ISLANDS_META.replace('.json', `_${chunkIndex}.json`)
+  const bboxMeta = JSON.parse(fs.readFileSync(path, 'utf-8'))
+  baseIslandsMeta = {
+    ...baseIslandsMeta,
+    ...bboxMeta
+  }
+})
 
 const clustersFiltered = clusters.features
   // Remove clustered points (but keep clusters + standalone points)
@@ -38,7 +54,8 @@ const clustersFiltered = clusters.features
 // give them a layout priority (popularity + numbooks)
 clustersFiltered.forEach(cluster => {
   const numBooksMult = 1 + (cluster.properties.books_count - 1) * .1
-  const layoutPriorityScore = cluster.properties.sum_popularity * numBooksMult
+  const popMult = 1 + cluster.properties.sum_popularity * .0001
+  const layoutPriorityScore = popMult * numBooksMult
   cluster.properties.layoutPriorityScore = layoutPriorityScore
 })
 
@@ -123,7 +140,7 @@ const getClusterBestIsland = (cluster, islandsAroundIds) => {
   )
   if (!bestIslandCandidate || bestIslandCandidate.fitScore === 0) {
     console.log('No good candidate found, fallback to the one with best fitScore')
-    numFallbacked++
+    // numFallbacked++
     bestIslandCandidate = islandCandidatesForCluster[0]
   }
   return bestIslandCandidate
@@ -145,7 +162,7 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
     const rd = Math.floor(Math.random() * islandsNotAround.length)
     islandMrct = islandsNotAround[rd]
   } else {
-    console.log('Warning: cant find any different island around')
+    // console.log('Warning: cant find any different island around')
     // fall back to just picking a random island
     const rd = Math.floor(Math.random() * baseIslandsMrct.features.length)
     islandMrct = baseIslandsMrct.features[rd]
@@ -153,13 +170,24 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
 
   const layoutPriorityScore = cluster.properties.layoutPriorityScore
 
-  // TODO what is the magic ratio here??
-  const maxArea = layoutPriorityScore * 100
-
+  // how much scale must be decreased at each iteration to try to fit with target area
   const STEP_INCREMENT = .01
-  const MAX_SCALE = .3
+
+  // at which scale should we start with (tends to decrease size of big islands)
+  const MAX_SCALE = .2
+
+  // how to map priority score (composite of nym books and popularity) to target max area
+  // smaller means more risk of running out of iterations and picking lowest possible scale
+  // for small islands
+  const MAP_PRIORITY_SCORE_WITH_AREA = 10000000
+  const maxArea = layoutPriorityScore * MAP_PRIORITY_SCORE_WITH_AREA
+
+  // scale down everything by this factor
+  const OVERALL_SCALE_FACTOR = .5
+
   const maxNumIterations = Math.ceil(MAX_SCALE/STEP_INCREMENT) - 1
   let currentScale = MAX_SCALE
+  let n = 0
 
   for (let i = 0; i < maxNumIterations; i++) {
     if(!clusterCenterMrct || !islandMrct) {
@@ -167,93 +195,110 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
     }
     const islandAtScaleMrct = transposeAndScale(clusterCenterMrct, islandMrct, currentScale)
     const islandAtScaleArea = turf.area(turf.toWgs84(islandAtScaleMrct))
-    // console.log(islandAtScaleArea, '<' , maxArea)
-
+    n++
     if (islandAtScaleArea <= maxArea) {
       break
     }
     currentScale -= STEP_INCREMENT
   }
+  // console.log(n)
 
   // console.log(currentScale, islandMrct.properties.island_id)
   // return scale and island id
   return {
-    newScale: currentScale,
+    newScale: currentScale * OVERALL_SCALE_FACTOR,
     island_id: islandMrct.properties.island_id
   }
 }
 
 console.log('Will layout' , clustersByPop.length , 'clusters')
 
-let numFallbacked = 0
-let numDidntFit = 0
 const islands = []
-const finalTransformations = {}
-const pb = progressBar(clustersByPop.length)
-for (let clusterIndex = 0; clusterIndex < clustersByPop.length; clusterIndex++) {
-// for (let clusterIndex = 0; clusterIndex < 10000; clusterIndex++) {
-  const cluster = clustersByPop[clusterIndex]
+
+BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
+  // if (chunkIndex >= 2) {
+  //   return
+  // }
+  console.log('Current chunk:', bboxChunk, chunkIndex)
+
+  const bboxFilteredClusters = clustersByPop
+    .filter(cluster => {
+      return (pointWithinBBox(cluster, bboxChunk))
+    })
+
+
+  // let numFallbacked = 0
+  let numDidntFit = 0
+  const finalTransformations = {}
+  const clusterIslands = []
+  const pb = progressBar(bboxFilteredClusters.length)
   
-  pb.increment()
+  for (let clusterIndex = 0; clusterIndex < bboxFilteredClusters.length; clusterIndex++) {
+    const cluster = bboxFilteredClusters[clusterIndex]
+    
+    pb.increment()
 
-  
-  // Gather islands within bbox around cluster center (cheap: large bbox/buffer and pick a polygon point)
-  const islandsAround = islands.filter(island => cheapDistance(cluster, island) < MIN_DISTANCE_SIMILAR_DEGREES)
-  // console.log('Found', islandsAround.length, ' islands around')
-  const islandsAroundIds = islandsAround.map(island => island.properties.island_id)
-  const clusterCenterMrct = turf.toMercator(cluster)
+    
+    // Gather islands within bbox around cluster center (cheap: large bbox/buffer and pick a polygon point)
+    const islandsAround = islands.filter(island => cheapDistance(cluster, island) < MIN_DISTANCE_SIMILAR_DEGREES)
+    // console.log('Found', islandsAround.length, ' islands around')
+    const islandsAroundIds = islandsAround.map(island => island.properties.island_id)
+    const clusterCenterMrct = turf.toMercator(cluster)
 
-  const bestIslandCandidate = (cluster.properties.is_cluster) 
-    ? getClusterBestIsland(cluster, islandsAroundIds)
-    : getStandalonePointBestIsland(cluster, islandsAroundIds, clusterCenterMrct)
+    const bestIslandCandidate = (cluster.properties.is_cluster) 
+      ? getClusterBestIsland(cluster, islandsAroundIds)
+      : getStandalonePointBestIsland(cluster, islandsAroundIds, clusterCenterMrct)
 
-  // console.log(bestIslandCandidate)
+    // console.log(bestIslandCandidate)
 
-  const islandMrct = baseIslandsMrct.features.find(i => i.properties.island_id === bestIslandCandidate.island_id)
-  // console.log(bestIslandCandidate)
+    const islandMrct = baseIslandsMrct.features.find(i => i.properties.island_id === bestIslandCandidate.island_id)
+    // console.log(bestIslandCandidate)
 
-  const { finalScale, islandAtFinalScale, error } = getIslandAtFinalScale(
-    clusterCenterMrct, islandMrct, bestIslandCandidate.newScale, islandsAround
-  )
+    const { finalScale, islandAtFinalScale, error } = getIslandAtFinalScale(
+      clusterCenterMrct, islandMrct, bestIslandCandidate.newScale, islandsAround
+    )
 
-  const layouted_id = cluster.properties.layouted_id
+    const layouted_id = cluster.properties.layouted_id
 
-  if (error) {
-    numDidntFit++
+    if (error) {
+      numDidntFit++
+      finalTransformations[layouted_id] = {
+        error
+      }
+      continue
+    }
+
+
+    const island = turf.toWgs84(islandAtFinalScale)
+    island.properties = {
+      ...cluster.properties,
+      layouted_id
+    }
+    island.properties.island_id = bestIslandCandidate.island_id
+
+    islands.push(island)
+    clusterIslands.push(island)
+
     finalTransformations[layouted_id] = {
-      error
-    }
-    continue
-  }
-
-
-  const island = turf.toWgs84(islandAtFinalScale)
-  island.properties = {
-    ...cluster.properties,
-    layouted_id
-  }
-  island.properties.island_id = bestIslandCandidate.island_id
-
-  islands.push(island)
-
-
-  finalTransformations[layouted_id] = {
-    scoringScale: bestIslandCandidate.newScale,
-    layoutScale: finalScale,
-    center: {
-      properties: {},
-      geometry: cluster.geometry
+      scoringScale: bestIslandCandidate.newScale,
+      island_id: bestIslandCandidate.island_id,
+      layoutScale: finalScale,
+      center: cluster.geometry.coordinates
     }
   }
-}
 
-console.log('Layouted ', islands.length, 'islands')
-console.log('Had to fallback with ', numFallbacked, 'islands (couldnt find different enough neighbour)')
-console.log('Islands didnt fit ', numDidntFit)
+  console.log('Layouted ', clusterIslands.length, 'islands')
+  // console.log('Had to fallback with ', numFallbacked, 'islands (couldnt find different enough neighbour)')
+  console.log('Islands didnt fit:', numDidntFit)
 
+  const islandsLowDefPath = ISLANDS_LOWDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
+  const islandsMetaPath = ISLANDS_META.replace('.json', `_${chunkIndex}.json`)
 
-fs.writeFileSync(ISLANDS_LOWDEF, JSON.stringify(turf.featureCollection(islands)))
-fs.writeFileSync(ISLANDS_META, JSON.stringify(finalTransformations))
+  fs.writeFileSync(islandsLowDefPath, JSON.stringify(turf.featureCollection(clusterIslands)))
+  fs.writeFileSync(islandsMetaPath, JSON.stringify(finalTransformations))
 
-console.log ('Wrote', ISLANDS_LOWDEF)
-console.log ('Wrote', ISLANDS_META)
+  console.log ('Wrote', islandsLowDefPath)
+  console.log ('Wrote', islandsMetaPath)
+})
+
+console.log('All completed. Layouted ', islands.length, 'islands')
