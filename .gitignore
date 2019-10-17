@@ -1,5 +1,5 @@
 node_modules
 /in
-/out
 /tiles
+/mbutil
 .DS_Store

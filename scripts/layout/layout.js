@@ -43,7 +43,7 @@ const clustersFiltered = clusters.features
     return islandCandidatesForCluster
   })
   .filter(
-    cluster => 
+    cluster =>
       cluster.geometry.coordinates[0] > TEST_BBOX.minX &&
     cluster.geometry.coordinates[0] < TEST_BBOX.maxX &&
     cluster.geometry.coordinates[1] > TEST_BBOX.minY &&
@@ -74,7 +74,7 @@ const cheapDistance = (clusterCenter, island) => {
 const cheapOverlap = (bbox1, bbox2) => {
   const [minX1, minY1, maxX1, maxY1] = bbox1
   const [minX2, minY2, maxX2, maxY2] = bbox2
-  if (minX1 > minX2 && maxX1 < maxX2) return true 
+  if (minX1 > minX2 && maxX1 < maxX2) return true
 
   if (maxX1 < minX2) return false
   if (maxX2 < minX1) return false
@@ -232,20 +232,20 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   const finalTransformations = {}
   const clusterIslands = []
   const pb = progressBar(bboxFilteredClusters.length)
-  
+
   for (let clusterIndex = 0; clusterIndex < bboxFilteredClusters.length; clusterIndex++) {
     const cluster = bboxFilteredClusters[clusterIndex]
-    
+
     pb.increment()
 
-    
+
     // Gather islands within bbox around cluster center (cheap: large bbox/buffer and pick a polygon point)
     const islandsAround = islands.filter(island => cheapDistance(cluster, island) < MIN_DISTANCE_SIMILAR_DEGREES)
     // console.log('Found', islandsAround.length, ' islands around')
     const islandsAroundIds = islandsAround.map(island => island.properties.island_id)
     const clusterCenterMrct = turf.toMercator(cluster)
 
-    const bestIslandCandidate = (cluster.properties.is_cluster) 
+    const bestIslandCandidate = (cluster.properties.is_cluster)
       ? getClusterBestIsland(cluster, islandsAroundIds)
       : getStandalonePointBestIsland(cluster, islandsAroundIds, clusterCenterMrct)
 
