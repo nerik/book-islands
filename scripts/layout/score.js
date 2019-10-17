@@ -6,11 +6,12 @@ const _ = require('lodash')
 const d3Arr = require('d3-array')
 const progressBar = require('../util/progressBar')
 const pointsWithinFeature = require('../util/pointsWithinFeature')
+const pointWithinBBox = require('../util/pointWithinBBox')
 const transposeAndScale = require('../util/transposeAndScale')
 
 const {
   CLUSTERS, BASE_ISLANDS_LOWDEF_MRCT, BASE_ISLANDS_META,
-  TEST_BBOX, MAX_BASE_ISLAND_SCALE_UP
+  TEST_BBOX, MAX_BASE_ISLAND_SCALE_UP, BBOX_CHUNKS
 } = require('../constants')
 
 const baseIslandsMrct = JSON.parse(fs.readFileSync(BASE_ISLANDS_LOWDEF_MRCT, 'utf-8'))
@@ -128,8 +129,6 @@ const getFitScoreFast = (islandAtScale, clusterEnveloppeArea) => {
 
 
 
-
-
 const points = clusters.features
   .filter(cluster => cluster.properties.is_cluster !== true)
   
@@ -144,123 +143,140 @@ const filteredClusters = clusters.features
     cluster.geometry.coordinates[1] > TEST_BBOX.minY &&
     cluster.geometry.coordinates[1] < TEST_BBOX.maxY
   )
-  // .slice(0, 1000)
 
 console.log('Fitting/scoring', filteredClusters.length, ' clusters')
 
-const testFeatures = []
-const scores = {}
 
-const pb = progressBar(filteredClusters.length)
-filteredClusters.forEach(cluster => {
-  const clusterId = cluster.properties.cluster_id
-  const allClusterPoints = points
-    .filter(p => p.properties.cluster_id === cluster.properties.cluster_id)
-  
-  const allClusterPointsMrct = allClusterPoints.map(p => turf.toMercator(p))
-
-  const clusterCenterMrct = turf.toMercator(cluster)
-
-  const clusterEnveloppe = turf.concave(turf.featureCollection(allClusterPoints))
-  let clusterEnveloppeArea
-  if (cluster.properties.cluster_point_count > 2) {
-    try {
-      // this can fail when points are colinear, which happens to happens with the UMAP output
-      clusterEnveloppeArea = turf.area(clusterEnveloppe)
-    } catch (e) {
-      
-    }
-  }
-
-  const clusterCanHaveScore = clusterEnveloppeArea !== undefined
-
-  const fitScores = baseIslandsMrct.features.map(baseIslandMrct => {
-    const island_id = baseIslandMrct.properties.island_id
-    const islandMrct = _.cloneDeep(baseIslandMrct)
-    const { newScale, islandAtScaleMrct, error } =
-      findScaleFit(allClusterPointsMrct, clusterCenterMrct, islandMrct)
+BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
+  // if (chunkIndex >= 2) {
+  //   return
+  // }
+  console.log('Current chunk:', bboxChunk, chunkIndex)
     
-    if (error !== undefined) {
-      return {
-        island_id,
-        error,
-        fitScore: 0
+  const testFeatures = []
+  const scores = {}
+
+  
+  const bboxFilteredClusters = filteredClusters
+    .filter(cluster => {
+      return (pointWithinBBox(cluster, bboxChunk))
+    })
+  
+  console.log('Will score', bboxFilteredClusters.length, '/', filteredClusters.length)
+  
+  const pb = progressBar(bboxFilteredClusters.length)
+
+  bboxFilteredClusters.forEach(cluster => {
+    const clusterId = cluster.properties.cluster_id
+    const allClusterPoints = points
+      .filter(p => p.properties.cluster_id === cluster.properties.cluster_id)
+    
+    const allClusterPointsMrct = allClusterPoints.map(p => turf.toMercator(p))
+
+    const clusterCenterMrct = turf.toMercator(cluster)
+
+    const clusterEnveloppe = turf.concave(turf.featureCollection(allClusterPoints))
+    let clusterEnveloppeArea
+    if (cluster.properties.cluster_point_count > 2) {
+      try {
+        // this can fail when points are colinear, which happens to happens with the UMAP output
+        clusterEnveloppeArea = turf.area(clusterEnveloppe)
+      } catch (e) {
+        
       }
     }
 
-    const islandAtScale = turf.toWgs84(islandAtScaleMrct)
-    const islandArea = turf.area(islandAtScale)
+    const clusterCanHaveScore = clusterEnveloppeArea !== undefined
 
-    const fitScore = (clusterCanHaveScore)
-      ? getFitScoreFast(islandAtScale, clusterEnveloppeArea)
-      : null
+    const fitScores = baseIslandsMrct.features.map(baseIslandMrct => {
+      const island_id = baseIslandMrct.properties.island_id
+      const islandMrct = _.cloneDeep(baseIslandMrct)
+      const { newScale, islandAtScaleMrct, error } =
+        findScaleFit(allClusterPointsMrct, clusterCenterMrct, islandMrct)
+      
+      if (error !== undefined) {
+        return {
+          island_id,
+          error,
+          fitScore: 0
+        }
+      }
 
-    return {
-      island_id,
-      newScale,
-      islandAtScale,
-      fitScore,
-      clusterCanHaveScore,
-      islandArea
-    }
-  })
+      const islandAtScale = turf.toWgs84(islandAtScaleMrct)
+      const islandArea = turf.area(islandAtScale)
 
+      const fitScore = (clusterCanHaveScore)
+        ? getFitScoreFast(islandAtScale, clusterEnveloppeArea)
+        : null
 
-  if (clusterCanHaveScore !== true) {
-    // console.log(fitScores)
-    const fsWithScale = fitScores.filter(fs => fs.error === undefined)
-    const maxArea = d3Arr.max(fsWithScale, d => d.islandArea)
-    fitScores.filter(fs => fs.error === undefined).forEach(fs => {
-      fs.fitScore = (maxArea - fs.islandArea)/maxArea
+      return {
+        island_id,
+        newScale,
+        islandAtScale,
+        fitScore,
+        // clusterCanHaveScore,º
+      }
     })
-    // console.log(fitScores)
-  }
 
-  const ordered = _.orderBy(fitScores, ['fitScore'], ['desc'])
-  // .slice(0, 50)
 
-  // console.log(ordered.filter(f => f.fitScore > 0).map(f => f.fitScore))
-  scores[clusterId] = ordered.map(fs => {
-    const props = { ... fs }
-    delete props.islandAtScale
-    return props
+    if (clusterCanHaveScore !== true) {
+      // console.log(fitScores)
+      const fsWithScale = fitScores.filter(fs => fs.error === undefined)
+      const maxArea = d3Arr.max(fsWithScale, d => d.islandArea)
+      fitScores.filter(fs => fs.error === undefined).forEach(fs => {
+        fs.fitScore = (maxArea - fs.islandArea)/maxArea
+      })
+      // console.log(fitScores)
+    }
+
+    const ordered = _.orderBy(fitScores, ['fitScore'], ['desc'])
+      .slice(0, 100)
+
+    // console.log(ordered.filter(f => f.fitScore > 0).map(f => f.fitScore))
+    scores[clusterId] = ordered.map(fs => {
+      const props = { ... fs }
+      delete props.islandAtScale
+      return props
+    })
+
+    // generate test features (ie take "the best" island for each cluster)
+    // - not actually in use, just for preview
+    let island
+    // if (ordered[0].clusterCanHaveScore) {
+    if (ordered[0].islandAtScale) {
+      island = ordered[0].islandAtScale
+    }
+    // } else {
+    //   const rd = Math.floor(Math.random() * ordered.length)
+    //   const scoreObj = ordered[rd]
+    //   if (scoreObj.islandAtScale) {
+    //     island = scoreObj.islandAtScale
+    //   }
+    // }
+    if (island) {
+      island.properties.cluster_r = cluster.properties.cluster_r
+      island.properties.cluster_g = cluster.properties.cluster_g
+      island.properties.cluster_b = cluster.properties.cluster_b
+      testFeatures.push(island)
+    }
+
+    pb.increment()
   })
 
-  // generate test features (ie take "the best" island for each cluster)
-  // - not actually in use, just for preview
-  let island
-  // if (ordered[0].clusterCanHaveScore) {
-  if (ordered[0].islandAtScale) {
-    island = ordered[0].islandAtScale
-  }
-  // } else {
-  //   const rd = Math.floor(Math.random() * ordered.length)
-  //   const scoreObj = ordered[rd]
-  //   if (scoreObj.islandAtScale) {
-  //     island = scoreObj.islandAtScale
-  //   }
+
+  console.log('Found at least 1 candidate for', testFeatures.length, '/', bboxFilteredClusters.length , 'features')
+
+  const avg = (a) => _.sum(a) / a.length
+  const fitAverages = Object.keys(scores).map(id => scores[id].filter(s => s.fitScore > 0).length)
+  console.log('Average of', Math.round(avg(fitAverages), 'islands for each cluster (total islands:', baseIslandsMrct.features.length, ')' ))
+
+  // const geoJSON = {
+  //   'type': 'FeatureCollection',
+  //   features: testFeatures
   // }
-  if (island) {
-    island.properties.cluster_r = cluster.properties.cluster_r
-    island.properties.cluster_g = cluster.properties.cluster_g
-    island.properties.cluster_b = cluster.properties.cluster_b
-    testFeatures.push(island)
-  }
+  // fs.writeFileSync('out/layout/testIslands.geo.json', JSON.stringify(geoJSON))
+  const path = BASE_ISLANDS_META.replace('.json', `_${chunkIndex}.json`)
+  fs.writeFileSync(path, JSON.stringify(scores))
 
-  pb.increment()
+  console.log('Wrote', path)
 })
-
-
-console.log('Found at least 1 candidate for', testFeatures.length, '/', filteredClusters.length , 'features')
-
-const avg = (a) => _.sum(a) / a.length
-const fitAverages = Object.keys(scores).map(id => scores[id].filter(s => s.fitScore > 0).length)
-console.log('Average of', Math.round(avg(fitAverages), 'islands for each cluster (total islands:', baseIslandsMrct.features.length, ')' ))
-
-const geoJSON = {
-  'type': 'FeatureCollection',
-  features: testFeatures
-}
-
-fs.writeFileSync('out/layout/testIslands.geo.json', JSON.stringify(geoJSON))
-fs.writeFileSync(BASE_ISLANDS_META, JSON.stringify(scores))

@@ -7,6 +7,7 @@ module.exports = {
   BASE_ISLANDS: 'out/baseIslands/baseIslands.geo.json',
   BASE_ISLANDS_LOWDEF: 'out/baseIslands/baseIslands_lowdef.geo.json',
   BASE_ISLANDS_LOWDEF_MRCT: 'out/baseIslands/baseIslands_lowdef_mrct.geo.json',
+  ISLETS: 'out/baseIslands/islets.geo.json',
   GEONAMES_POP_PLACES: 'out/baseIslands/populated_places.csv',
   CITIES_REAL: 'out/baseIslands/cities.geo.json',
   CITIES_STATS: 'out/baseIslands/cities_stats.json',
@@ -15,7 +16,7 @@ module.exports = {
   UMAP_CAT_STATS: 'out/umap/umap_cat_stats.json',
   UMAP_GEO: 'out/umap/umap.geo.json',
   CLUSTERS: 'out/layout/clusters.geo.json',
-  BASE_ISLANDS_META: 'out/layout/baseIslandsMeta.json',
+  BASE_ISLANDS_META: 'out/layout/baseIslands.meta.json',
   ISLANDS: 'out/layout/islands.geo.json',
   ISLANDS_LOWDEF: 'out/layout/islands_lowdef.geo.json',
   ISLANDS_META: 'out/layout/islands.meta.json',
@@ -23,15 +24,16 @@ module.exports = {
   TERRITORY_LABELS: 'out/layout/territory_labels.geo.json',
   TERRITORY_FRONTIERS: 'out/layout/territory_frontiers.geo.json',
   ISLANDS_TILES: 'tiles/islands',
+  TERRITORIES_TILES: 'tiles/territories',
   POINTS_TILES: 'tiles/points',
   HEIGHT_TILES: 'tiles/height',
   HEIGHT_TILE_SIZE: 256,
   HEIGHT_EMPTY_TILE: 'scripts/tiles/height/blank.png',
   TEST_BBOX: {
-    minX: -10,
-    minY: -10,
-    maxX: 0,
-    maxY: 0
+    minX: -180,
+    minY: -80,
+    maxX: 180,
+    maxY: 80
   },
   BBOX_CHUNKS:[
     [-180, -80, -10, 0],

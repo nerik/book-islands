@@ -219,7 +219,8 @@ d3.csv(`../in/umap/${umap}.csv`)
   
 
     const x = d3.scaleLinear()
-      .domain([5.3, 6.3])
+      .domain([minX, maxX])
+      // .domain([5.3, 6.3])
       .range([ 0, width ])
   
     svg.append('g')
@@ -227,7 +228,8 @@ d3.csv(`../in/umap/${umap}.csv`)
       .call(d3.axisBottom(x))
 
     const y = d3.scaleLinear()
-      .domain([-1, 1])
+      .domain([minY, maxY])
+      // .domain([-1, 1])
       .range([0, height])
 
     svg.append('g')
