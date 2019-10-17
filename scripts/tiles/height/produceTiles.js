@@ -5,7 +5,10 @@ const { ISLANDS } = require('../../constants')
 const fs = require('fs')
 const Jimp = require('jimp')
 const turf = require('@turf/turf')
-const { getBboxTiles, heightToRGB } = require('./utils')
+const tilebelt = require('@mapbox/tilebelt')
+// const { renderTile } = require('./renderTile')
+const _ = require('lodash')
+const { getBboxTiles, heightToRGB, bboxOverlaps } = require('./utils')
 const progressBar = require('../../util/progressBar')
 const { performance } = require('perf_hooks')
 const {
@@ -24,9 +27,16 @@ const produceHeightBitmap = (islands, bbox, zoomLevel) => {
     const pb = progressBar(tiles.length)
     for (let i = 0; i < tiles.length; i++) {
       const tile = tiles[i]
-
+      const tileBbox = tilebelt.tileToBBOX(tile)
+      const overlappingIslands = _.flatMap(islands, (island) => {
+        const overlaps = bboxOverlaps(tileBbox, island.bbox)
+        return overlaps ? island : []
+      })
+      // renderTile(overlappingIslands, tile, HEIGHT_TILE_SIZE).then(d => {
+      //   console.log(d)
+      // })
       pool
-        .exec('renderTile', [islands, tile, HEIGHT_TILE_SIZE])
+        .exec('renderTile', [overlappingIslands, tile, HEIGHT_TILE_SIZE])
         .then(() => {
           pb.increment()
           const { pendingTasks, activeTasks } = pool.stats()
