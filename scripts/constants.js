@@ -23,6 +23,7 @@ module.exports = {
   BOOKS_POINTS: 'out/layout/books_points.geo.json',
   TERRITORY_LABELS: 'out/layout/territory_labels.geo.json',
   TERRITORY_FRONTIERS: 'out/layout/territory_frontiers.geo.json',
+  SEARCH_DB: 'out/search-db/search-db.csv',
   ISLANDS_TILES: 'tiles/islands',
   TERRITORIES_TILES: 'tiles/territories',
   POINTS_TILES: 'tiles/points',
