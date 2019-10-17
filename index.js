@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const { renderTile } = require('./scripts/tiles/height/renderTile')
+// const generateHeightBitMap = require('./scripts/tiles/height/produceTiles')
 // const { prepareOffline } = require('./scripts/tiles/height/download')
 
 async function doIt() {
@@ -16,3 +17,5 @@ async function doIt() {
 }
 
 doIt()
+
+// generateHeightBitMap()
