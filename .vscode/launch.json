@@ -15,6 +15,12 @@
           "request": "launch",
           "name": "Layout inner",
           "program": "${workspaceFolder}/scripts/layout/layoutInner.js"
+        },
+        {
+          "type": "node",
+          "request": "launch",
+          "name": "Produce height tiles",
+          "program": "${workspaceFolder}/scripts/tiles/height/produceTiles.js"
         }
     ]
 }
