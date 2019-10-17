@@ -7,8 +7,14 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Launch index",
             "program": "${workspaceFolder}/index.js"
+        },
+        {
+          "type": "node",
+          "request": "launch",
+          "name": "Layout inner",
+          "program": "${workspaceFolder}/scripts/layout/layoutInner.js"
         }
     ]
 }
