@@ -1,31 +1,32 @@
 #!/usr/bin/env node
 
 const workerpool = require('workerpool')
-const {
-  TEST_BBOX
-  /* BASE_ISLANDS */
-} = require('../../constants')
+const { ISLANDS } = require('../../constants')
 const fs = require('fs')
 const Jimp = require('jimp')
+const turf = require('@turf/turf')
 const { getBboxTiles, heightToRGB } = require('./utils')
 const progressBar = require('../../util/progressBar')
 const { performance } = require('perf_hooks')
-const { HEIGHT_EMPTY_TILE } = require('../../constants')
+const {
+  HEIGHT_TILE_SIZE,
+  BBOX_CHUNKS,
+  HEIGHT_EMPTY_TILE
+} = require('../../constants')
 
-const TILE_SIZE_PX = 256
-const BBOX = [TEST_BBOX.minX, TEST_BBOX.minY, TEST_BBOX.maxX, TEST_BBOX.maxY]
-
-const produceHeightBitmap = (zoomLevel) => {
+const produceHeightBitmap = (islands, bbox, zoomLevel) => {
   return new Promise((resolve, reject) => {
     if (!zoomLevel) reject('No zoom level passed')
-    const pool = workerpool.pool(__dirname + '/worker.js', { minWorkers: 'max' })
-    const tiles = getBboxTiles(BBOX, zoomLevel)
+    const pool = workerpool.pool(__dirname + '/worker.js', {
+      minWorkers: 'max'
+    })
+    const tiles = getBboxTiles(bbox, zoomLevel)
     const pb = progressBar(tiles.length)
     for (let i = 0; i < tiles.length; i++) {
       const tile = tiles[i]
 
       pool
-        .exec('renderTile', [tile, TILE_SIZE_PX])
+        .exec('renderTile', [islands, tile, HEIGHT_TILE_SIZE])
         .then(() => {
           pb.increment()
           const { pendingTasks, activeTasks } = pool.stats()
@@ -42,8 +43,7 @@ const produceHeightBitmap = (zoomLevel) => {
   })
 }
 
-
-async function blankImage(tileSize = TILE_SIZE_PX) {
+async function blankImage(tileSize = HEIGHT_TILE_SIZE) {
   const { r, g, b } = heightToRGB(0)
   const defaultColor = Jimp.rgbaToInt(r, g, b, 255)
   const image = await new Jimp(tileSize, tileSize, defaultColor)
@@ -56,16 +56,29 @@ async function generateHeightBitMap(zooms = zoomLevels) {
   if (!fs.existsSync(HEIGHT_EMPTY_TILE)) {
     await blankImage()
   }
-  for (let i = 0; i < zooms.length; i++) {
-    const zoom = zooms[i]
-    const t = performance.now()
-    console.log('Starting zoom level', zoom)
-    await produceHeightBitmap(zoom)
 
-    console.log(`${zoom} done in ${(performance.now() - t) / 1000}s`)
+  for (let bboxIndex = 0; bboxIndex < BBOX_CHUNKS.length; bboxIndex++) {
+    const bboxt = performance.now()
+    console.log('Starting bbox part ', bboxIndex)
+    const bbox = BBOX_CHUNKS[bboxIndex]
+    const islandsPath = ISLANDS.replace('.geo.json', `_${bboxIndex}.geo.json`)
+    const islands = JSON.parse(fs.readFileSync(islandsPath, 'utf-8')).features.map((island) => ({
+      ...island,
+      bbox: turf.bbox(island)
+    }))
+    for (let i = 0; i < zooms.length; i++) {
+      const zoom = zooms[i]
+      const t = performance.now()
+      console.log('Starting zoom level', zoom)
+      await produceHeightBitmap(islands, bbox, zoom)
+      console.log(`${zoom} done in ${(performance.now() - t) / 1000}s`)
+    }
+    console.log(`Bbox area ${bboxIndex} done in ${(performance.now() - bboxt) / 1000}s`)
   }
   console.log(`Total time generation ${(performance.now() - tt) / 1000}`)
   process.exit()
 }
 
 generateHeightBitMap()
+
+module.exports = generateHeightBitMap

@@ -6,10 +6,8 @@ const fse = require('fs-extra')
 const Jimp = require('jimp')
 const { heightToRGB, converSNWE } = require('./utils')
 const { Hgt } = require('node-hgt')
-const { HGT_DATA, BASE_ISLANDS, ISLANDS_LOWDEF, HEIGHT_TILES, HEIGHT_EMPTY_TILE } = require('../../constants')
+const { HGT_DATA, BASE_ISLANDS, HEIGHT_TILES, HEIGHT_EMPTY_TILE } = require('../../constants')
 
-const islands = JSON.parse(fs.readFileSync(ISLANDS_LOWDEF, 'utf-8'))
-const islandsBbox = islands.features.map((feature) => turf.bbox(feature))
 const baseIslands = JSON.parse(fs.readFileSync(BASE_ISLANDS, 'utf-8'))
 const baseIslandsBboxDict = {}
 baseIslands.features.forEach((feature) => {
@@ -26,16 +24,11 @@ const bboxOverlaps = (tileBbox, islandBbox) => {
   return true
 }
 
-const getTileCoordinates = (tile, tileSize = TILE_SIZE_PX) => {
+const getTileCoordinates = (islands, tile, tileSize = TILE_SIZE_PX) => {
   const tileBbox = tilebelt.tileToBBOX(tile)
-  const overlappingIslands = _.flatMap(islandsBbox, (islandBbox, index) => {
-    const overlaps = bboxOverlaps(tileBbox, islandBbox)
-    if (!overlaps) return []
-    const island = islands.features[index]
-    return {
-      ...island,
-      bbox: islandBbox // quicker for turf booleanPointInPolygon
-    }
+  const overlappingIslands = _.flatMap(islands, (island) => {
+    const overlaps = bboxOverlaps(tileBbox, island.bbox)
+    return overlaps ? island : []
   })
 
   const [minTileX, minTileY, maxTileX, maxTileY] = tileBbox
@@ -78,10 +71,10 @@ const getTileCoordinates = (tile, tileSize = TILE_SIZE_PX) => {
   return hasOverlap ? coordinates : null
 }
 
-async function renderTile(tile, tileSize = TILE_SIZE_PX) {
+async function renderTile(islands, tile, tileSize = TILE_SIZE_PX) {
   const [tileX, tileY, tileZ] = tile
   const tilePath = `${HEIGHT_TILES}/${tileZ}/${tileX}/${tileY}.png`
-  const coordinates = getTileCoordinates(tile, tileSize)
+  const coordinates = getTileCoordinates(islands, tile, tileSize)
   if (coordinates) {
     const { r, g, b } = heightToRGB(0)
     const defaultColor = Jimp.rgbaToInt(r, g, b, 255)
