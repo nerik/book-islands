@@ -107,13 +107,14 @@ async function renderTile(bboxIndex, tile, tileSize = HEIGHT_TILE_SIZE) {
   }
 
   // when there is no island overlap we dont need to create a new image, just copy the empty one
-  try {
-    fse.copySync(HEIGHT_EMPTY_TILE, tilePath)
-    return true
-  } catch(e) {
-    console.log('Failed copying empty image', e)
-    return false
-  }
+  // there is no need to use an empty one anymore
+  // try {
+  //   fse.copySync(HEIGHT_EMPTY_TILE, tilePath)
+  //   return true
+  // } catch(e) {
+  //   console.log('Failed copying empty image', e)
+  //   return false
+  // }
 }
 
 

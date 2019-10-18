@@ -17,7 +17,7 @@ SCRIPTS
 ./scripts/layout/createSearchDatabase.js
 
 ./scripts/tiles/islandsTiles.js
-./scripts/tiles/pointTiles.js
+./scripts/tiles/pointsTiles.js
 
 ./scripts/tiles/height/download.js
 ./scripts/tiles/height/produceTiles.js
