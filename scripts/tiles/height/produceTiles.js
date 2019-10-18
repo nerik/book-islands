@@ -65,12 +65,12 @@ async function generateHeightBitMap(zooms = zoomLevels) {
     await blankImage()
   }
 
-  for (let bboxIndex = 0; bboxIndex < BBOX_CHUNKS.length; bboxIndex++) {
+  // for (let bboxIndex = 0; bboxIndex < BBOX_CHUNKS.length; bboxIndex++) {
+  for (let bboxIndex = 1; bboxIndex < 2; bboxIndex++) {
     const bboxt = performance.now()
     console.log('Starting bbox part ', bboxIndex)
     const bbox = BBOX_CHUNKS[bboxIndex]
-    for (let i = 1; i < 2; i++) {
-    // for (let i = 0; i < zooms.length; i++) {
+    for (let i = 0; i < zooms.length; i++) {
       const zoom = zooms[i]
       const t = performance.now()
       console.log('Starting zoom level', zoom)
