@@ -11,10 +11,11 @@ const t = `${POINTS_TILES}/tiles`
 
 rimraf.sync(POINTS_TILES)
 fs.mkdirSync(POINTS_TILES)
-// try { fs.unlinkSync(p) } catch(e) {}
 
-const cmd = `tippecanoe -o ${p}.mbtiles --maximum-zoom=14 --drop-densest-as-needed --named-layer='author_labels':${TERRITORY_LABELS} --named-layer='books_labels':${BOOKS_POINTS}`
+const cmd = `tippecanoe -o ${p}.mbtiles --minimum-zoom=5 --maximum-zoom=14 --base-zoom=5 --named-layer='author_labels':${TERRITORY_LABELS} --named-layer='books_labels':${BOOKS_POINTS}`
 console.log(cmd)
 exec(cmd)
 
-const pbf = exec(`mb-util --image_format=pbf ${p}.mbtiles ${t} --silent`)
+const tilesCmd = `mb-util --image_format=pbf ${p}.mbtiles ${t} --silent`
+console.log(tilesCmd)
+exec(tilesCmd)
