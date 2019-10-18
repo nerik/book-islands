@@ -91,11 +91,11 @@ const getBooks = (author) => {
 // compute territories / cities ranks bins
 const citiesRankScale = d3.scaleThreshold()
   .domain([0, 1, 200, 6000])
-  .range([4,4,3,2,1])
+  .range([1,1,2,3,4])
 
 const territoriesRankScale = d3.scaleThreshold()
   .domain([0, 1, 200, 6000])
-  .range([4,4,3,2,1])
+  .range([1,1,2,3,4])
 
 
 const numClusters = filteredClusters.filter(c => c.properties.is_cluster).length
