@@ -248,13 +248,14 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
         islandCities.push(city)
         const rank = citiesRankScale(book.popularity)
         city.properties = {
-          ...book,
+          title: book.title,
+          book_id: book.book_id,
           rank,
           // remove below for final dataset
-          author_id: authorBooks.author.id,
-          cluster_r: cluster.properties.cluster_r,
-          cluster_g: cluster.properties.cluster_g,
-          cluster_b: cluster.properties.cluster_b,
+          // author_id: authorBooks.author.id,
+          // cluster_r: cluster.properties.cluster_r,
+          // cluster_g: cluster.properties.cluster_g,
+          // cluster_b: cluster.properties.cluster_b,
         }
         bookPoints.push(city)
       })
