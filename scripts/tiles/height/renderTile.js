@@ -1,11 +1,14 @@
 const tilebelt = require('@mapbox/tilebelt')
 const turf = require('@turf/turf')
 const fs = require('fs')
+const _ = require('lodash')
 const fse = require('fs-extra')
 const Jimp = require('jimp')
-const { heightToRGB, converSNWE } = require('./utils')
+const { heightToRGB, converSNWE, bboxOverlaps } = require('./utils')
 const { Hgt } = require('node-hgt')
-const { HGT_DATA, BASE_ISLANDS, HEIGHT_TILES, HEIGHT_EMPTY_TILE, HEIGHT_TILE_SIZE } = require('../../constants')
+const { ISLANDS, HGT_DATA, BASE_ISLANDS, HEIGHT_TILES, HEIGHT_EMPTY_TILE, HEIGHT_TILE_SIZE } = require('../../constants')
+
+let db = {}
 
 const baseIslands = JSON.parse(fs.readFileSync(BASE_ISLANDS, 'utf-8'))
 const baseIslandsBboxDict = {}
@@ -13,7 +16,7 @@ baseIslands.features.forEach((feature) => {
   baseIslandsBboxDict[feature.properties.island_id] = turf.bbox(feature)
 })
 
-const getTileCoordinates = (islands, tile, tileSize = HEIGHT_TILE_SIZE) => {
+const getTileCoordinates = (tile, tileSize = HEIGHT_TILE_SIZE) => {
   const tileBbox = tilebelt.tileToBBOX(tile)
   const [minTileX, minTileY, maxTileX, maxTileY] = tileBbox
   const lngDelta = Math.abs(maxTileX - minTileX)
@@ -23,11 +26,16 @@ const getTileCoordinates = (islands, tile, tileSize = HEIGHT_TILE_SIZE) => {
   const coordinates = []
   let hasOverlap = false
 
+  const overlappingIslands = _.flatMap(db.data, (island) => {
+    const overlaps = bboxOverlaps(tileBbox, island.bbox)
+    return overlaps ? island : []
+  })
+
   for (let x = 0; x < tileSize; x++) {
     for (let y = 0; y < tileSize; y++) {
       const lng = minTileX + lngStep * x
       const lat = minTileY + latStep * y
-      const island = islands.find((island) => {
+      const island = overlappingIslands.find((island) => {
         return turf.booleanPointInPolygon(turf.point([lng, lat]), island)
       })
 
@@ -55,10 +63,19 @@ const getTileCoordinates = (islands, tile, tileSize = HEIGHT_TILE_SIZE) => {
   return hasOverlap ? coordinates : null
 }
 
-async function renderTile(islands, tile, tileSize = HEIGHT_TILE_SIZE) {
+async function renderTile(bboxIndex, tile, tileSize = HEIGHT_TILE_SIZE) {
+  if (db.index !== bboxIndex) {
+    delete db.data
+    const islandsPath = ISLANDS.replace('.geo.json', `_${bboxIndex}.geo.json`)
+    db.data = JSON.parse(fs.readFileSync(islandsPath, 'utf-8')).features.map((island) => ({
+      ...island,
+      bbox: turf.bbox(island)
+    }))
+    db.index = bboxIndex
+  }
   const [tileX, tileY, tileZ] = tile
   const tilePath = `${HEIGHT_TILES}/${tileZ}/${tileX}/${tileY}.png`
-  const coordinates = getTileCoordinates(islands, tile, tileSize)
+  const coordinates = getTileCoordinates(tile, tileSize)
   if (coordinates) {
     const { r, g, b } = heightToRGB(0)
     const defaultColor = Jimp.rgbaToInt(r, g, b, 255)
