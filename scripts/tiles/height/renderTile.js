@@ -6,7 +6,7 @@ const fse = require('fs-extra')
 const Jimp = require('jimp')
 const { heightToRGB, converSNWE, bboxOverlaps } = require('./utils')
 const { Hgt } = require('node-hgt')
-const { ISLANDS, HGT_DATA, BASE_ISLANDS, HEIGHT_TILES, HEIGHT_EMPTY_TILE, HEIGHT_TILE_SIZE } = require('../../constants')
+const { ISLANDS_LOWDEF, HGT_DATA, BASE_ISLANDS, HEIGHT_TILES, HEIGHT_EMPTY_TILE, HEIGHT_TILE_SIZE } = require('../../constants')
 
 let db = {}
 
@@ -66,7 +66,7 @@ const getTileCoordinates = (tile, tileSize = HEIGHT_TILE_SIZE) => {
 async function renderTile(bboxIndex, tile, tileSize = HEIGHT_TILE_SIZE) {
   if (db.index !== bboxIndex) {
     delete db.data
-    const islandsPath = ISLANDS.replace('.geo.json', `_${bboxIndex}.geo.json`)
+    const islandsPath = ISLANDS_LOWDEF.replace('.geo.json', `_${bboxIndex}.geo.json`)
     db.data = JSON.parse(fs.readFileSync(islandsPath, 'utf-8')).features.map((island) => ({
       ...island,
       bbox: turf.bbox(island)
