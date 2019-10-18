@@ -1,6 +1,7 @@
 node_modules
 /in
 /tiles
+/out
 /mbutil
 .DS_Store
 
