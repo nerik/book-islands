@@ -13,7 +13,7 @@ rimraf.sync(POINTS_TILES)
 fs.mkdirSync(POINTS_TILES)
 // try { fs.unlinkSync(p) } catch(e) {}
 
-const cmd = `tippecanoe -o ${p}.mbtiles -zg --drop-densest-as-needed --extend-zooms-if-still-dropping --named-layer='author_labels':${TERRITORY_LABELS} --named-layer='books_labels':${BOOKS_POINTS}`
+const cmd = `tippecanoe -o ${p}.mbtiles --maximum-zoom=14 --drop-densest-as-needed --named-layer='author_labels':${TERRITORY_LABELS} --named-layer='books_labels':${BOOKS_POINTS}`
 console.log(cmd)
 exec(cmd)
 

@@ -19,8 +19,9 @@ const style = {
     },
     'islands': {
       'type': 'vector',
-      tiles: ['https://storage.googleapis.com/books-detail-data/islands/{z}/{x}/{y}.pbf'],
-      // maxzoom: 10
+      // tiles: ['https://storage.googleapis.com/books-detail-data/islands/{z}/{x}/{y}.pbf'],
+      tiles: ['http://localhost:9090/islands/tiles/{z}/{x}/{y}.pbf'],
+      maxzoom: 12
     },
     // 'territories': {
     //   'type': 'vector',
@@ -29,8 +30,9 @@ const style = {
     // },
     'points': {
       'type': 'vector',
-      tiles: ['https://storage.googleapis.com/books-detail-data/points/{z}/{x}/{y}.pbf'],
-      maxzoom: 5
+      // tiles: ['https://storage.googleapis.com/books-detail-data/points/{z}/{x}/{y}.pbf'],
+      tiles: ['http://localhost:9090/points/tiles/{z}/{x}/{y}.pbf'],
+      maxzoom: 14
     }
   },
   'sprite': 'mapbox://sprites/satellitestudio-nerik/ck0po9xqr15641doeyt8t0ctg/ck2u8j60r58fu0sgyxrigm3cu',
