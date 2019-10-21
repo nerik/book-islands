@@ -5,6 +5,7 @@ module.exports = {
   GEONAMES_DB: './out/baseIslands/geonames.db',
   SHORELINES: 'out/baseIslands/gshhs/shorelines.geo.json',
   BASE_ISLANDS: 'out/baseIslands/baseIslands.geo.json',
+  BASE_ISLANDS_BBOX: 'out/baseIslands/baseIslands_bbox.json',
   BASE_ISLANDS_LOWDEF: 'out/baseIslands/baseIslands_lowdef.geo.json',
   BASE_ISLANDS_LOWDEF_MRCT: 'out/baseIslands/baseIslands_lowdef_mrct.geo.json',
   ISLETS: 'out/baseIslands/islets.geo.json',
