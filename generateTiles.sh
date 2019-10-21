@@ -11,5 +11,3 @@
 
 ./scripts/tiles/islandsTiles.js \
 && ./scripts/tiles/pointTiles.js
-
-scp /Users/joseangel/Workspace/book-islands/scripts/tiles/height/produceTiles.js j8seangel@35.204.229.243:/home/j8seangel/book-islands/in

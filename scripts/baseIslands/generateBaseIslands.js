@@ -10,6 +10,7 @@ const pointWithinBBox = require('../util/pointWithinBBox')
 const {
   SHORELINES,
   BASE_ISLANDS,
+  BASE_ISLANDS_BBOX,
   BASE_ISLANDS_LOWDEF,
   BASE_ISLANDS_LOWDEF_MRCT,
   ISLETS,
@@ -157,14 +158,19 @@ geoJSON.features = filteredFeatures.map((feature, i) => {
       }
     }
   })
-  
+
   selectedIslets = selectedIslets.concat(candidateIslets)
 
   return feature
 })
 
+const baseIslandsBboxDict = {}
+geoJSON.features.forEach((feature) => {
+  baseIslandsBboxDict[feature.properties.island_id] = turf.bbox(feature)
+})
 
 fs.writeFileSync(BASE_ISLANDS, JSON.stringify(geoJSON))
+fs.writeFileSync(BASE_ISLANDS_BBOX, JSON.stringify(baseIslandsBboxDict))
 fs.writeFileSync(BASE_ISLANDS_LOWDEF, JSON.stringify(geoJSONLowdef))
 fs.writeFileSync(BASE_ISLANDS_LOWDEF_MRCT, JSON.stringify(geoJSONLowdefMrct))
 
