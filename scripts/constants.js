@@ -1,3 +1,4 @@
+const d3 = require('d3')
 module.exports = {
   BOOKS_DB: 'in/google-books/books_with_mid.db',
   AUTHORS: 'out/db/authors.json',
@@ -19,10 +20,12 @@ module.exports = {
   BASE_ISLANDS_META: 'out/layout/baseIslands.meta.json',
   ISLANDS: 'out/layout/islands.geo.json',
   ISLANDS_LOWDEF: 'out/layout/islands_lowdef.geo.json',
-  ISLANDS_META: 'out/layout/islands.meta.json',
-  BOOKS_POINTS: 'out/layout/books_points.geo.json',
+  ISLANDS_CANDIDATES_META: 'out/layout/islands_candidates.meta.json',
+  ISLANDS_FINAL_META: 'out/layout/islands_final.meta.json',
+  TERRITORY_LINES: 'out/layout/territory_lines.geo.json',
+  TERRITORY_POLYGONS: 'out/layout/territory_polygons.geo.json',
   TERRITORY_LABELS: 'out/layout/territory_labels.geo.json',
-  TERRITORY_FRONTIERS: 'out/layout/territory_frontiers.geo.json',
+  BOOKS_POINTS: 'out/layout/books_points.geo.json',
   SEARCH_DB: 'out/search-db/search-db.csv',
   ISLANDS_TILES: 'tiles/islands',
   TERRITORIES_TILES: 'tiles/territories',
@@ -31,10 +34,10 @@ module.exports = {
   HEIGHT_TILE_SIZE: 256,
   HEIGHT_EMPTY_TILE: 'scripts/tiles/height/blank.png',
   TEST_BBOX: {
-    minX: -180,
-    minY: -80,
-    maxX: 180,
-    maxY: 80
+    minX: -5,
+    minY: -5,
+    maxX: 0,
+    maxY: 0
   },
   BBOX_CHUNKS:[
     [-180, -80, -10, 0],
@@ -45,5 +48,12 @@ module.exports = {
     [10  , -80, 20, 0],
     [20  , -80, 180, 0]
   ],
-  MAX_BASE_ISLAND_SCALE_UP: 2
+  MAX_BASE_ISLAND_SCALE_UP: 2,
+  CITIES_RANK_SCALE: d3.scaleThreshold()
+    .domain([0, 1, 200, 6000])
+    .range([1,1,2,3,4]),
+  TERRITORIES_RANK_SCALE: d3.scaleThreshold()
+    .domain([0, 1, 200, 6000])
+    .range([1,1,2,3,4])
+
 }

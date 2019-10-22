@@ -522,5 +522,5 @@ module.exports = (clusterPoints, clusterWeights, island) => {
   // if (isMulti.length) {
   //   drawPreview(cells, territoriesSegments, territoriesBorderSegments, isMulti)
   // }
-  return polygons
+  return { polygons, lines: [] }
 }
