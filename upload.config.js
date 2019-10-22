@@ -11,7 +11,7 @@ module.exports = {
     },
     {
       name: 'upload-data',
-      script: `gsutil -m cp -r out/search-db/search-db.csv gs://${bucket} && gsutil -m cp -r out/books gs://${bucket} && gsutil -m cp -r font-glyphs gs://${bucket} && gsutil -m cp -r sprites gs://${bucket} && gsutil -m cp -r tour gs://${bucket}`,
+      script: `gsutil -m cp -r out/search-db/search-db.csv gs://${bucket} && gsutil -m cp -r out/books gs://${bucket} && gsutil -m cp -r font-glyphs gs://${bucket} && gsutil -m cp -r sprite gs://${bucket} && gsutil -m cp -r tour gs://${bucket}`,
       autorestart: false,
     },
     {
