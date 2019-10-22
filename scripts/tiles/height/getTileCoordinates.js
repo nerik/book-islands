@@ -12,6 +12,11 @@ const baseIslandsBboxDict = JSON.parse(fs.readFileSync(BASE_ISLANDS_BBOX, 'utf-8
 const getTileCoordinates = async (data, tile, writeData, done) => {
   const islands = data.islands.islands.features
 
+  if (!islands || !islands.length) {
+    done()
+    return
+  }
+
   const tileBbox = tilebelt.tileToBBOX(tile)
   const [minTileX, minTileY, maxTileX, maxTileY] = tileBbox
   const lngDelta = Math.abs(maxTileX - minTileX)
@@ -41,7 +46,6 @@ const getTileCoordinates = async (data, tile, writeData, done) => {
         const realLatDelta = realMaxY - realMinY
         const realLng = realMinX + lngRatio * realLngDelta
         const realLat = realMinY + latRatio * realLatDelta
-
 
         let elevation = 0
         try {
