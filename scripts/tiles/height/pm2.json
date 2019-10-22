@@ -1,0 +1,5 @@
+{
+  "name": "generate-heights",
+  "script": "./download.js && ./tile-reduce.js",
+  "autorestart": false
+}
