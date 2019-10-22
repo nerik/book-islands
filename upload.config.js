@@ -2,7 +2,7 @@ module.exports = {
   apps : [
     {
       name: 'upload-data',
-      script: 'gsutil -m cp -r out/search-db.csv gs://cilex-books-map-data && gsutil -m cp -r out/books gs://cilex-books-map-data',
+      script: 'gsutil -m cp -r out/search-db.csv gs://cilex-books-map-data && gsutil -m cp -r out/books gs://cilex-books-map-data && gsutil -m cp -r font-glyphs gs://cilex-books-map-data && gsutil -m cp -r sprites gs://cilex-books-map-data',
       autorestart: false,
     },
     {
