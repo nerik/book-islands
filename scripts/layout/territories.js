@@ -113,13 +113,13 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
           succeeded = true
           break
         } catch (e) {
-          console.log(e.message)
-          console.log('failed')
+          // console.log(e.message)
+          // console.log('failed')
         }
       }
       if (succeeded === true) {
         numClustersSucceeded++
-        console.log('succeeded for', layoutedId)
+        // console.log('succeeded for', layoutedId)
         finalMeta.push({
           layouted_id: layoutedId,
           is_cluster: true,
@@ -129,7 +129,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
           center: cluster.geometry.coordinates
         })
       } else {
-        console.log('failed for', layoutedId)
+        // console.log('failed for', layoutedId)
         clusterChildren.forEach(clusterChild => {
           const clusterChildLayoutedId = clusterChild.properties.layouted_id
           const clusterChildIslandMeta = islandsMeta[clusterChildLayoutedId]
@@ -144,7 +144,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
           })
         })
       }
-      console.log('-----')
+      // console.log('-----')
       numClustersTried++
 
     } else {

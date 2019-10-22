@@ -261,10 +261,10 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
 
     if (error) {
       numDidntFit++
-      finalTransformations[layouted_id] = {
-        error
-      }
-      continue
+      // finalTransformations[layouted_id] = {
+      //   error
+      // }
+      // continue
     }
 
 

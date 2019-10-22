@@ -20,6 +20,7 @@
   "homepage": "https://github.com/nerik/book-islands#readme",
   "devDependencies": {
     "@mapbox/tile-cover": "^3.0.2",
+    "@mapbox/tile-reduce": "^3.3.0",
     "@mapbox/tilebelt": "^1.0.1",
     "@turf/area": "^6.0.1",
     "@turf/turf": "^5.1.6",
@@ -39,6 +40,7 @@
     "live-server": "^1.2.1",
     "lodash": "^4.17.15",
     "mapshaper": "^0.4.126",
+    "ndb": "^1.1.5",
     "node-hgt": "^1.2.3",
     "paper": "^0.12.3",
     "rimraf": "^3.0.0",

@@ -68,7 +68,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   
 
   finalMetas
-    .filter(finalMeta => finalMeta.error === undefined)
+    // .filter(finalMeta => finalMeta.error === undefined)
     .forEach(finalMeta => {
     // console.log(finalMeta)
       const layoutedId = finalMeta.layouted_id
@@ -78,16 +78,9 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       if (finalMeta.is_cluster === true) {
         polygons = territories.filter(t => t.properties.cluster_layouted_id === layoutedId)
         authorsIds = polygons.map(p => p.properties.author_id)
-
-        if (authorsIds.includes('Richard Mowbray Haywood')) {
-          console.log(finalMeta)
-        }
       } else {
         polygons = [island]
         authorsIds = [island.properties.id]
-        if (island.properties.id === 'Richard Mowbray Haywood') {
-          console.log(finalMeta)
-        }
       }
 
       // console.log(polygons, authorsIds)
