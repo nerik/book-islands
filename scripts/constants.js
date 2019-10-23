@@ -41,7 +41,7 @@ module.exports = {
     minX: -5,
     minY: -5,
     maxX: 0,
-    maxY: 0
+    maxY: 5
   },
   BBOX_CHUNKS:[
     [-180, -80, -10, 0],
