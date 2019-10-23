@@ -9,7 +9,7 @@ const transposeAndScale = require('../util/transposeAndScale')
 const pointWithinBBox = require('../util/pointWithinBBox')
 
 const {
-  BASE_ISLANDS, ISLANDS_META, ISLANDS, ISLETS,
+  BASE_ISLANDS, ISLANDS_FINAL_META, ISLANDS, ISLETS,
   BBOX_CHUNKS
 } = require('../constants')
 
@@ -36,14 +36,18 @@ const next = () => {
   const { bboxChunk, chunkIndex } = bboxChunks[currentChunkPos]
   console.log('Current chunk:', bboxChunk, chunkIndex)
 
-  const islandsMetaPath = ISLANDS_META.replace('.json', `_${chunkIndex}.json`)
-  const islandsMeta = JSON.parse(fs.readFileSync(islandsMetaPath, 'utf-8'))
+  const islandsMetaPath = ISLANDS_FINAL_META.replace('.json', `_${chunkIndex}.json`)
+  const islandsMetaArray = JSON.parse(fs.readFileSync(islandsMetaPath, 'utf-8'))
+  const islandsMeta = {}
+  islandsMetaArray.forEach(m => {
+    islandsMeta[m.layouted_id] = m
+  })
   const allIslandsLayoutedIds = Object.keys(islandsMeta)
 
   const islandsLayoutedIds = allIslandsLayoutedIds
     .filter(islandLayoutedId => {
       const meta = islandsMeta[islandLayoutedId]
-      if (!meta || meta.error) return false
+      // if (!meta || meta.error) return false
       const center = meta.center
       return (pointWithinBBox(center, bboxChunk))
     })
@@ -66,8 +70,10 @@ const next = () => {
 
     const islandMrct = turf.toMercator(island)
     const transposedToCenterMrct = transposeToWorldCenter(islandMrct)
-    const transposedIsland = transposeAndScale(centerMrct, transposedToCenterMrct, meta.layoutScale)
+    const transposedIsland = transposeAndScale(centerMrct, transposedToCenterMrct, meta.scale)
     const transposedIslandWgs84 = turf.toWgs84(transposedIsland)
+
+    transposedIslandWgs84.properties.layouted_id = islandLayoutedId
 
     islands.push(transposedIslandWgs84)
 
@@ -75,9 +81,11 @@ const next = () => {
     // console.log('islets', islandIslets.length)
     const isletsMrct = islandIslets.map(f => turf.toMercator(f))
     const isletsTransposedToCenterMrct = isletsMrct.map(f => transposeToWorldCenter(f, islandMrct))
-    const isletsTransposed = isletsTransposedToCenterMrct.map(f => transposeAndScale(centerMrct, f, meta.layoutScale))
+    const isletsTransposed = isletsTransposedToCenterMrct.map(f => transposeAndScale(centerMrct, f, meta.scale))
     const isletsTransposedWgs84 = isletsTransposed.map(f => turf.toWgs84(f))
     isletsTransposedWgs84.forEach(f => {
+      f.properties.islet = true
+      f.properties.layouted_id = islandLayoutedId
       islands.push(f)
     })
   })
@@ -93,6 +101,7 @@ const next = () => {
   outputStream.on('finish', () => {
     console.log('Wrote', path)
     currentChunkPos++
+    pb.stop()
     next()
   })
   transformStream.end()

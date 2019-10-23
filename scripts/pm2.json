@@ -1,5 +1,5 @@
 {
   "name": "generate-tiles",
-  "script": "./db/generateAuthors.js && ./umap/normalizeToWorld.js && ./layout/cluster.js && ./baseIslands/physicalToGeoJSON.js && ./baseIslands/generateBaseIslands.js && ./layout/score.js && ./layout/layout.js && ./layout/layoutInner.js && ./layout/collectHighDefIslands.js && ./layout/createSearchDatabase.js && ./tiles/islandsTiles.js ./tiles/pointTiles.js",
+  "script": "./db/generateAuthors.js && ./umap/normalizeToWorld.js && ./layout/cluster.js && ./baseIslands/physicalToGeoJSON.js && ./baseIslands/generateBaseIslands.js && ./layout/score.js && ./layout/layout.js && ./layout/territories.js && ./layout/points.js && ./layout/collectHighDefIslands.js && ./layout/createSearchDatabase.js && ./tiles/islandsTiles.js ./tiles/pointTiles.js ./tiles/territoriesTiles.js",
   "autorestart": false
 }

@@ -23,11 +23,11 @@ const style = {
       tiles: ['http://localhost:9090/islands/tiles/{z}/{x}/{y}.pbf'],
       maxzoom: 12
     },
-    // 'territories': {
-    //   'type': 'vector',
-    //   tiles: ['http://localhost:9090/territories/tiles/{z}/{x}/{y}.pbf'],
-    //   maxzoom: 10
-    // },
+    'territories': {
+      'type': 'vector',
+      tiles: ['http://localhost:9090/territories/tiles/{z}/{x}/{y}.pbf'],
+      maxzoom: 10
+    },
     'points': {
       'type': 'vector',
       // tiles: ['https://storage.googleapis.com/books-detail-data/points/tiles/{z}/{x}/{y}.pbf'],
@@ -52,15 +52,15 @@ const style = {
       'layout': {},
       'paint': {'fill-color': 'hsl(252, 93%, 49%)', 'fill-opacity': 0.17}
     },
-    // {
-    //   'id': 'territories',
-    //   'type': 'line',
-    //   'source': 'territories',
-    //   'source-layer': 'territories',
-    //   minzoom: 6,
-    //   'layout': {},
-    //   'paint': {}
-    // },
+    {
+      'id': 'territories',
+      'type': 'line',
+      'source': 'territories',
+      'source-layer': 'territories',
+      minzoom: 6,
+      'layout': {},
+      'paint': {}
+    },
     {
       'id': 'books_labels_pts',
       type: 'circle',
