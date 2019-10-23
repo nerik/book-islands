@@ -4,17 +4,22 @@ const exec = require('child_process').execSync
 const fs = require('fs')
 const rimraf = require('rimraf')
 
-const { TERRITORY_FRONTIERS, TERRITORIES_TILES } = require('../constants')
-const p = `${TERRITORIES_TILES}/main.mbtiles`
-const t = `${TERRITORIES_TILES}/tiles`
+const { TERRITORY_POLYGONS, TERRITORIES_TILES, BBOX_CHUNKS } = require('../constants')
+const mbtiles = `${TERRITORIES_TILES}/main.mbtiles`
+const tiles = `${TERRITORIES_TILES}/tiles`
 
 
 rimraf.sync(TERRITORIES_TILES)
 fs.mkdirSync(TERRITORIES_TILES)
-try { fs.unlinkSync(p) } catch(e) {}
 
-console.log('Tippecanoe')
-const tippecanoe = exec(`tippecanoe -o ${p} -zg --drop-densest-as-needed -l territories ${TERRITORY_FRONTIERS}`)
+const allPaths = BBOX_CHUNKS.map((bbox, chunkIndex) =>
+  TERRITORY_POLYGONS.replace('.geo.json', `_${chunkIndex}.geo.json`)
+).join(' ')
+
+const cmd = `tippecanoe -o ${mbtiles} -zg --drop-densest-as-needed -l territories ${allPaths}`
+
+console.log(cmd)
+exec(cmd)
 // tippecanoe.stdout.pipe(process.stdout)
 
-const pbf = exec(`mb-util --image_format=pbf ${p} ${t} --silent`)
+exec(`mb-util --image_format=pbf ${mbtiles} ${tiles} --silent`)

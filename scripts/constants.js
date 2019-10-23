@@ -27,7 +27,6 @@ module.exports = {
   TERRITORY_POLYGONS: 'out/layout/territory_polygons.geo.json',
   TERRITORY_LABELS: 'out/layout/territory_labels.geo.json',
   BOOKS_POINTS: 'out/layout/books_points.geo.json',
-  TERRITORY_FRONTIERS: 'out/layout/territory_frontiers.geo.json',
   SEARCH_DB: 'out/search-db/search-db-all.csv',
   SEARCH_DB_RANKED: 'out/search-db/search-db.csv',
   SEARCH_DB_RANKED_LIMIT: 10000,
