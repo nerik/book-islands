@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 const fs = require('fs')
-const BOOKS_DB_PATH = './in/google-books/books_with_mid.db'
+const BOOKS_DB_PATH = './in/google-books/books.db'
 
-const { AUTHORS } = require('../constants')
+const { BOOKS_DB_TABLE, AUTHORS } = require('../constants')
 
 let authors
 
@@ -18,7 +18,7 @@ const db = new sqlite3.Database(BOOKS_DB_PATH, sqlite3.OPEN_READONLY, (err) => {
       group_concat(id, '|') ids,
       group_concat(title, '|') titles,
       group_concat(relatedness_signal_projected_query_popularity, '|') popularities
-      FROM books_with_mid
+      FROM ${BOOKS_DB_TABLE}
       GROUP BY author
       ORDER BY sum_popularity DESC`, (err, rows) => {
     if (err) console.log('Error reading rows', err)
