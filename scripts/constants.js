@@ -36,11 +36,17 @@ module.exports = {
   HEIGHT_TILES: 'tiles/height',
   HEIGHT_TILE_SIZE: 256,
   HEIGHT_EMPTY_TILE: 'scripts/tiles/height/blank.png',
+  // TEST_BBOX: {
+  //   minX: -5,
+  //   minY: -5,
+  //   maxX: 0,
+  //   maxY: 5
+  // },
   TEST_BBOX: {
-    minX: -5,
-    minY: -5,
-    maxX: 0,
-    maxY: 5
+    minX: -180,
+    minY: -80,
+    maxX: 180,
+    maxY: 80
   },
   BBOX_CHUNKS:[
     [-180, -80, -10, 0],
