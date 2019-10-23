@@ -80,7 +80,7 @@ const execChunk = () => {
   }
 
 
-  const pb = progressBar(bboxFilteredClusters.length)
+
 
   // when bbox is empty (because TEST_BBOX is used), skip
   if (bboxFilteredClusters.length === 0) {
@@ -91,7 +91,10 @@ const execChunk = () => {
       chunkIndex++
       execChunk()
     }
+    return
   }
+
+  const pb = progressBar(bboxFilteredClusters.length)
 
   bboxFilteredClusters.forEach(cluster => {
     pb.increment()
@@ -162,6 +165,7 @@ const execChunk = () => {
           if (numFeatures === bboxFilteredClusters.length) {
             console.log(chunkIndex, BBOX_CHUNKS.length - 1)
             pool.terminate()
+            pb.stop()
             if (chunkIndex === BBOX_CHUNKS.length - 1) {
               done()
             } else {

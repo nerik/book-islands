@@ -66,6 +66,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   const territoriesPath = TERRITORY_POLYGONS.replace('.geo.json', `_${chunkIndex}.geo.json`)
   const territories = JSON.parse(fs.readFileSync(territoriesPath, 'utf-8')).features
   
+  console.log('Has', finalMetas.length, 'islands')
 
   finalMetas
     // .filter(finalMeta => finalMeta.error === undefined)
