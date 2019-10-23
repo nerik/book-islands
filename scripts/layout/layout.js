@@ -6,7 +6,8 @@ const transposeAndScale = require('../util/transposeAndScale')
 const pointWithinBBox = require('../util/pointWithinBBox')
 
 const {
-  CLUSTERS, BASE_ISLANDS_LOWDEF_MRCT, BASE_ISLANDS_META, ISLANDS_META, ISLANDS_LOWDEF,
+  CLUSTERS, BASE_ISLANDS_LOWDEF_MRCT, BASE_ISLANDS_META,
+  ISLANDS_CANDIDATES_META, ISLANDS_LOWDEF,
   TEST_BBOX, BBOX_CHUNKS
 } = require('../constants')
 
@@ -31,9 +32,9 @@ BBOX_CHUNKS.forEach((bbox, chunkIndex) => {
 
 const clustersFiltered = clusters.features
   // Remove clustered points (but keep clusters + standalone points)
-  .filter(cluster => {
-    return cluster.properties.is_cluster || cluster.properties.cluster_id === undefined
-  })
+  // .filter(cluster => {
+  //   return cluster.properties.is_cluster || cluster.properties.cluster_id === undefined
+  // })
   // Get rid of whatever clusters did not get a score in the score step
   // This happens when running score on a subset
   .filter(cluster => {
@@ -53,7 +54,7 @@ const clustersFiltered = clusters.features
 
 // give them a layout priority (popularity + numbooks)
 clustersFiltered.forEach(cluster => {
-  const numBooksMult = 1 + (cluster.properties.books_count - 1) * .1
+  const numBooksMult = 1 + (cluster.properties.books_count - 1) * .5
   const popMult = 1 + cluster.properties.sum_popularity * .0001
   const layoutPriorityScore = popMult * numBooksMult
   cluster.properties.layoutPriorityScore = layoutPriorityScore
@@ -216,9 +217,8 @@ console.log('Will layout' , clustersByPop.length , 'clusters')
 const islands = []
 
 BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
-  // if (chunkIndex >= 2) {
-  //   return
-  // }
+  let numLayouted = 0
+  const bboxIslands = []
   console.log('Current chunk:', bboxChunk, chunkIndex)
 
   const bboxFilteredClusters = clustersByPop
@@ -230,7 +230,6 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   // let numFallbacked = 0
   let numDidntFit = 0
   const finalTransformations = {}
-  const clusterIslands = []
   const pb = progressBar(bboxFilteredClusters.length)
 
   for (let clusterIndex = 0; clusterIndex < bboxFilteredClusters.length; clusterIndex++) {
@@ -262,10 +261,10 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
 
     if (error) {
       numDidntFit++
-      finalTransformations[layouted_id] = {
-        error
-      }
-      continue
+      // finalTransformations[layouted_id] = {
+      //   error
+      // }
+      // continue
     }
 
 
@@ -277,28 +276,29 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
     island.properties.island_id = bestIslandCandidate.island_id
 
     islands.push(island)
-    clusterIslands.push(island)
+    bboxIslands.push(island)
+    numLayouted++
 
     finalTransformations[layouted_id] = {
       scoringScale: bestIslandCandidate.newScale,
       island_id: bestIslandCandidate.island_id,
       layoutScale: finalScale,
-      center: cluster.geometry.coordinates
+      center: cluster.geometry.coordinates,
+      error
     }
   }
 
-  console.log('Layouted ', clusterIslands.length, 'islands')
+  console.log('Layouted ', numLayouted, 'islands')
   // console.log('Had to fallback with ', numFallbacked, 'islands (couldnt find different enough neighbour)')
   console.log('Islands didnt fit:', numDidntFit)
 
-  const islandsLowDefPath = ISLANDS_LOWDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
-  const islandsMetaPath = ISLANDS_META.replace('.json', `_${chunkIndex}.json`)
-
-  fs.writeFileSync(islandsLowDefPath, JSON.stringify(turf.featureCollection(clusterIslands)))
+  const islandsMetaPath = ISLANDS_CANDIDATES_META.replace('.json', `_${chunkIndex}.json`)
   fs.writeFileSync(islandsMetaPath, JSON.stringify(finalTransformations))
-
-  console.log ('Wrote', islandsLowDefPath)
   console.log ('Wrote', islandsMetaPath)
+  const islandsLowdefPath = ISLANDS_LOWDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
+  fs.writeFileSync(islandsLowdefPath, JSON.stringify(turf.featureCollection(bboxIslands)))
+  console.log ('Wrote', islandsLowdefPath)
+  pb.stop()
 })
 
 console.log('All completed. Layouted ', islands.length, 'islands')
