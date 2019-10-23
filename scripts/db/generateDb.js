@@ -27,7 +27,8 @@ const TABLE_FIELDS = [
   { name: 'type', type: 'STRING' },
   { name: 'text', type: 'STRING' },
   { name: 'relatedness_signal_projected_query_popularity', type: 'STRING' },
-  { name: 'url', type: 'STRING' }
+  { name: 'cover_url', type: 'STRING' },
+  { name: 'public_id', type: 'STRING' }
 ]
 
 console.log('New database generation started')
@@ -54,9 +55,18 @@ const insertData = () => {
   const fields = TABLE_FIELDS.map(({ name }) => name).join(',')
   const values = TABLE_FIELDS.map(() => '? ').join(',')
   console.log('Starting csv parsing and columns insert')
+  let index = 0
   Papa.parse(file, {
     step: function(result) {
-      db.run(`INSERT INTO ${BOOKS_DB_TABLE} (${fields}) VALUES (${values})`, result.data)
+      if (index === 0) {
+        index ++
+        return
+      }
+      const cover_url = result.data[result.data.length - 1]
+      var regex = /.*id=(?<id>[a-zA-Z0-9_-]*).*/gi
+      var regexResults = regex.exec(cover_url)
+      let publicId = regexResults && regexResults[1]
+      db.run(`INSERT INTO ${BOOKS_DB_TABLE} (${fields}) VALUES (${values})`, result.data.concat(publicId))
     },
     complete: function() {
       console.log('Data import finished')
