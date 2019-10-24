@@ -39,10 +39,10 @@ module.exports = {
   HEIGHT_TILE_SIZE: 256,
   HEIGHT_EMPTY_TILE: 'scripts/tiles/height/blank.png',
   // TEST_BBOX: {
-  //   minX: -5,
-  //   minY: -5,
-  //   maxX: 0,
-  //   maxY: 5
+  //   minX: 20,
+  //   minY: -80,
+  //   maxX: 25,
+  //   maxY: -30
   // },
   TEST_BBOX: {
     minX: -180,
