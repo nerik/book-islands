@@ -4,6 +4,7 @@ const turf = require('@turf/turf')
 const progressBar = require('../util/progressBar')
 const transposeAndScale = require('../util/transposeAndScale')
 const pointWithinBBox = require('../util/pointWithinBBox')
+const getAuthorLayoutPriority = require('../util/getAuthorLayoutPriority')
 
 const {
   CLUSTERS, BASE_ISLANDS_LOWDEF_MRCT, BASE_ISLANDS_META,
@@ -54,10 +55,7 @@ const clustersFiltered = clusters.features
 
 // give them a layout priority (popularity + numbooks)
 clustersFiltered.forEach(cluster => {
-  const numBooksMult = 1 + (cluster.properties.books_count - 1) * .5
-  const popMult = 1 + cluster.properties.sum_popularity * .0001
-  const layoutPriorityScore = popMult * numBooksMult
-  cluster.properties.layoutPriorityScore = layoutPriorityScore
+  cluster.properties.layoutPriorityScore = getAuthorLayoutPriority(cluster.properties)
 })
 
 // Sort them by layout priority score so that first ones get lowest chance of being scaled down
