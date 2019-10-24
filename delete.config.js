@@ -23,5 +23,10 @@ module.exports = {
       script: `gsutil -m rm -r gs://${tilesBucket}/territories`,
       autorestart: false,
     },
+    {
+      name: 'delete-heights',
+      script: `gsutil -m rm -r gs://${tilesBucket}/height`,
+      autorestart: false,
+    },
   ],
 }
