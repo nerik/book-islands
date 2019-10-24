@@ -18,7 +18,7 @@
     "height": 38,
     "x": 356,
     "y": 0,
-    "pixelRatio": 2
+    "pixelRatio": 1
   },
   "city-medium": {
     "width": 28,
@@ -32,6 +32,13 @@
     "height": 20,
     "x": 422,
     "y": 0,
+    "pixelRatio": 2
+  },
+  "city-selected": {
+    "width": 155,
+    "height": 155,
+    "x": 256,
+    "y": 100,
     "pixelRatio": 2
   }
 }
