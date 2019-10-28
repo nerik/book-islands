@@ -1,6 +1,8 @@
 const d3 = require('d3')
 module.exports = {
-  BOOKS_DB: 'in/google-books/books_with_mid.db',
+  BOOKS_CSV: 'in/google-books/books.csv',
+  BOOKS_DB: 'in/google-books/books.db',
+  BOOKS_DB_TABLE: 'books',
   AUTHORS: 'out/db/authors.json',
   BOOKS_JSON: 'out/books',
   GEONAMES_DB: './out/baseIslands/geonames.db',
@@ -37,10 +39,10 @@ module.exports = {
   HEIGHT_TILE_SIZE: 256,
   HEIGHT_EMPTY_TILE: 'scripts/tiles/height/blank.png',
   // TEST_BBOX: {
-  //   minX: -5,
-  //   minY: -5,
-  //   maxX: 0,
-  //   maxY: 5
+  //   minX: 20,
+  //   minY: -80,
+  //   maxX: 25,
+  //   maxY: -30
   // },
   TEST_BBOX: {
     minX: -180,

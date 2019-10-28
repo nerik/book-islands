@@ -262,6 +262,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
 
     pb.increment()
   })
+  pb.stop()
 
 
   console.log('Found at least 1 candidate for', testFeatures.length, '/', bboxFilteredClusters.length , 'features')

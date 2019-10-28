@@ -104,7 +104,6 @@ const execChunk = () => {
     const islandMeta = islandsMeta[layoutedId]
     const clusterIslandId = islandMeta.island_id
 
-
     if (cluster.properties.is_cluster === true) {
       numClustersTried++
       const clusterChildren = clusters.features
@@ -166,10 +165,10 @@ const execChunk = () => {
             console.log(chunkIndex, BBOX_CHUNKS.length - 1)
             pool.terminate()
             pb.stop()
+            writeChunk()
             if (chunkIndex === BBOX_CHUNKS.length - 1) {
               done()
             } else {
-              writeChunk()
               chunkIndex++
               execChunk()
             }

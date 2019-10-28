@@ -12,7 +12,7 @@ const getTerritories = (cluster, clusterChildren, islandMrct, scale) => {
   // will then have to generate "borders"
   // TODO generate real weights
   const clusterWeights = clusterChildren.map(p => 1)
-  const NUM_TRIES = 10
+  const NUM_TRIES = 20
   for (let i = 0; i < NUM_TRIES; i++) {
     try {
       const {lines, polygons} = getClusterTerritories(clusterChildren, clusterWeights, island)

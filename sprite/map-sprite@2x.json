@@ -33,5 +33,12 @@
     "x": 422,
     "y": 0,
     "pixelRatio": 2
+  },
+  "city-selected": {
+    "width": 155,
+    "height": 155,
+    "x": 256,
+    "y": 100,
+    "pixelRatio": 2
   }
 }
