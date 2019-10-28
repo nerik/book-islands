@@ -1,6 +1,7 @@
 const d3 = require('d3')
 module.exports = {
-  BOOKS_CSV: 'in/google-books/books.csv',
+  // BOOKS_CSV: 'in/google-books/books.csv',
+  BOOKS_CSV: 'in/google-books/books_with_mid.csv',
   BOOKS_DB: 'in/google-books/books.db',
   BOOKS_DB_TABLE: 'books',
   AUTHORS: 'out/db/authors.json',
@@ -38,18 +39,18 @@ module.exports = {
   HEIGHT_TILES: 'tiles/height',
   HEIGHT_TILE_SIZE: 256,
   HEIGHT_EMPTY_TILE: 'scripts/tiles/height/blank.png',
-  // TEST_BBOX: {
-  //   minX: 20,
-  //   minY: -80,
-  //   maxX: 25,
-  //   maxY: -30
-  // },
   TEST_BBOX: {
-    minX: -180,
-    minY: -80,
-    maxX: 180,
-    maxY: 80
+    minX: -14,
+    minY: -52,
+    maxX: 0,
+    maxY: -42
   },
+  // TEST_BBOX: {
+  //   minX: -180,
+  //   minY: -80,
+  //   maxX: 180,
+  //   maxY: 80
+  // },
   BBOX_CHUNKS:[
     [-180, -80, -10, 0],
     [-10 , -80, 0  , 0],

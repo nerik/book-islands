@@ -15,7 +15,7 @@ const {
 const MIN_DISTANCE_SIMILAR_DEGREES = 3
 
 const baseIslandsMrct = JSON.parse(fs.readFileSync(BASE_ISLANDS_LOWDEF_MRCT, 'utf-8'))
-const clusters = JSON.parse(fs.readFileSync(CLUSTERS, 'utf-8'))
+const points = JSON.parse(fs.readFileSync(CLUSTERS, 'utf-8'))
 
 let baseIslandsMeta = {}
 BBOX_CHUNKS.forEach((bbox, chunkIndex) => {
@@ -31,11 +31,7 @@ BBOX_CHUNKS.forEach((bbox, chunkIndex) => {
   }
 })
 
-const clustersFiltered = clusters.features
-  // Remove clustered points (but keep clusters + standalone points)
-  // .filter(cluster => {
-  //   return cluster.properties.is_cluster || cluster.properties.cluster_id === undefined
-  // })
+const pointsFiltered = points.features
   // Get rid of whatever clusters did not get a score in the score step
   // This happens when running score on a subset
   .filter(cluster => {
@@ -54,12 +50,12 @@ const clustersFiltered = clusters.features
 
 
 // give them a layout priority (popularity + numbooks)
-clustersFiltered.forEach(cluster => {
+pointsFiltered.forEach(cluster => {
   cluster.properties.layoutPriorityScore = getAuthorLayoutPriority(cluster.properties)
 })
 
 // Sort them by layout priority score so that first ones get lowest chance of being scaled down
-const clustersByPop = clustersFiltered
+const pointsByPriority = pointsFiltered
   .sort((a, b) => b.properties.layoutPriorityScore - a.properties.layoutPriorityScore)
 
 
@@ -186,7 +182,7 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
 
   const maxNumIterations = Math.ceil(MAX_SCALE/STEP_INCREMENT) - 1
   let currentScale = MAX_SCALE
-  let n = 0
+  // let n = 0
 
   for (let i = 0; i < maxNumIterations; i++) {
     if(!clusterCenterMrct || !islandMrct) {
@@ -194,23 +190,20 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
     }
     const islandAtScaleMrct = transposeAndScale(clusterCenterMrct, islandMrct, currentScale)
     const islandAtScaleArea = turf.area(turf.toWgs84(islandAtScaleMrct))
-    n++
+    // n++
     if (islandAtScaleArea <= maxArea) {
       break
     }
     currentScale -= STEP_INCREMENT
   }
   // console.log(n)
-
-  // console.log(currentScale, islandMrct.properties.island_id)
-  // return scale and island id
   return {
     newScale: currentScale * OVERALL_SCALE_FACTOR,
     island_id: islandMrct.properties.island_id
   }
 }
 
-console.log('Will layout' , clustersByPop.length , 'clusters')
+console.log('Will layout' , pointsByPriority.length , 'clusters')
 
 const islands = []
 
@@ -219,7 +212,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   const bboxIslands = []
   console.log('Current chunk:', bboxChunk, chunkIndex)
 
-  const bboxFilteredClusters = clustersByPop
+  const bboxFilteredPoints = pointsByPriority
     .filter(cluster => {
       return (pointWithinBBox(cluster, bboxChunk))
     })
@@ -228,10 +221,10 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   // let numFallbacked = 0
   let numDidntFit = 0
   const finalTransformations = {}
-  const pb = progressBar(bboxFilteredClusters.length)
+  const pb = progressBar(bboxFilteredPoints.length)
 
-  for (let clusterIndex = 0; clusterIndex < bboxFilteredClusters.length; clusterIndex++) {
-    const cluster = bboxFilteredClusters[clusterIndex]
+  for (let clusterIndex = 0; clusterIndex < bboxFilteredPoints.length; clusterIndex++) {
+    const cluster = bboxFilteredPoints[clusterIndex]
 
     pb.increment()
 
