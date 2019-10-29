@@ -208,6 +208,9 @@ finalClusters = finalClusters.filter(cluster => {
   if (clusterChildren.length === 1) {
     delete clusterChildren[0].properties.cluster_id
     clusterChildren[0].properties.layouted_id = clusterChildren[0].properties.layouted_id.replace('clustered_', 'standalone_')
+    clusterChildren[0].properties.cluster_r = 100
+    clusterChildren[0].properties.cluster_g = 100
+    clusterChildren[0].properties.cluster_b = 100
     return false
   }
   return true
@@ -236,7 +239,8 @@ finalClusters = finalClusters.map(cluster => {
       cluster_point_count: clusterChildren.length,
       sum_popularity: _.sumBy(clusterChildren, a => a.properties.sum_popularity),
       avg_popularity: avg(clusterChildren.map(a => a.properties.sum_popularity)),
-      books_count: _.sumBy(clusterChildren, a => a.properties.books_count)
+      books_count: _.sumBy(clusterChildren, a => a.properties.books_count),
+      children: clusterChildren.map(p => p.properties.layouted_id)
     }
   }
 })

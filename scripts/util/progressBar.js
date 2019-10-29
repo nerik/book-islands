@@ -1,6 +1,6 @@
 const cliProgress = require('cli-progress')
 module.exports = (total) => {
-  return { start: () => {}, increment: () => {}, stop: () => {} }
+  // return { start: () => {}, increment: () => {}, stop: () => {} }
   const progressBar = new cliProgress.SingleBar({
     stopOnComplete: true,
     clearOnComplete: true,
