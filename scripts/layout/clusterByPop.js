@@ -67,48 +67,52 @@ const clusters = orderedFeatures.filter(f => f.properties.will_cluster === true)
 console.log(clusters.length, 'clusters in first pass')
 
 
-// Merge clusters that are touching, ie their center to center distance is less
-// than the sum of their radii. 
-// Start by collecting neighbors
-const allNeighborsIds = []
-let allMergedIds = []
-clusters.forEach(cluster => {
-  let neighborsIds
-  clusters.forEach(overlappingCluster => {
-    if (cluster.properties.id === overlappingCluster.properties.id) {
-      return
-    }
-    const d = turf.distance(cluster, overlappingCluster)
-    if (d < cluster.properties.radius + overlappingCluster.properties.radius) {
-      if (!neighborsIds) {
-        neighborsIds = [cluster.properties.id]
-      }
-      neighborsIds.push(overlappingCluster.properties.id)
-    }
-  })
-  if (neighborsIds) {
-    allNeighborsIds.push(neighborsIds)
-  } else {
-    allMergedIds.push([cluster.properties.id])
-  }
-})
+// // Merge clusters that are touching, ie their center to center distance is less
+// // than the sum of their radii. 
+// // Start by collecting neighbors
+// const allNeighborsIds = []
+// let allMergedIds = []
+// clusters.forEach(cluster => {
+//   let neighborsIds
+//   clusters.forEach(overlappingCluster => {
+//     if (cluster.properties.id === overlappingCluster.properties.id) {
+//       return
+//     }
+//     const d = turf.distance(cluster, overlappingCluster)
+//     if (d < cluster.properties.radius + overlappingCluster.properties.radius) {
+//       if (!neighborsIds) {
+//         neighborsIds = [cluster.properties.id]
+//       }
+//       neighborsIds.push(overlappingCluster.properties.id)
+//     }
+//   })
+//   if (neighborsIds) {
+//     allNeighborsIds.push(neighborsIds)
+//   } else {
+//     allMergedIds.push([cluster.properties.id])
+//   }
+// })
 
-// Merge neighbors into clusters
-allNeighborsIds.forEach(neighborsIds => {
-  for (let i = 0; i < allMergedIds.length; i++) {
-    const mergedIds = allMergedIds[i]
-    if (_.intersection(neighborsIds, mergedIds).length) {
-      allMergedIds[i] = _.uniq(allMergedIds[i].concat(neighborsIds))
-      return
-    }
-  }
-  allMergedIds.push(neighborsIds)
-})
+// // Merge neighbors into clusters
+// allNeighborsIds.forEach(neighborsIds => {
+//   for (let i = 0; i < allMergedIds.length; i++) {
+//     const mergedIds = allMergedIds[i]
+//     if (_.intersection(neighborsIds, mergedIds).length) {
+//       allMergedIds[i] = _.uniq(allMergedIds[i].concat(neighborsIds))
+//       return
+//     }
+//   }
+//   allMergedIds.push(neighborsIds)
+// })
 
-// Remove 1 point clusters
-allMergedIds = allMergedIds.filter(ids => {
-  return ids.length > 1
-})
+
+
+
+// Remove 1-point clusters
+// allMergedIds = allMergedIds.filter(ids => {
+//   return ids.length > 1
+// })
+let allMergedIds = clusters.map(c => [c.properties.id])
 
 
 // Prepare Final clusters
@@ -135,23 +139,43 @@ const finalStandalonePoints = orderedFeatures.map(point => {
   const properties = {
     is_cluster: false
   }
-  // check if point belongs to cluster (check with centers)
-  const parentCluster = finalClusters.find(cluster => {
-    return cluster.properties.centers.some(clusterCenter =>
-      turf.distance(clusterCenter, point) < clusterCenter.properties.radius
-    )
+  // check if point is within cluster centers radii (check with centers)
+  // const parentClusters = finalClusters.filter(cluster => {
+  //   return cluster.properties.centers.some(clusterCenter =>
+  //     turf.distance(clusterCenter, point) < clusterCenter.properties.radius
+  //   )
+  // })
+
+  const closestCluster = _.minBy(finalClusters, (cluster) => {
+    const closestClusterCenter = _.minBy(cluster.properties.centers, (clusterCenter) => {
+      const dist = turf.distance(clusterCenter, point)
+      const inCluster = dist < clusterCenter.properties.radius
+      // if (inCluster && point.properties.id === 'Leo Bretholz') {
+      //   console.log(dist)
+      //   console.log(cluster)
+      //   console.log(clusterCenter)
+      // }
+      return (inCluster) ? dist : null
+    })
+    return (closestClusterCenter) ? closestClusterCenter : null
   })
-  if (parentCluster === undefined) {
+  // console.log(point.properties.id)
+  // if(point.properties.id === 'Leo Bretholz') {
+  //   console.log(point)
+  //   console.log(closestCluster)
+  // }
+
+  if (closestCluster === undefined) {
     properties.layouted_id = `standalone_${point.properties.id}`
     properties.cluster_r = 100
     properties.cluster_g = 100
     properties.cluster_b = 100
   } else {
     properties.layouted_id = `clustered_${point.properties.id}`
-    properties.cluster_id = parentCluster.properties.layouted_id
-    properties.cluster_r = parentCluster.properties.cluster_r
-    properties.cluster_g = parentCluster.properties.cluster_g
-    properties.cluster_b = parentCluster.properties.cluster_b
+    properties.cluster_id = closestCluster.properties.layouted_id
+    properties.cluster_r = closestCluster.properties.cluster_r
+    properties.cluster_g = closestCluster.properties.cluster_g
+    properties.cluster_b = closestCluster.properties.cluster_b
     // console.log(properties, parentCluster)
   }
   return {
@@ -167,6 +191,30 @@ const finalStandalonePoints = orderedFeatures.map(point => {
 
 const clusteredPoints = finalStandalonePoints.filter(point => point.properties.cluster_id !== undefined)
 
+// Remove 1-point clusters
+console.log(finalClusters.length)
+finalClusters = finalClusters.filter(cluster => {
+  const clusterChildren = clusteredPoints
+    .filter(clusteredPoint => {
+      return clusteredPoint.properties.cluster_id === cluster.properties.layouted_id
+    })
+  if (clusterChildren.length === 0) {
+    return false
+  }
+  if (cluster.properties.layouted_id === 'cluster_Richard Russo') {
+    console.log(cluster)
+    console.log(clusterChildren)
+  }
+  if (clusterChildren.length === 1) {
+    delete clusterChildren[0].properties.cluster_id
+    clusterChildren[0].properties.layouted_id = clusterChildren[0].properties.layouted_id.replace('clustered_', 'standalone_')
+    return false
+  }
+  return true
+})
+console.log(finalClusters.length)
+
+
 // Compute cluster stats
 const cluster_point_counts = []
 finalClusters = finalClusters.map(cluster => {
@@ -174,8 +222,11 @@ finalClusters = finalClusters.map(cluster => {
     .filter(clusteredPoint => {
       return clusteredPoint.properties.cluster_id === cluster.properties.layouted_id
     })
+  if (clusterChildren.length === 1) {
 
-  // console.log(clusterChildren)
+    console.log(cluster)
+    console.log(clusterChildren)
+  }
   
   cluster_point_counts.push(clusterChildren.length)
   return {

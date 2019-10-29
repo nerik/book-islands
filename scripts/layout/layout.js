@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 const fs = require('fs')
 const turf = require('@turf/turf')
+const _ = require('lodash')
 const progressBar = require('../util/progressBar')
 const transposeAndScale = require('../util/transposeAndScale')
 const pointWithinBBox = require('../util/pointWithinBBox')
 const getAuthorLayoutPriority = require('../util/getAuthorLayoutPriority')
+const bboxRatio = require('../util/bboxRatio')
 
 const {
   CLUSTERS, BASE_ISLANDS_LOWDEF_MRCT, BASE_ISLANDS_META,
-  ISLANDS_CANDIDATES_META, ISLANDS_LOWDEF,
+  ISLANDS_CANDIDATES_META, ISLANDS_LOWDEF, LAYOUTED_CLUSTERS,
   TEST_BBOX, BBOX_CHUNKS
 } = require('../constants')
 
@@ -31,7 +33,7 @@ BBOX_CHUNKS.forEach((bbox, chunkIndex) => {
   }
 })
 
-const pointsFiltered = points.features
+const filteredPoints = points.features
   // Get rid of whatever clusters did not get a score in the score step
   // This happens when running score on a subset
   .filter(cluster => {
@@ -48,14 +50,18 @@ const pointsFiltered = points.features
     cluster.geometry.coordinates[1] < TEST_BBOX.maxY
   )
 
+// Filter out cluster leaves - must normally be deactivated as layout should generate both cluster
+// and cluster leaves as standalone islands in case territory generation fails 
+const islandPoints = filteredPoints
+  .filter(cluster => cluster.properties.is_cluster === true || cluster.properties.cluster_id === undefined)
 
 // give them a layout priority (popularity + numbooks)
-pointsFiltered.forEach(cluster => {
+islandPoints.forEach(cluster => {
   cluster.properties.layoutPriorityScore = getAuthorLayoutPriority(cluster.properties)
 })
 
 // Sort them by layout priority score so that first ones get lowest chance of being scaled down
-const pointsByPriority = pointsFiltered
+const islandPointsByPriority = islandPoints
   .sort((a, b) => b.properties.layoutPriorityScore - a.properties.layoutPriorityScore)
 
 
@@ -125,7 +131,7 @@ const getIslandAtFinalScale = (clusterCenterMrct, islandMrct, startScale, island
 
 const getClusterBestIsland = (cluster, islandsAroundIds) => {
   // Gather islands sorted by score for cluster (baseIslandsMeta)
-  const clusterId = cluster.properties.cluster_id.toString()
+  const clusterId = cluster.properties.layouted_id.toString()
   const islandCandidatesForCluster = baseIslandsMeta[clusterId]
 
   // Get island with best score and not already within radius
@@ -203,16 +209,17 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
   }
 }
 
-console.log('Will layout' , pointsByPriority.length , 'clusters')
+console.log('Will layout' , islandPointsByPriority.length , 'clusters')
 
 const islands = []
+const layoutedPoints = []
 
 BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   let numLayouted = 0
   const bboxIslands = []
   console.log('Current chunk:', bboxChunk, chunkIndex)
 
-  const bboxFilteredPoints = pointsByPriority
+  const bboxFilteredPoints = islandPointsByPriority
     .filter(cluster => {
       return (pointWithinBBox(cluster, bboxChunk))
     })
@@ -235,7 +242,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
     const islandsAroundIds = islandsAround.map(island => island.properties.island_id)
     const clusterCenterMrct = turf.toMercator(cluster)
 
-    const bestIslandCandidate = (cluster.properties.is_cluster)
+    const bestIslandCandidate = (cluster.properties.is_cluster === true)
       ? getClusterBestIsland(cluster, islandsAroundIds)
       : getStandalonePointBestIsland(cluster, islandsAroundIds, clusterCenterMrct)
 
@@ -258,11 +265,11 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       // continue
     }
 
-
     const island = turf.toWgs84(islandAtFinalScale)
     island.properties = {
       ...cluster.properties,
-      layouted_id
+      layouted_id,
+      r: bboxRatio(turf.bbox(island))
     }
     island.properties.island_id = bestIslandCandidate.island_id
 
@@ -277,6 +284,57 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       center: cluster.geometry.coordinates,
       error
     }
+
+    layoutedPoints.push(cluster)
+
+    if (cluster.properties.is_cluster === true) {
+      // get cluster children from non-island list
+      let clusterChildren = filteredPoints
+        .filter(clusteredPoint => {
+          return clusteredPoint.properties.cluster_id === cluster.properties.layouted_id
+        })
+
+      // If cluster, move cluster points back inside island when they are out of island due to downscaling
+      const closestPolygonPoints = []
+      const islandPoints = turf.coordAll(island).map(c => turf.point(c))
+      clusterChildren = clusterChildren.map(clusterChild => {
+        if (!turf.booleanPointInPolygon(clusterChild, island)) {
+          const closestPolygonPoint = _.minBy(islandPoints, polygonPoint => {
+            if (closestPolygonPoints.includes(polygonPoint)) {
+              return null
+            }
+            return turf.distance(polygonPoint, clusterChild)
+          })
+          // console.log(closestPolygonPoint)
+          closestPolygonPoints.push(closestPolygonPoint)
+          return {
+            ...closestPolygonPoint,
+            properties: {
+              ...clusterChild.properties
+            }
+          }
+        }
+        return clusterChild
+      })
+
+        
+      // TODO If cluster, generate fallback islands (generate islands but keep them out of the pool?)
+      clusterChildren.forEach(child => {
+        layoutedPoints.push(child)
+      })
+
+    }
+
+
+    // Loop through remaining standalone and clustered points (no clusters)
+    // If point within just created island:
+    //   If just created island is not a cluster, create it
+    //   Attach point to island cluster
+    //   If point belonged to another cluster 
+    //     Check if other cluster is not already layouted !!
+    //       Remove point from other cluster
+    //       If other cluster is left with only one 
+    //          Demote cluster to standalone pt
   }
 
   console.log('Layouted ', numLayouted, 'islands')
@@ -292,4 +350,8 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   pb.stop()
 })
 
+
 console.log('All completed. Layouted ', islands.length, 'islands')
+
+fs.writeFileSync(LAYOUTED_CLUSTERS, JSON.stringify(turf.featureCollection(layoutedPoints)))
+console.log ('Wrote', LAYOUTED_CLUSTERS)

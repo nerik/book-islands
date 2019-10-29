@@ -146,9 +146,9 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   const pb = progressBar(bboxFilteredClusters.length)
 
   bboxFilteredClusters.forEach(cluster => {
-    const clusterId = cluster.properties.cluster_id
+    const clusterId = cluster.properties.layouted_id
     const allClusterPoints = points
-      .filter(p => p.properties.cluster_id === cluster.properties.cluster_id)
+      .filter(p => p.properties.cluster_id === clusterId)
     
     const allClusterPointsMrct = allClusterPoints.map(p => turf.toMercator(p))
 
@@ -182,7 +182,6 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       }
 
       const islandAtScale = turf.toWgs84(islandAtScaleMrct)
-      const islandArea = turf.area(islandAtScale)
 
       const fitScore = (clusterCanHaveScore)
         ? getFitScoreFast(islandAtScale, clusterEnveloppeArea)
@@ -193,7 +192,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
         newScale,
         islandAtScale,
         fitScore,
-        // clusterCanHaveScore,º
+        // clusterCanHaveScore,
       }
     })
 

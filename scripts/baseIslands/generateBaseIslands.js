@@ -56,15 +56,19 @@ const cleanFeatures = islandsWithArea.filter(feature => {
 })
 console.log(cleanFeatures.length, ' features meet lat requirements out of ', islandsWithArea.length, '\n\n')
 
-const filteredFeatures = cleanFeatures.filter(feature => {
+let filteredFeatures = cleanFeatures.filter(feature => {
   if (feature.properties.area < MIN_AREA || feature.properties.area > MAX_AREA) {
     return false
   }
   return true
 })
+console.log(filteredFeatures.length, ' features meet size requirements out of ', cleanFeatures.length, '\n\n')
 
-
-console.log(filteredFeatures.length, ' features meet size rquirements out of ', cleanFeatures.length, '\n\n')
+filteredFeatures = filteredFeatures.filter(feature => {
+  const r = bboxRatio(turf.bbox(feature))
+  return r < 5 && r > 0.2
+})
+console.log(filteredFeatures.length, ' features meet ratio requirements out of ', cleanFeatures.length, '\n\n')
 
 const pb = progressBar(filteredFeatures.length)
 let selectedIslets = []
