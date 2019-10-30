@@ -1,58 +1,58 @@
 {
   "arts_and_entertainment": {
-    "scale": [0.5, 0.5],
-    "translate": [-120, 60]
+    "scale": [0.6, 0.7],
+    "translate": [90, 40]
   },
   "children_literature": {
-    "scale": [0.5, 0.5],
-    "translate": [-150, 30]
+    "scale": [0.6, 0.6],
+    "translate": [160, -77]
   },
   "classics": {
-    "scale": [0.5, 0.5],
-    "translate": [-140, 0]
+    "scale": [0.7, 0.4],
+    "translate": [10, -60]
   },
-  "education_combined": {
-    "scale": [0.1, 1],
-    "translate": [-120, -50]
+  "education": {
+    "scale": [0.3, 0.5],
+    "translate": [-135, 15]
   },
   "history": {
-    "scale": [0.5, 0.5],
-    "translate": [0, 60]
+    "scale": [0.7, 0.7],
+    "translate": [-80, -26]
   },
   "hobbies": {
-    "scale": [0.5, 0.5],
-    "translate": [0, 0]
+    "scale": [0.25, 0.25],
+    "translate": [-40, 60]
   },
   "law_and_government": {
-    "scale": [0.5, 0.5],
-    "translate": [0, -30]
+    "scale": [0.3, 0.4],
+    "translate": [-110, 50]
   },
   "news": {
-    "scale": [0.5, 0.5],
-    "translate": [0, -60]
+    "scale": [0.2, 0.2],
+    "translate": [-40, 50]
   },
   "novels": {
-    "scale": [0.5, 0.5],
-    "translate": [70, -60]
+    "scale": [1.2, 1],
+    "translate": [75, 2]
   },
   "people_and_society": {
-    "scale": [0.5, 0.5],
-    "translate": [130, -40]
+    "scale": [0.25, 0.25],
+    "translate": [0, 55]
   },
   "philosophy": {
     "scale": [0.5, 0.5],
-    "translate": [130, 0]
+    "translate": [-50, -20]
   },
   "poetry": {
-    "scale": [0.5, 0.5],
-    "translate": [130, 60]
+    "scale": [0.4, 1.1],
+    "translate": [134, 30]
   },
   "religion_and_belief": {
-    "scale": [0.5, 0.5],
-    "translate": [130, 30]
+    "scale": [0.9, 0.2],
+    "translate": [-80, -65]
   },
   "science": {
-    "scale": [0.5, 0.5],
-    "translate": [30, 30]
+    "scale": [0.8, 0.65],
+    "translate": [-5, 10]
   }
 }

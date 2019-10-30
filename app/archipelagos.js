@@ -1,8 +1,8 @@
 /* global d3 */
 
 var margin = {top: 10, right: 30, bottom: 30, left: 60},
-  width = 1400 - margin.left - margin.right,
-  height = 1200 - margin.top - margin.bottom
+  width = 1800 - margin.left - margin.right,
+  height = 900 - margin.top - margin.bottom
 
 const MIN_LNG = -180
 const MAX_LNG = 180
@@ -53,7 +53,7 @@ d3.json('../out/umap/umap_cat_stats.json').then(umapCats => {
         .attr('id', 'clusters')
         .attr('transform', `translate(${scaledTrans[0]}, ${scaledTrans[1]}) scale(${trans.scale[0]}, ${trans.scale[1]})`)
         .attr('transform-origin', `${width/2} ${height/2}`)
-      
+
       umapCatG.append('text')
         .text(`${umapCat.name} ${umapCat.count}`)
         .attr('x', width/2)
@@ -77,6 +77,6 @@ d3.json('../out/umap/umap_cat_stats.json').then(umapCats => {
         .style('fill-opacity', .6)
         .style('stroke-opacity', .6)
     })
-   
+
   })
 })
