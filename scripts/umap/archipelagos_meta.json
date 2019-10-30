@@ -1,58 +1,86 @@
 {
   "arts_and_entertainment": {
+    "file": "arts_and_entertainment",
     "scale": [0.6, 0.7],
-    "translate": [90, 40]
+    "translate": [90, 40],
+    "bounds": [15, 80, 160, 0]
   },
   "children_literature": {
+    "file": "children_literature",
     "scale": [0.6, 0.6],
-    "translate": [160, -77]
+    "translate": [160, -77],
+    "bounds": [100, -46, 179, -78]
   },
   "classics": {
+    "file": "classics",
     "scale": [0.7, 0.4],
-    "translate": [10, -60]
+    "translate": [10, -60],
+    "bounds": [-110, -45, 67, -80]
   },
   "education": {
+    "file": "education",
     "scale": [0.3, 0.5],
-    "translate": [-135, 15]
+    "translate": [-135, 15],
+    "bounds": [-177, 47, -105, -8]
   },
   "history": {
+    "file": "history",
     "scale": [0.7, 0.7],
-    "translate": [-80, -26]
+    "translate": [-80, -26],
+    "bounds": [-163, 25, -20, -76]
   },
   "hobbies": {
+    "file": "hobbies",
     "scale": [0.25, 0.25],
-    "translate": [-40, 60]
+    "translate": [-40, 60],
+    "bounds": [-83, 75, -7, 50]
   },
   "law_and_government": {
+    "file": "law_and_government",
     "scale": [0.3, 0.4],
-    "translate": [-110, 50]
+    "translate": [-110, 50],
+    "bounds": [-145, 75, -55, 33]
   },
   "news": {
+    "file": "news",
     "scale": [0.2, 0.2],
-    "translate": [-40, 50]
+    "translate": [-40, 50],
+    "bounds": [-64, 62, -11, 39]
   },
   "novels": {
+    "file": "novels",
     "scale": [1.2, 1],
-    "translate": [75, 2]
+    "translate": [75, 2],
+    "bounds": [-90, 53, 220, -77]
   },
   "people_and_society": {
+    "file": "people_and_society",
     "scale": [0.25, 0.25],
-    "translate": [0, 55]
+    "translate": [0, 55],
+    "bounds": [-35, 70, 22, 42]
   },
   "philosophy": {
+    "file": "philosophy",
     "scale": [0.5, 0.5],
-    "translate": [-50, -20]
+    "translate": [-50, -20],
+    "bounds": [-128, 6, 20, -44]
   },
   "poetry": {
+    "file": "poetry",
     "scale": [0.4, 1.1],
-    "translate": [134, 30]
+    "translate": [134, 30],
+    "bounds": [83, 78, 175, 3]
   },
   "religion_and_belief": {
+    "file": "religion_and_belief",
     "scale": [0.9, 0.2],
-    "translate": [-80, -65]
+    "translate": [-80, -65],
+    "bounds": [-240, -51, -8, -77]
   },
   "science": {
+    "file": "science",
     "scale": [0.8, 0.65],
-    "translate": [-5, 10]
+    "translate": [-5, 10],
+    "bounds": [-147, 63, 83, -30]
   }
 }

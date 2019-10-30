@@ -15,7 +15,6 @@ const { UMAP_CAT, UMAP_CAT_STATS } = require('../constants')
 
 const umapCatsPaths = fs.readdirSync(UMAP_CAT)
 
-
 const rdChan = () => Math.floor(Math.random() * 255)
 const rdCol = () => `rgb(${rdChan()},${rdChan()},${rdChan()})`
 

@@ -1,5 +1,6 @@
 /* global d3 */
 
+// var margin = {top: 10, right: 300, bottom: 30, left: 250},
 var margin = {top: 10, right: 30, bottom: 30, left: 60},
   width = 1800 - margin.left - margin.right,
   height = 900 - margin.top - margin.bottom
@@ -27,14 +28,14 @@ d3.json('../out/umap/umap_cat_stats.json').then(umapCats => {
 
     svg.append('g')
       .attr('transform', 'translate(0,' + height + ')')
-      .call(d3.axisBottom(x))
+      .call(d3.axisBottom(x).ticks(40))
 
     const y = d3.scaleLinear()
       .domain([MIN_LAT, MAX_LAT])
       .range([height, 0])
 
     svg.append('g')
-      .call(d3.axisLeft(y))
+      .call(d3.axisLeft(y).ticks(40))
 
     umapCats.forEach(umapCat => {
       console.log(umapCat.name)
