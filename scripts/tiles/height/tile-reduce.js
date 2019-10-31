@@ -1,11 +1,12 @@
 const tileReduce = require('@mapbox/tile-reduce')
 const path = require('path')
 const {
+  MAX_ZOOM_GENERATED,
   ISLANDS_TILES
 } = require('../../constants')
 
 tileReduce({
-  zoom: 13,
+  zoom: MAX_ZOOM_GENERATED,
   map: path.join(__dirname, '/getTileCoordinates.js'),
   sources: [
     {
