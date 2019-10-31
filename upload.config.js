@@ -16,22 +16,22 @@ module.exports = {
     },
     {
       name: 'upload-islands',
-      script: `gsutil -h "Cache-Control:public,max-age=${cacheAge}" -h "Content-Encoding:gzip" -m cp -r tiles/islands gs://${tilesBucket}`,
+      script: `gsutil -m mv -r gs://${tilesBucket}/islands gs://${tilesBucket}/islands2 && gsutil -h "Cache-Control:public,max-age=${cacheAge}" -h "Content-Encoding:gzip" -m cp -r tiles/islands gs://${tilesBucket}`,
       autorestart: false,
     },
     {
       name: 'upload-points',
-      script: `gsutil -h "Cache-Control:public,max-age=${cacheAge}" -h "Content-Encoding:gzip" -m cp -r tiles/points gs://${tilesBucket}`,
+      script: `gsutil -m mv -r gs://${tilesBucket}/points gs://${tilesBucket}/points2 && gsutil -h "Cache-Control:public,max-age=${cacheAge}" -h "Content-Encoding:gzip" -m cp -r tiles/points gs://${tilesBucket}`,
       autorestart: false,
     },
     {
       name: 'upload-territories',
-      script: `gsutil -h "Cache-Control:public,max-age=${cacheAge}" -h "Content-Encoding:gzip" -m cp -r tiles/territories gs://${tilesBucket}`,
+      script: `gsutil -m mv -r gs://${tilesBucket}/territories gs://${tilesBucket}/territories2 && gsutil -h "Cache-Control:public,max-age=${cacheAge}" -h "Content-Encoding:gzip" -m cp -r tiles/territories gs://${tilesBucket}`,
       autorestart: false,
     },
     {
       name: 'upload-heights',
-      script: `gsutil -h "Cache-Control:public,max-age=${cacheAge}" -m cp -r tiles/height gs://${tilesBucket}`,
+      script: `gsutil -m mv -r gs://${tilesBucket}/height gs://${tilesBucket}/height2 && gsutil -h "Cache-Control:public,max-age=${cacheAge}" -m cp -r tiles/height gs://${tilesBucket}`,
       autorestart: false,
     }
   ],
