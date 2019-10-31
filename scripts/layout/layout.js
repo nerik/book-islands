@@ -267,24 +267,25 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       // continue
     }
 
+    if (islandAtFinalScale) {
+      const island = turf.toWgs84(islandAtFinalScale)
+      island.properties = {
+        ...cluster.properties,
+        layouted_id
+      }
+      island.properties.island_id = bestIslandCandidate.island_id
 
-    const island = turf.toWgs84(islandAtFinalScale)
-    island.properties = {
-      ...cluster.properties,
-      layouted_id
-    }
-    island.properties.island_id = bestIslandCandidate.island_id
+      islands.push(island)
+      bboxIslands.push(island)
+      numLayouted++
 
-    islands.push(island)
-    bboxIslands.push(island)
-    numLayouted++
-
-    finalTransformations[layouted_id] = {
-      scoringScale: bestIslandCandidate.newScale,
-      island_id: bestIslandCandidate.island_id,
-      layoutScale: finalScale,
-      center: cluster.geometry.coordinates,
-      error
+      finalTransformations[layouted_id] = {
+        scoringScale: bestIslandCandidate.newScale,
+        island_id: bestIslandCandidate.island_id,
+        layoutScale: finalScale,
+        center: cluster.geometry.coordinates,
+        error
+      }
     }
   }
 
