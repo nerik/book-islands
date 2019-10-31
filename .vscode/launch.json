@@ -13,8 +13,8 @@
         {
           "type": "node",
           "request": "launch",
-          "name": "Layout inner",
-          "program": "${workspaceFolder}/scripts/layout/layoutInner.js"
+          "name": "Layout",
+          "program": "${workspaceFolder}/scripts/layout/layout.js"
         },
         {
           "type": "node",
