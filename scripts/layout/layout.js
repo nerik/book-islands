@@ -235,6 +235,10 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
 
     pb.increment()
 
+    if (cluster.properties.layouted_id === 'cluster_L. Frank Baum' || cluster.properties.layouted_id === 'cluster_Giovanni Boccaccio') {
+      console.log(cluster)
+    }
+
     if (cluster.skip === true) {
       continue
     }
@@ -347,20 +351,21 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       // no children of the current cluster
         .filter(point => point.properties.cluster_id !== cluster.properties.layouted_id)
         .forEach(point => {
+          if (point.properties.layouted_id === 'clustered_Dani Shapiro' && cluster.properties.layouted_id === 'cluster_L. Frank Baum') {
+            console.log(turf.booleanPointInPolygon(point, island))
+          }
           if (turf.booleanPointInPolygon(point, island)) {
-          // Point belongs to the currently picked island:
-          // - skip it for next iterations
-          // - attach to current cluster
-          // - detach from parent cluster if needed
-          // - if parent cluster ends up being empty (having no children), skip cluster for next
-          // - if parent cluster still viable, recalculate cluster center
-            if (point.properties.cluster_id === 'cluster_Jerry Spinelli') {
-              console.log('inside other:', cluster)
-            }
+            // Point belongs to the currently picked island:
+            // - skip it for next iterations
+            // - attach to current cluster
+            // - detach from parent cluster if needed
+            // - if parent cluster ends up being empty (having no children), skip cluster for next
+            // - if parent cluster still viable (has more than 1pt), recalculate cluster center
             // mark as skip so that this doesnt get layouted later (in a futur step of the for loop)
             point.skip = true
 
             // attach to current cluster
+            point.properties.cluster_id_old = point.properties.cluster_id
             point.properties.cluster_id = cluster.properties.layouted_id
             point.properties.cluster_r = cluster.properties.cluster_r
             point.properties.cluster_g = cluster.properties.cluster_g
@@ -391,8 +396,12 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
                   .filter(clusteredPoint => {
                     return clusteredPoint.properties.cluster_id === cluster.properties.layouted_id
                   })
-                const previousParentClusterNewCenter = turf.centerOfMass(turf.featureCollection(previousParentClusterChildren))
-                previousParentCluster.geometry = previousParentClusterNewCenter.geometry
+                if (previousParentClusterChildren.length > 1) {
+                  const previousParentClusterNewCenter = turf.centerOfMass(turf.featureCollection(previousParentClusterChildren))
+                  previousParentCluster.geometry = previousParentClusterNewCenter.geometry
+                } else {
+                  // console.log(point, previousParentCluster)
+                }
               }
             }
           }
