@@ -65,7 +65,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   const islands = JSON.parse(fs.readFileSync(islandsPath, 'utf-8')).features
   const territoriesPath = TERRITORY_POLYGONS.replace('.geo.json', `_${chunkIndex}.geo.json`)
   const territories = JSON.parse(fs.readFileSync(territoriesPath, 'utf-8')).features
-  
+
   console.log('Has', finalMetas.length, 'islands')
 
   finalMetas
@@ -76,12 +76,14 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       let polygons = []
       let authorsIds = []
       const island = islands.find(i => i.properties.layouted_id === layoutedId)
-      if (finalMeta.is_cluster === true) {
-        polygons = territories.filter(t => t.properties.cluster_layouted_id === layoutedId)
-        authorsIds = polygons.map(p => p.properties.author_id)
-      } else {
-        polygons = [island]
-        authorsIds = [island.properties.id]
+      if (island) {
+        if (finalMeta.is_cluster === true) {
+          polygons = territories.filter(t => t.properties.cluster_layouted_id === layoutedId)
+          authorsIds = polygons.map(p => p.properties.author_id)
+        } else {
+          polygons = [island]
+          authorsIds = [island.properties.id]
+        }
       }
 
       // console.log(polygons, authorsIds)

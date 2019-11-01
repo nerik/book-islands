@@ -18,6 +18,7 @@ const minY = _.minBy(umap.features, d => d.geometry.coordinates[1]).geometry.coo
 const maxY = _.maxBy(umap.features, d => d.geometry.coordinates[1]).geometry.coordinates[1]
 
 const bbox = [minX, minY, maxX, maxY]
+console.log('UMAP bbox', bbox)
 
 //  -------  Initial pass: generate very tight clusters (usually 2-3 points)
 const initialIndex = new Supercluster({
@@ -110,7 +111,7 @@ umap.features.forEach(feature => {
   featuresDict[feature.properties.id] = feature
 })
 
-metaClusters.forEach((cluster) => { 
+metaClusters.forEach((cluster) => {
   cluster.properties.cluster_leaves.forEach(leaf => {
     const id = leaf
     featuresDict[id].properties.is_cluster = false

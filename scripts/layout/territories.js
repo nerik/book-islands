@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const fs = require('fs')
 const turf = require('@turf/turf')
-const workerpool = require('workerpool')  
+const workerpool = require('workerpool')
 const progressBar = require('../util/progressBar')
 const pointWithinBBox = require('../util/pointWithinBBox')
 
@@ -48,7 +48,7 @@ const execChunk = () => {
 
   const islandsMetaPath = ISLANDS_CANDIDATES_META.replace('.json', `_${chunkIndex}.json`)
   const islandsMeta = JSON.parse(fs.readFileSync(islandsMetaPath, 'utf-8'))
-  
+
   console.log('For chunk:', bboxFilteredClusters.length)
 
 
@@ -66,14 +66,14 @@ const execChunk = () => {
     console.log(chunkIndex)
     console.log('Cluster success: ', numClustersSucceeded, '/', numClustersTried)
     console.log('Created ', territoriesPolygons.length, 'territories')
-  
+
     const territoryPolygonsPath = TERRITORY_POLYGONS.replace('.geo.json', `_${chunkIndex}.geo.json`)
     const territoryLinesPath = TERRITORY_LINES.replace('.geo.json', `_${chunkIndex}.geo.json`)
     fs.writeFileSync(territoryPolygonsPath, JSON.stringify(turf.featureCollection(territoriesPolygons)))
     fs.writeFileSync(territoryLinesPath, JSON.stringify(turf.featureCollection(territoriesLines)))
     console.log ('Wrote', territoryPolygonsPath)
     console.log ('Wrote', territoryLinesPath)
-  
+
     const finalMetaPath = ISLANDS_FINAL_META.replace('.json', `_${chunkIndex}.json`)
     fs.writeFileSync(finalMetaPath, JSON.stringify(finalMeta))
     console.log ('Wrote', finalMetaPath)
@@ -102,7 +102,11 @@ const execChunk = () => {
     const layoutedId = cluster.properties.layouted_id
     const clusterId = cluster.properties.cluster_id
     const islandMeta = islandsMeta[layoutedId]
-    const clusterIslandId = islandMeta.island_id
+    if (!islandMeta) {
+      console.log('island meta not found')
+      return
+    }
+    const clusterIslandId = islandMeta && islandMeta.island_id
 
     if (cluster.properties.is_cluster === true) {
       numClustersTried++
@@ -112,7 +116,7 @@ const execChunk = () => {
       const islandMrct = baseIslandsMrct.features.find(i => i.properties.island_id === clusterIslandId)
       pool.exec('getTerritories', [cluster, clusterChildren, islandMrct, islandMeta.layoutScale])
         .then((result) => {
-          // territories suceeded, add to polygon and lines arrays, 
+          // territories suceeded, add to polygon and lines arrays,
           // and in final meta as cluster
           if (result) {
             const {lines, polygons} = result

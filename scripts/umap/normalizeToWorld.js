@@ -1,42 +1,68 @@
 #!/usr/bin/env node
 
 const fs = require('fs')
+const path = require('path')
 const _ = require('lodash')
 const parse = require('csv-parse/lib/sync')
 const d3 = require('d3')
 const turf = require('@turf/turf')
-const { UMAP_GEO } = require('../constants')
+const { UMAP_CAT, UMAP_GEO, UMAP_CAT_META } = require('../constants')
 
-const UMAP = './in/umap/UMAP_with_author.csv'
+const umapsMeta = JSON.parse(fs.readFileSync(UMAP_CAT_META, 'utf-8'))
 
-const umap = parse(fs.readFileSync(UMAP, 'utf-8'), {columns: true })
-umap.forEach(r => {
-  r.x = parseFloat(r.x)
-  r.y = parseFloat(r.y)
-})
+const umapFeatures = Object.values(umapsMeta).flatMap(
+  ({ file, bounds }) => {
+    const umap = parse(
+      fs.readFileSync(path.join(UMAP_CAT, `${file}.csv`), 'utf-8')
+    )
+    const umapAuthors = parse(
+      fs.readFileSync(path.join(UMAP_CAT, `${file}_authors.csv`), 'utf-8')
+    )
 
-const MIN_LNG = -180
-const MAX_LNG = 180
-const MIN_LAT = -80
-const MAX_LAT = 80
+    const umapNormalized = umap.map((umapCoordinate, index) => {
+      const author = umapAuthors[index]
+      const [, x, y] = umapCoordinate
 
-const xMin = _.minBy(umap, r => r.x).x
-const xMax = _.maxBy(umap, r => r.x).x
-const yMin = _.minBy(umap, r => r.y).y
-const yMax = _.maxBy(umap, r => r.y).y
+      return {
+        x: parseFloat(x),
+        y: parseFloat(y),
+        author: author[1],
+        authorId: author[0]
+      }
+    })
 
-var lng = d3.scaleLinear().domain([xMin, xMax]).range([MIN_LNG, MAX_LNG])
-var lat = d3.scaleLinear().domain([yMin, yMax]).range([MIN_LAT, MAX_LAT])
+    const xMin = _.minBy(umapNormalized, 'x').x
+    const xMax = _.maxBy(umapNormalized, 'x').x
+    const yMin = _.minBy(umapNormalized, 'y').y
+    const yMax = _.maxBy(umapNormalized, 'y').y
+
+    const domainX = [xMin, xMax]
+    const rangeX = [bounds[0], bounds[2]]
+    const domainY = [yMin, yMax]
+    const rangeY = [bounds[1], bounds[3]]
+
+    const lng = d3.scaleLinear().domain(domainX).range(rangeX)
+    const lat = d3.scaleLinear().domain(domainY).range(rangeY)
+
+    const features = umapNormalized.map((record) => {
+      const point = turf.point([
+        lng(record.x),
+        lat(record.y)
+      ])
+      point.properties.id = record.author
+      point.properties.authorId = record.authorId
+      point.properties.category = file
+      return point
+    })
+
+    return features
+  }
+)
 
 const geoJSON = {
-  'type': 'FeatureCollection',
+  type: 'FeatureCollection',
+  features: umapFeatures
 }
-
-geoJSON.features = umap.map(record => {
-  const point = turf.point([lng(record.x), lat(record.y)])
-  point.properties.id = record.id
-  return point
-})
 
 fs.writeFileSync(UMAP_GEO, JSON.stringify(geoJSON))
 

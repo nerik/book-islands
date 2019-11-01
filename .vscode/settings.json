@@ -1,0 +1,5 @@
+{
+    "search.exclude": {
+        "**/app/lib": true
+    }
+}

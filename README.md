@@ -12,7 +12,8 @@ SCRIPTS
 ./scripts/baseIslands/generateBaseIslands.js
 ./scripts/layout/score.js
 ./scripts/layout/layout.js
-./scripts/layout/layoutInner.js
+./scripts/layout/territories.js
+./scripts/layout/points.js
 ./scripts/layout/collectHighDefIslands.js
 ./scripts/layout/createSearchDatabase.js
 
