@@ -67,6 +67,6 @@ module.exports = {
     .range([1,1,2,3,4]),
   TERRITORIES_RANK_SCALE: d3.scaleThreshold()
     .domain([0, 1, 200, 6000])
-    .range([1,1,2,3,4])
-
+    .range([1,1,2,3,4]),
+  USE_PROGRESS_BAR: false,
 }
