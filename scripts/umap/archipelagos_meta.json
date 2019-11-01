@@ -12,7 +12,7 @@
     "translate": [-140, 0]
   },
   "education_combined": {
-    "scale": [0.1, 1],
+    "scale": [1, 1],
     "translate": [-120, -50]
   },
   "history": {

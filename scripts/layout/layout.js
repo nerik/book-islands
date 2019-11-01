@@ -299,7 +299,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
           return clusteredPoint.properties.cluster_id === cluster.properties.layouted_id
         })
 
-      // If cluster, move cluster points back inside island when they are out of island due to downscaling
+      // If cluster, move cluster points back inside island if they are out of island due to downscaling
       const closestPolygonPoints = []
       const islandPoints = turf.coordAll(island).map(c => turf.point(c))
       clusterChildren = clusterChildren.map(clusterChild => {
@@ -330,7 +330,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
 
     }
 
-
+    if (cluster.properties.is_cluster === true) {
     // Loop through remaining standalone and clustered points (no clusters)
     // 
     // If point within just created island:
@@ -341,57 +341,63 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
     //       Remove point from other cluster
     //       If other cluster is left with only one 
     //          Demote cluster to standalone pt
-    filteredPoints
-    // no clusters
-      .filter(point => point.properties.is_cluster !== true)
-    // no children of the current cluster
-      .filter(point => point.properties.cluster_id !== cluster.properties.layouted_id)
-      .forEach(point => {
-        if (turf.booleanPointInPolygon(point, island)) {
-          if (point.properties.cluster_id === 'cluster_Jerry Spinelli') {
-            console.log('inside other:', cluster)
-          }
-          // mark as skip so that this doesnt get layouted later
-          point.skip = true
+      filteredPoints
+      // no clusters
+        .filter(point => point.properties.is_cluster !== true)
+      // no children of the current cluster
+        .filter(point => point.properties.cluster_id !== cluster.properties.layouted_id)
+        .forEach(point => {
+          if (turf.booleanPointInPolygon(point, island)) {
+          // Point belongs to the currently picked island:
+          // - skip it for next iterations
+          // - attach to current cluster
+          // - detach from parent cluster if needed
+          // - if parent cluster ends up being empty (having no children), skip cluster for next
+          // - if parent cluster still viable, recalculate cluster center
+            if (point.properties.cluster_id === 'cluster_Jerry Spinelli') {
+              console.log('inside other:', cluster)
+            }
+            // mark as skip so that this doesnt get layouted later (in a futur step of the for loop)
+            point.skip = true
 
-          const previousParentClusterId = point.properties.cluster_id
-          const pointLayoutedId = point.properties.layouted_id
-          if (previousParentClusterId !== undefined) {
-            const previousParentCluster = filteredPoints
-              .find(pt => pt.properties.layouted_id === previousParentClusterId)
+            // attach to current cluster
+            point.properties.cluster_id = cluster.properties.layouted_id
+            point.properties.cluster_r = cluster.properties.cluster_r
+            point.properties.cluster_g = cluster.properties.cluster_g
+            point.properties.cluster_b = cluster.properties.cluster_b
+            if (!layoutedPoints.includes(point)) {
+              layoutedPoints.push(point)
+            }
+
+
+            const previousParentClusterId = point.properties.cluster_id
+            const pointLayoutedId = point.properties.layouted_id
+            if (previousParentClusterId !== undefined) {
+              const previousParentCluster = filteredPoints
+                .find(pt => pt.properties.layouted_id === previousParentClusterId)
             
-            // remove point from previous parent cluster
-            const childIndex = previousParentCluster.properties.children.findIndex(id => id === pointLayoutedId)
-            previousParentCluster.properties.children.splice(childIndex, 1)
-            previousParentCluster.properties.cluster_point_count = previousParentCluster.properties.children.length
+              // remove point from previous parent cluster
+              const childIndex = previousParentCluster.properties.children.findIndex(id => id === pointLayoutedId)
+              previousParentCluster.properties.children.splice(childIndex, 1)
+              previousParentCluster.properties.cluster_point_count = previousParentCluster.properties.children.length
 
-            // if cluster is now empty, mark as skip
-            if (previousParentCluster.properties.cluster_point_count === 0) {
-              previousParentCluster.skip = true
-            } else {
+              // if cluster is now empty, mark as skip
+              if (previousParentCluster.properties.cluster_point_count <= 1) {
+                previousParentCluster.skip = true
+              } else {
               // recalculate cluster center
-              let previousParentClusterChildren = filteredPoints
-                .filter(clusteredPoint => clusteredPoint.skip !== true)
-                .filter(clusteredPoint => {
-                  return clusteredPoint.properties.cluster_id === cluster.properties.layouted_id
-                })
-              const previousParentClusterNewCenter = turf.centerOfMass(turf.featureCollection(previousParentClusterChildren))
-              previousParentCluster.geometry = previousParentClusterNewCenter.geometry
+                let previousParentClusterChildren = filteredPoints
+                  .filter(clusteredPoint => clusteredPoint.skip !== true)
+                  .filter(clusteredPoint => {
+                    return clusteredPoint.properties.cluster_id === cluster.properties.layouted_id
+                  })
+                const previousParentClusterNewCenter = turf.centerOfMass(turf.featureCollection(previousParentClusterChildren))
+                previousParentCluster.geometry = previousParentClusterNewCenter.geometry
+              }
             }
           }
-
-          point.properties.cluster_id = cluster.properties.layouted_id
-          point.properties.cluster_r = cluster.properties.cluster_r
-          point.properties.cluster_g = cluster.properties.cluster_g
-          point.properties.cluster_b = cluster.properties.cluster_b
-          if (!layoutedPoints.includes(point)) {
-            layoutedPoints.push(point)
-          }
-
-
-        }
-      })
-    
+        })
+    }
   }
 
   console.log('Layouted ', numLayouted, 'islands')
