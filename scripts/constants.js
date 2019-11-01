@@ -69,5 +69,5 @@ module.exports = {
     .domain([0, 1, 200, 6000])
     .range([1,1,2,3,4]),
   STORAGE_BUCKET_DATA: 'cilex-books-map-data',
-  STORAGE_BUCKET_TILES: 'cilex-books-map-TILES',
+  STORAGE_BUCKET_TILES: 'cilex-books-map-tiles',
 }
