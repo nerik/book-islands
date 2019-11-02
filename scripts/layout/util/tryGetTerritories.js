@@ -3,15 +3,16 @@ const getClusterTerritories = require('./getClusterTerritories')
 const tryGetTerritories = (cluster, clusterChildren, island, clusterWeights) => {
   console.log('Trying with', cluster.properties.layouted_id, cluster.properties.cluster_point_count)
 
-  const NUM_TRIES = 1
+  // if (cluster.properties.layouted_id !== 'cluster_Dan Brown') return
+
+  const NUM_TRIES = 5
   for (let i = 0; i < NUM_TRIES; i++) {
     try {
-      const {lines, polygons} = getClusterTerritories(clusterChildren, clusterWeights, island)
+      const {lines, polygons} = getClusterTerritories(clusterChildren, clusterWeights, island, cluster.properties.layouted_id)
       console.log('Success!')
       return {lines, polygons}
     } catch (e) {
-      console.log(e.message)
-      console.log('failed')
+      console.log('failed: ', e.message)
     }
   }
 }

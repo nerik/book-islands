@@ -101,7 +101,6 @@ const execBBoxChunk = () => {
     pb.increment()
 
     const layoutedId = point.properties.layouted_id
-    const clusterId = point.properties.cluster_id
     const islandMeta = islandsMeta[layoutedId]
     const island_id = islandMeta.island_id
 
@@ -109,7 +108,7 @@ const execBBoxChunk = () => {
       const cluster = point
       numClustersTried++
       const clusterChildren = points.features
-        .filter(f => f.properties.is_cluster === false && f.properties.cluster_id === clusterId)
+        .filter(f => f.properties.is_cluster === false && f.properties.cluster_id === layoutedId)
 
       const scale = islandMeta.layoutScale
       const islandMrct = baseIslandsMrct.features.find(i => i.properties.island_id === island_id)
@@ -117,16 +116,17 @@ const execBBoxChunk = () => {
       const islandMrctTransposed = transposeAndScale(clusterCenterMrct, islandMrct, scale)
       const island = turf.toWgs84(islandMrctTransposed)
       // TODO for now just generate "dirty" territories ovelapping islands
-      // will then have to generate "borders"
+      // will then have to generate "lines"
       // TODO generate real weights
       const clusterWeights = clusterChildren.map(p => 1)
-      const tryGetTerritoriesPromise = (USE_WORKERS) ?
-        pool.exec('tryGetTerritories', [cluster, clusterChildren, island, clusterWeights]) :
-        new Promise((resolve) => {
-          resolve(tryGetTerritories(cluster, clusterChildren, island, clusterWeights))
-        })
-        
-      tryGetTerritoriesPromise.then((result) => {
+      let resultPromise
+      let syncResult
+      if (USE_WORKERS !== true) {
+        syncResult = tryGetTerritories(cluster, clusterChildren, island, clusterWeights)
+      } else {
+        resultPromise = pool.exec('tryGetTerritories', [cluster, clusterChildren, island, clusterWeights])
+      }
+      (resultPromise || new Promise(resolve => { resolve(syncResult) })).then((result) => {
         // territories suceeded, add to polygon and lines arrays,
         // and in final meta as cluster
         if (result) {

@@ -380,8 +380,6 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
               previousParentCluster.properties.children.splice(childIndex, 1)
               previousParentCluster.properties.cluster_point_count = previousParentCluster.properties.children.length
 
-
-
               // if cluster is now empty, mark as skip
               if (previousParentCluster.properties.cluster_point_count <= 1) {
                 previousParentCluster.skip = true
