@@ -41,7 +41,7 @@ module.exports = {
   HEIGHT_TILE_SIZE: 256,
   HEIGHT_EMPTY_TILE: 'scripts/tiles/height/blank.png',
   TEST_BBOX: {
-    minX: -14,
+    minX: -10,
     minY: -52,
     maxX: 0,
     maxY: -42
@@ -68,5 +68,5 @@ module.exports = {
   TERRITORIES_RANK_SCALE: d3.scaleThreshold()
     .domain([0, 1, 200, 6000])
     .range([1,1,2,3,4]),
-  USE_PROGRESS_BAR: true,
+  USE_PROGRESS_BAR: false,
 }
