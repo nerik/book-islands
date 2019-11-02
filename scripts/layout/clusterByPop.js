@@ -53,8 +53,8 @@ const orderedFeatures = features.map(feature => {
         properties: {
           ...feature.properties,
           will_cluster: true,
-          radius
-        }
+        },
+        radius
       }
     }
     return feature
@@ -80,11 +80,11 @@ let finalClusters = clusters.map(cluster => {
     properties: {
       is_cluster: true,
       layouted_id: `cluster_${cluster.properties.id}`,
-      radius: cluster.properties.radius,
       cluster_r,
       cluster_g,
       cluster_b,
-    }
+    },
+    radius: cluster.radius
   }
   return feature
 })
@@ -97,7 +97,7 @@ const finalStandalonePoints = orderedFeatures.map(point => {
   }
   const closestCluster = _.minBy(finalClusters, (cluster) => {
     const dist = turf.distance(cluster, point)
-    const inCluster = dist < cluster.properties.radius
+    const inCluster = dist < cluster.radius
     return (inCluster) ? dist : null
   })
 
@@ -220,6 +220,7 @@ mergedClusters = mergedClusters.map(cluster => {
 mergedClusters.forEach(cluster => {
   delete cluster.children
   delete cluster.envelope
+  delete cluster.radius
 })
 console.log(mergedClusters[0])
 

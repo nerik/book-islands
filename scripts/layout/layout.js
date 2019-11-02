@@ -21,9 +21,6 @@ const points = JSON.parse(fs.readFileSync(CLUSTERS, 'utf-8'))
 
 let baseIslandsMeta = {}
 BBOX_CHUNKS.forEach((bbox, chunkIndex) => {
-  // if (chunkIndex >= 2) {
-  //   return
-  // }
   console.log('Adding meta for bbox', bbox)
   const path = BASE_ISLANDS_META.replace('.json', `_${chunkIndex}.json`)
   const bboxMeta = JSON.parse(fs.readFileSync(path, 'utf-8'))
@@ -84,6 +81,7 @@ const cheapOverlap = (bbox1, bbox2) => {
   return true
 }
 
+// Check if an island overlaps with surrounding islands
 const overlapsWithIslandsAround = (islandAtScaleMrct, islandsAround) => {
   const islandAtScale = turf.toWgs84(islandAtScaleMrct)
   const islandAtScaleBBox = turf.bbox(islandAtScale)
@@ -99,36 +97,39 @@ const overlapsWithIslandsAround = (islandAtScaleMrct, islandsAround) => {
   return false
 }
 
+// Decreases an island scale until it doesn't overlap with surrounding islands
 const getIslandAtFinalScale = (clusterCenterMrct, islandMrct, startScale, islandsAround) => {
   let currentScale = startScale
   let islandAtScaleMrct
 
-  const STEP_INCREMENT = .05
-  const maxNumIterations = Math.ceil(startScale/STEP_INCREMENT)
+  // How much should we decrease scale when trying again
+  const STEP_DECREMENT = .05
+  
+  // Multiplicator applied when it finally fits. Avoid big cluster islands being too close to everything
+  const FINAL_SCALE_MULT = .8
+  const maxNumIterations = Math.ceil(startScale/STEP_DECREMENT)
 
   for (let i = 0; i < maxNumIterations; i++) {
     islandAtScaleMrct = transposeAndScale(clusterCenterMrct, islandMrct, currentScale)
-    // TODO do not send again islandsAround already marked as not overlapping?
     const overlaps = overlapsWithIslandsAround(islandAtScaleMrct, islandsAround)
-    // scaling down and it now doesnt fit anymore: use prev
     if (!overlaps) {
+      const finalScale = currentScale * FINAL_SCALE_MULT
       return {
-        finalScale: currentScale,
-        islandAtFinalScale: islandAtScaleMrct
+        finalScale,
+        islandAtFinalScale: transposeAndScale(clusterCenterMrct, islandMrct, finalScale)
       }
     }
-    currentScale -= STEP_INCREMENT
+    currentScale -= STEP_DECREMENT
   }
   return {
     error: 'cantFit',
-    finalScale: currentScale + STEP_INCREMENT,
+    finalScale: currentScale + STEP_DECREMENT,
     islandAtFinalScale: islandAtScaleMrct
   }
 }
 
 
-
-
+// Get best island for a cluster, picking island with best score that is not around
 const getClusterBestIsland = (cluster, islandsAroundIds) => {
   // Gather islands sorted by score for cluster (baseIslandsMeta)
   const clusterId = cluster.properties.layouted_id.toString()
@@ -148,7 +149,8 @@ const getClusterBestIsland = (cluster, islandsAroundIds) => {
 }
 
 
-// standalone points should pick a random island, then scale it until its area matches layout priority score
+// Get best island for a single standalone point
+// Standalone points should pick a random island, then scale it until its area matches layout priority score
 const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMrct) => {
   // pick random island that is not around
   const islandsNotAround = baseIslandsMrct.features.filter(
@@ -172,12 +174,12 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
   const layoutPriorityScore = cluster.properties.layoutPriorityScore
 
   // how much scale must be decreased at each iteration to try to fit with target area
-  const STEP_INCREMENT = .01
+  const STEP_DECREMENT = .01
 
   // at which scale should we start with (tends to decrease size of big islands)
   const MAX_SCALE = .2
 
-  // how to map priority score (composite of nym books and popularity) to target max area
+  // how to map priority score (composite of num books and popularity) to target max area
   // smaller means more risk of running out of iterations and picking lowest possible scale
   // for small islands
   const MAP_PRIORITY_SCORE_WITH_AREA = 10000000
@@ -186,7 +188,7 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
   // scale down everything by this factor
   const OVERALL_SCALE_FACTOR = .5
 
-  const maxNumIterations = Math.ceil(MAX_SCALE/STEP_INCREMENT) - 1
+  const maxNumIterations = Math.ceil(MAX_SCALE/STEP_DECREMENT) - 1
   let currentScale = MAX_SCALE
   // let n = 0
 
@@ -200,7 +202,7 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
     if (islandAtScaleArea <= maxArea) {
       break
     }
-    currentScale -= STEP_INCREMENT
+    currentScale -= STEP_DECREMENT
   }
   // console.log(n)
   return {
@@ -224,8 +226,6 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       return (pointWithinBBox(cluster, bboxChunk))
     })
 
-
-  // let numFallbacked = 0
   let numDidntFit = 0
   const finalTransformations = {}
   const pb = progressBar(bboxFilteredPoints.length)
@@ -235,10 +235,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
 
     pb.increment()
 
-    if (cluster.properties.layouted_id === 'cluster_L. Frank Baum' || cluster.properties.layouted_id === 'cluster_Giovanni Boccaccio') {
-      console.log(cluster)
-    }
-
+    // Might have been skipped previously if attached to another cluster
     if (cluster.skip === true) {
       continue
     }
@@ -326,7 +323,6 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
         return clusterChild
       })
 
-        
       // TODO If cluster, generate fallback islands (generate islands but keep them out of the pool?)
       clusterChildren.forEach(child => {
         layoutedPoints.push(child)
@@ -351,9 +347,6 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       // no children of the current cluster
         .filter(point => point.properties.cluster_id !== cluster.properties.layouted_id)
         .forEach(point => {
-          if (point.properties.layouted_id === 'clustered_Dani Shapiro' && cluster.properties.layouted_id === 'cluster_L. Frank Baum') {
-            console.log(turf.booleanPointInPolygon(point, island))
-          }
           if (turf.booleanPointInPolygon(point, island)) {
             // Point belongs to the currently picked island:
             // - skip it for next iterations
@@ -375,8 +368,9 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
             }
 
 
-            const previousParentClusterId = point.properties.cluster_id
+            const previousParentClusterId = point.properties.cluster_id_old
             const pointLayoutedId = point.properties.layouted_id
+
             if (previousParentClusterId !== undefined) {
               const previousParentCluster = filteredPoints
                 .find(pt => pt.properties.layouted_id === previousParentClusterId)
@@ -386,21 +380,26 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
               previousParentCluster.properties.children.splice(childIndex, 1)
               previousParentCluster.properties.cluster_point_count = previousParentCluster.properties.children.length
 
+
+
               // if cluster is now empty, mark as skip
               if (previousParentCluster.properties.cluster_point_count <= 1) {
                 previousParentCluster.skip = true
               } else {
               // recalculate cluster center
                 let previousParentClusterChildren = filteredPoints
-                  .filter(clusteredPoint => clusteredPoint.skip !== true)
+                  // .filter(clusteredPoint => clusteredPoint.skip !== true)
                   .filter(clusteredPoint => {
-                    return clusteredPoint.properties.cluster_id === cluster.properties.layouted_id
+                    return clusteredPoint.properties.cluster_id === previousParentClusterId
                   })
+
                 if (previousParentClusterChildren.length > 1) {
+                  
                   const previousParentClusterNewCenter = turf.centerOfMass(turf.featureCollection(previousParentClusterChildren))
                   previousParentCluster.geometry = previousParentClusterNewCenter.geometry
                 } else {
-                  // console.log(point, previousParentCluster)
+                  // REMOVE CLUSTER!!!!!!!
+                  previousParentCluster.skip = true
                 }
               }
             }

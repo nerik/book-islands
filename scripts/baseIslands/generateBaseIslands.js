@@ -45,7 +45,7 @@ const islandsWithArea = islands.features.map(feature => {
   }
 })
 
-// avoids distorsions in elevation tiles
+// Chop at high latitudes - avoids distorsions in elevation tiles
 const cleanFeatures = islandsWithArea.filter(feature => {
   const somePoint = feature.geometry.coordinates[0][0]
   const somePointLat = somePoint[1]
@@ -56,6 +56,7 @@ const cleanFeatures = islandsWithArea.filter(feature => {
 })
 console.log(cleanFeatures.length, ' features meet lat requirements out of ', islandsWithArea.length, '\n\n')
 
+// FIlter by min and max area
 let filteredFeatures = cleanFeatures.filter(feature => {
   if (feature.properties.area < MIN_AREA || feature.properties.area > MAX_AREA) {
     return false
@@ -64,12 +65,17 @@ let filteredFeatures = cleanFeatures.filter(feature => {
 })
 console.log(filteredFeatures.length, ' features meet size requirements out of ', cleanFeatures.length, '\n\n')
 
+// Filter by width - height ratio, to avoird very long islands
+// TODO this actually doesn't work at all, because a very long island can be "rotated" at 45º
+// For this to work we'd need to calculate the ratio of a rotated bounding box
 filteredFeatures = filteredFeatures.filter(feature => {
   const r = bboxRatio(turf.bbox(feature))
   return r < 5 && r > 0.2
 })
 console.log(filteredFeatures.length, ' features meet ratio requirements out of ', cleanFeatures.length, '\n\n')
 
+
+// Collect islets
 const pb = progressBar(filteredFeatures.length)
 let selectedIslets = []
 
@@ -87,11 +93,14 @@ const getProps = (feature) => {
   }
 }
 
+const MAX_ISLET_MAIN_ISLAND_COAST_DISTANCE = 1
 const closeToCoast = (mainIsland, islet) => {
+  // Cheaply asses if islet is close to island coast
+  // Take a random islet point and check distance with all island points
   const isletRdPoint = islet.geometry.coordinates[0][0]
   return mainIsland.geometry.coordinates[0].some(pt => {
     const dist = turf.distance(isletRdPoint, pt)
-    return dist < 1
+    return dist < MAX_ISLET_MAIN_ISLAND_COAST_DISTANCE
   })
 }
 

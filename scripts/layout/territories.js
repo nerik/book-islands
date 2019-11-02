@@ -8,12 +8,12 @@ const pointWithinBBox = require('../util/pointWithinBBox')
 
 
 const {
-  CLUSTERS, ISLANDS_CANDIDATES_META, BASE_ISLANDS_LOWDEF_MRCT,
+  LAYOUTED_CLUSTERS, ISLANDS_CANDIDATES_META, BASE_ISLANDS_LOWDEF_MRCT,
   TERRITORY_LINES, TERRITORY_POLYGONS, ISLANDS_FINAL_META,
   TEST_BBOX, BBOX_CHUNKS
 } = require('../constants')
 
-const clusters = JSON.parse(fs.readFileSync(CLUSTERS, 'utf-8'))
+const clusters = JSON.parse(fs.readFileSync(LAYOUTED_CLUSTERS, 'utf-8'))
 const baseIslandsMrct = JSON.parse(fs.readFileSync(BASE_ISLANDS_LOWDEF_MRCT, 'utf-8'))
 
 const filteredClusters = clusters.features
