@@ -119,6 +119,7 @@ const execBBoxChunk = () => {
       // will then have to generate "lines"
       const clusterWeights = clusterChildren.map(c => 1 + 0.5 * Math.sqrt(c.properties.layoutPriorityScore))
       console.log(clusterWeights)
+      console.log( clusterChildren.map(c => c.properties.author_id))
       let resultPromise
       let syncResult
       if (USE_WORKERS !== true) {
@@ -135,7 +136,7 @@ const execBBoxChunk = () => {
           polygons.forEach((territory, i) => {
             territory.properties = {
               cluster_layouted_id: layoutedId,
-              author_id: clusterChildren[i].properties.id,
+              author_id: clusterChildren[i].properties.author_id,
               // cluster_r: clusterPoints[i].properties.cluster_r,
               // cluster_g: clusterPoints[i].properties.cluster_g,
               // cluster_b: clusterPoints[i].properties.cluster_b,
@@ -205,6 +206,7 @@ const execBBoxChunk = () => {
         scale: islandMeta.layoutScale,
         error: islandMeta.error,
         center: point.geometry.coordinates,
+        author_id: point.properties.author_id
       })
       numFeatures++
     }

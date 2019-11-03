@@ -79,9 +79,9 @@ let finalClusters = clusters.map(cluster => {
   const feature = {
     ...cluster,
     properties: {
-      author_id: cluster.id,
+      author_id: cluster.properties.id,
       // TODO !!!! AUTHOR NAME + ID
-      author_name: cluster.author_name,
+      author_name: cluster.properties.author_name,
       is_cluster: true,
       layouted_id: `cluster_${cluster.properties.id}`,
       cluster_r,
@@ -193,9 +193,6 @@ finalClusters.forEach(cluster => {
       clusterChild.properties.cluster_r = biggerCluster.properties.cluster_r
       clusterChild.properties.cluster_g = biggerCluster.properties.cluster_g
       clusterChild.properties.cluster_b = biggerCluster.properties.cluster_b
-
-      // TODO REMOVE
-      clusterChild.properties.old_cluster = cluster.properties.layouted_id
     })
     biggerCluster.children = biggerCluster.children.concat(cluster.children)
     return
@@ -231,6 +228,8 @@ mergedClusters.forEach(cluster => {
   delete cluster.radius
 })
 
+
+
 // console.log(finalStandalonePoints.find(p => p.properties.author_id === 'Kingsley Amis'))
 // console.log(mergedClusters[0])
 // console.log(finalStandalonePoints.find(p => p.properties.cluster_id === mergedClusters[0].properties.layouted_id))
@@ -238,6 +237,7 @@ mergedClusters.forEach(cluster => {
 console.log('Average cluster # children: ', avg(cluster_point_counts))
 
 const all = finalStandalonePoints.concat(mergedClusters)
+console.log(all.filter(p => !p.properties.author_id))
 
 fs.writeFileSync(CLUSTERS, JSON.stringify(turf.featureCollection(all)))
 console.log('Wrote ', CLUSTERS)

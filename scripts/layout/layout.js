@@ -15,6 +15,7 @@ const {
   TEST_BBOX, BBOX_CHUNKS
 } = require('../constants')
 
+// Minimum radius in degrees to consider an identical island shouldnt be too close with
 const MIN_DISTANCE_SIMILAR_DEGREES = 3
 
 const baseIslandsMrct = JSON.parse(fs.readFileSync(BASE_ISLANDS_LOWDEF_MRCT, 'utf-8'))
@@ -271,7 +272,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       }
       finalIsland.bbox = turf.bbox(finalIsland)
       finalIsland.properties.island_id = bestIslandCandidate.island_id
-
+      finalIsland.properties.author_id = _cluster.properties.author_id
       return {
         finalIsland,
         finalScale,
