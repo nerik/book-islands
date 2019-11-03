@@ -15,7 +15,7 @@ const {
 } = require('../constants')
 
 const POOL_PATH = __dirname + '/util/territoryWorker.js'
-const USE_WORKERS = true
+const USE_WORKERS = false
 
 const points = JSON.parse(fs.readFileSync(LAYOUTED_CLUSTERS, 'utf-8'))
 const baseIslandsMrct = JSON.parse(fs.readFileSync(BASE_ISLANDS_LOWDEF_MRCT, 'utf-8'))
@@ -117,8 +117,8 @@ const execBBoxChunk = () => {
       const island = turf.toWgs84(islandMrctTransposed)
       // TODO for now just generate "dirty" territories overlapping islands
       // will then have to generate "lines"
-      console.log(clusterChildren)
-      const clusterWeights = clusterChildren.map(p => 1)
+      const clusterWeights = clusterChildren.map(c => 1 + 0.5 * Math.sqrt(c.properties.layoutPriorityScore))
+      console.log(clusterWeights)
       let resultPromise
       let syncResult
       if (USE_WORKERS !== true) {
