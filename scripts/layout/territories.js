@@ -15,7 +15,7 @@ const {
 } = require('../constants')
 
 const POOL_PATH = __dirname + '/util/territoryWorker.js'
-const USE_WORKERS = false
+const USE_WORKERS = true
 
 const points = JSON.parse(fs.readFileSync(LAYOUTED_CLUSTERS, 'utf-8'))
 const baseIslandsMrct = JSON.parse(fs.readFileSync(BASE_ISLANDS_LOWDEF_MRCT, 'utf-8'))
@@ -129,7 +129,8 @@ const execBBoxChunk = () => {
       (resultPromise || new Promise(resolve => { resolve(syncResult) })).then((result) => {
         // territories suceeded, add to polygon and lines arrays,
         // and in final meta as cluster
-        if (result) {
+        if (result && !result.error) {
+          console.log('Success for', cluster.properties.layouted_id, cluster.properties.cluster_point_count)
           const {lines, polygons} = result
           polygons.forEach((territory, i) => {
             territory.properties = {
@@ -157,6 +158,7 @@ const execBBoxChunk = () => {
         // territories failed, do not add to polygon and lines arrays,
         // and add cluster children in meta instead of cluster
         else {
+          console.log('Failed for', cluster.properties.layouted_id, cluster.properties.cluster_point_count, result.error)
           clusterChildren.forEach(clusterChild => {
             const clusterChildLayoutedId = clusterChild.properties.layouted_id
             const clusterChildIslandMeta = islandsMeta[clusterChildLayoutedId]
