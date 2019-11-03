@@ -7,6 +7,7 @@ const transposeAndScale = require('../util/transposeAndScale')
 const pointWithinBBox = require('../util/pointWithinBBox')
 const getAuthorLayoutPriority = require('../util/getAuthorLayoutPriority')
 const bboxRatio = require('../util/bboxRatio')
+const computeClusterStats = require('./util/computeClusterStats')
 
 const {
   CLUSTERS, BASE_ISLANDS_LOWDEF_MRCT, BASE_ISLANDS_META,
@@ -47,8 +48,8 @@ const filteredPoints = points.features
     cluster.geometry.coordinates[1] < TEST_BBOX.maxY
   )
 
-// Filter out cluster leaves - must normally be deactivated as layout should generate both cluster
-// and cluster leaves as standalone islands in case territory generation fails 
+// Filter out cluster children. Main loop will only operate on points that yield islands,
+// so either clusters or standalone points, not cluster children
 const islandPoints = filteredPoints
   .filter(cluster => cluster.properties.is_cluster === true || cluster.properties.cluster_id === undefined)
 
@@ -235,6 +236,11 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
 
     pb.increment()
 
+
+
+
+    // ----- 1. Get best of scored island while trying to fit with already existing islnads -----
+
     // Might have been skipped previously if attached to another cluster
     if (cluster.skip === true) {
       continue
@@ -271,7 +277,6 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
 
     const island = turf.toWgs84(islandAtFinalScale)
     island.properties = {
-      ...cluster.properties,
       layouted_id,
       r: bboxRatio(turf.bbox(island))
     }
@@ -291,6 +296,13 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
     }
 
     layoutedPoints.push(cluster)
+
+
+
+
+
+
+    // ----- 2. Re-arrange cluster after island has been layouted (refit cluster points + gen fallback islands) -----
 
     if (cluster.properties.is_cluster === true) {
       // get cluster children from non-island list
@@ -330,6 +342,10 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
 
     }
 
+
+
+
+    // ----- 3. Edit OTHER points/clusters after island has been layouted -----------
     if (cluster.properties.is_cluster === true) {
     // Loop through remaining standalone and clustered points (no clusters)
     // 
@@ -357,7 +373,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
             // mark as skip so that this doesnt get layouted later (in a futur step of the for loop)
             point.skip = true
 
-            // attach to current cluster
+            // Attach point to current cluster
             point.properties.cluster_id_old = point.properties.cluster_id
             point.properties.cluster_id = cluster.properties.layouted_id
             point.properties.cluster_r = cluster.properties.cluster_r
@@ -367,6 +383,12 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
               layoutedPoints.push(point)
             }
 
+            // Recalculate stats on current cluster
+            const currentClusterNewChildren = filteredPoints.filter(p => p.properties.cluster_id === cluster.properties.layouted_id)
+            cluster.properties = {
+              ...cluster.properties,
+              ...computeClusterStats(currentClusterNewChildren)
+            }
 
             const previousParentClusterId = point.properties.cluster_id_old
             const pointLayoutedId = point.properties.layouted_id
@@ -378,25 +400,28 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
               // remove point from previous parent cluster
               const childIndex = previousParentCluster.properties.children.findIndex(id => id === pointLayoutedId)
               previousParentCluster.properties.children.splice(childIndex, 1)
-              previousParentCluster.properties.cluster_point_count = previousParentCluster.properties.children.length
+              // previousParentCluster.properties.cluster_point_count = previousParentCluster.properties.children.length
 
-              // if cluster is now empty, mark as skip
-              if (previousParentCluster.properties.cluster_point_count <= 1) {
+              // If cluster is now empty (0 children), OR if cluster is not viable (only has one element which has just been
+              // attached to another cluster) -> mark as skip - will be ignored from layout
+              if (previousParentCluster.properties.children.length <= 1) {
                 previousParentCluster.skip = true
               } else {
-              // recalculate cluster center
+                // recalculate cluster center
                 let previousParentClusterChildren = filteredPoints
-                  // .filter(clusteredPoint => clusteredPoint.skip !== true)
-                  .filter(clusteredPoint => {
-                    return clusteredPoint.properties.cluster_id === previousParentClusterId
-                  })
+                  .filter(clusteredPoint => clusteredPoint.properties.cluster_id === previousParentClusterId)
 
                 if (previousParentClusterChildren.length > 1) {
-                  
                   const previousParentClusterNewCenter = turf.centerOfMass(turf.featureCollection(previousParentClusterChildren))
                   previousParentCluster.geometry = previousParentClusterNewCenter.geometry
+                  previousParentCluster.properties = {
+                    ...previousParentCluster.properties,
+                    ...computeClusterStats(previousParentClusterChildren)
+                  }
+
                 } else {
-                  // REMOVE CLUSTER!!!!!!!
+                  console.log('That shouldnt happen')
+                  // Remove
                   previousParentCluster.skip = true
                 }
               }

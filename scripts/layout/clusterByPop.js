@@ -4,6 +4,7 @@ const fs = require('fs')
 const turf = require('@turf/turf')
 const _ = require('lodash')
 const getAuthorLayoutPriority = require('../util/getAuthorLayoutPriority')
+const computeClusterStats = require('./util/computeClusterStats')
 const avg = require('../util/avg')
 
 const { AUTHORS, UMAP_GEO, CLUSTERS } = require('../constants')
@@ -78,6 +79,9 @@ let finalClusters = clusters.map(cluster => {
   const feature = {
     ...cluster,
     properties: {
+      author_id: cluster.id,
+      // TODO !!!! AUTHOR NAME + ID
+      author_name: cluster.author_name,
       is_cluster: true,
       layouted_id: `cluster_${cluster.properties.id}`,
       cluster_r,
@@ -90,7 +94,7 @@ let finalClusters = clusters.map(cluster => {
 })
 
 
-// Attach standalone leaves to clusters
+// Attach standalone leaves to clusters when they are below a certain radius
 const finalStandalonePoints = orderedFeatures.map(point => {
   const properties = {
     is_cluster: false
@@ -100,6 +104,7 @@ const finalStandalonePoints = orderedFeatures.map(point => {
     const inCluster = dist < cluster.radius
     return (inCluster) ? dist : null
   })
+
 
   if (closestCluster === undefined) {
     properties.layouted_id = `standalone_${point.properties.id}`
@@ -114,15 +119,20 @@ const finalStandalonePoints = orderedFeatures.map(point => {
     properties.cluster_b = closestCluster.properties.cluster_b
     // console.log(properties, parentCluster)
   }
-  return {
+
+  const finalPoint = {
     ...point,
     properties: {
       ...properties,
       sum_popularity: point.properties.sum_popularity,
       avg_popularity: point.properties.avg_popularity,
       books_count: point.properties.books_count,
+      author_id: point.properties.id,
+      // TODO !!!! AUTHOR NAME + ID
+      author_name: point.properties.author_name,
     }
   }
+  return finalPoint
 })
 
 const clusteredPoints = finalStandalonePoints.filter(point => point.properties.cluster_id !== undefined)
@@ -132,6 +142,8 @@ finalClusters = finalClusters.map(cluster => {
     .filter(clusteredPoint => {
       return clusteredPoint.properties.cluster_id === cluster.properties.layouted_id
     })
+
+  
   return {
     ...cluster,
     children
@@ -152,7 +164,7 @@ finalClusters = finalClusters.filter(cluster => {
   }
   return true
 })
-console.log('Num final clusters after removing non viable clusters:', finalClusters.length)
+console.log('Num final clusters after removing non-viable clusters:', finalClusters.length)
 
 // Compute cluster centers
 finalClusters = finalClusters.map(cluster => {
@@ -207,11 +219,7 @@ mergedClusters = mergedClusters.map(cluster => {
     ...cluster,
     properties: {
       ...cluster.properties,
-      cluster_point_count: clusterChildren.length,
-      sum_popularity: _.sumBy(clusterChildren, a => a.properties.sum_popularity),
-      avg_popularity: avg(clusterChildren.map(a => a.properties.sum_popularity)),
-      books_count: _.sumBy(clusterChildren, a => a.properties.books_count),
-      children: clusterChildren.map(p => p.properties.layouted_id)
+      ...computeClusterStats(clusterChildren)
     }
   }
 })
@@ -222,7 +230,10 @@ mergedClusters.forEach(cluster => {
   delete cluster.envelope
   delete cluster.radius
 })
-console.log(mergedClusters[0])
+
+// console.log(finalStandalonePoints.find(p => p.properties.author_id === 'Kingsley Amis'))
+// console.log(mergedClusters[0])
+// console.log(finalStandalonePoints.find(p => p.properties.cluster_id === mergedClusters[0].properties.layouted_id))
 
 console.log('Average cluster # children: ', avg(cluster_point_counts))
 
