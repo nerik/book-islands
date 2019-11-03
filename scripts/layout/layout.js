@@ -54,7 +54,7 @@ const islandPoints = filteredPoints
   .filter(cluster => cluster.properties.is_cluster === true || cluster.properties.cluster_id === undefined)
 
 // give them a layout priority (popularity + numbooks)
-islandPoints.forEach(cluster => {
+filteredPoints.forEach(cluster => {
   cluster.properties.layoutPriorityScore = getAuthorLayoutPriority(cluster.properties)
 })
 
@@ -151,7 +151,8 @@ const getClusterBestIsland = (cluster, islandsAroundIds) => {
 
 
 // Get best island for a single standalone point
-// Standalone points should pick a random island, then scale it until its area matches layout priority score
+// Standalone points pick a random island, then scale it until its area matches layout priority score
+// It does not checks if scaled island overlaps with neighbours
 const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMrct) => {
   // pick random island that is not around
   const islandsNotAround = baseIslandsMrct.features.filter(
@@ -239,57 +240,57 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
 
 
 
-    // ----- 1. Get best of scored island while trying to fit with already existing islnads -----
+    // ----- 1. Get best of scored island while trying to fit with already existing islands -----
 
     // Might have been skipped previously if attached to another cluster
     if (cluster.skip === true) {
       continue
     }
 
-    // Gather islands within bbox around cluster center (cheap: large bbox/buffer and pick a polygon point)
-    const islandsAround = islands.filter(island => cheapDistance(cluster, island) < MIN_DISTANCE_SIMILAR_DEGREES)
-    // console.log('Found', islandsAround.length, ' islands around')
-    const islandsAroundIds = islandsAround.map(island => island.properties.island_id)
-    const clusterCenterMrct = turf.toMercator(cluster)
+    const getIslandAndMeta = (_cluster, doNotDownscale) => {
+      // Gather islands within bbox around cluster center (cheap: large bbox/buffer and pick a polygon point)
+      const islandsAround = islands.filter(island => cheapDistance(_cluster, island) < MIN_DISTANCE_SIMILAR_DEGREES)
+      // console.log('Found', islandsAround.length, ' islands around')
+      const islandsAroundIds = islandsAround.map(island => island.properties.island_id)
 
-    const bestIslandCandidate = (cluster.properties.is_cluster === true)
-      ? getClusterBestIsland(cluster, islandsAroundIds)
-      : getStandalonePointBestIsland(cluster, islandsAroundIds, clusterCenterMrct)
+      const clusterCenterMrct = turf.toMercator(_cluster)
+      const bestIslandCandidate = (_cluster.properties.is_cluster === true)
+        ? getClusterBestIsland(_cluster, islandsAroundIds)
+        : getStandalonePointBestIsland(_cluster, islandsAroundIds, clusterCenterMrct, doNotDownscale)
 
-    // console.log(bestIslandCandidate)
+      const islandMrct = baseIslandsMrct.features.find(i => i.properties.island_id === bestIslandCandidate.island_id)
 
-    const islandMrct = baseIslandsMrct.features.find(i => i.properties.island_id === bestIslandCandidate.island_id)
-    // console.log(bestIslandCandidate)
+      const { finalScale, islandAtFinalScale, error } = getIslandAtFinalScale(
+        clusterCenterMrct, islandMrct, bestIslandCandidate.newScale, islandsAround
+      )
 
-    const { finalScale, islandAtFinalScale, error } = getIslandAtFinalScale(
-      clusterCenterMrct, islandMrct, bestIslandCandidate.newScale, islandsAround
-    )
+      const finalIsland = turf.toWgs84(islandAtFinalScale)
+      finalIsland.properties = {
+        layouted_id,
+        r: bboxRatio(turf.bbox(finalIsland))
+      }
+      finalIsland.bbox = turf.bbox(finalIsland)
+      finalIsland.properties.island_id = bestIslandCandidate.island_id
+
+      return {
+        finalIsland,
+        finalScale,
+        error
+      }
+    }
 
     const layouted_id = cluster.properties.layouted_id
+    const {finalIsland, finalScale, error} = getIslandAndMeta(cluster, islands)
 
     if (error) {
       numDidntFit++
-      // finalTransformations[layouted_id] = {
-      //   error
-      // }
-      // continue
     }
 
-    const island = turf.toWgs84(islandAtFinalScale)
-    island.properties = {
-      layouted_id,
-      r: bboxRatio(turf.bbox(island))
-    }
-    island.bbox = turf.bbox(island)
-    island.properties.island_id = bestIslandCandidate.island_id
-
-    islands.push(island)
-    bboxIslands.push(island)
+    bboxIslands.push(finalIsland)
     numLayouted++
 
     finalTransformations[layouted_id] = {
-      scoringScale: bestIslandCandidate.newScale,
-      island_id: bestIslandCandidate.island_id,
+      island_id: finalIsland.properties.island_id,
       layoutScale: finalScale,
       center: cluster.geometry.coordinates,
       error
@@ -298,11 +299,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
     layoutedPoints.push(cluster)
 
 
-
-
-
-
-    // ----- 2. Re-arrange cluster after island has been layouted (refit cluster points + gen fallback islands) -----
+    // ----- 2. Re-arrange cluster after island has been layouted (refit cluster points) -----
 
     if (cluster.properties.is_cluster === true) {
       // get cluster children from non-island list
@@ -314,9 +311,9 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
 
       // If cluster, move cluster points back inside island if they are out of island due to downscaling
       const closestPolygonPoints = []
-      const islandPoints = turf.coordAll(island).map(c => turf.point(c))
+      const islandPoints = turf.coordAll(finalIsland).map(c => turf.point(c))
       clusterChildren = clusterChildren.map(clusterChild => {
-        if (!turf.booleanPointInPolygon(clusterChild, island)) {
+        if (!turf.booleanPointInPolygon(clusterChild, finalIsland)) {
           const closestPolygonPoint = _.minBy(islandPoints, polygonPoint => {
             if (closestPolygonPoints.includes(polygonPoint)) {
               return null
@@ -334,12 +331,9 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
         }
         return clusterChild
       })
-
-      // TODO If cluster, generate fallback islands (generate islands but keep them out of the pool?)
-      clusterChildren.forEach(child => {
-        layoutedPoints.push(child)
+      clusterChildren.forEach(clusterChild => {
+        layoutedPoints.push(clusterChild)
       })
-
     }
 
 
@@ -363,7 +357,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       // no children of the current cluster
         .filter(point => point.properties.cluster_id !== cluster.properties.layouted_id)
         .forEach(point => {
-          if (turf.booleanPointInPolygon(point, island)) {
+          if (turf.booleanPointInPolygon(point, finalIsland)) {
             // Point belongs to the currently picked island:
             // - skip it for next iterations
             // - attach to current cluster
@@ -429,6 +423,34 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
           }
         })
     }
+
+    // ----- 4. Generate fallback islands for cluster children -----------
+    if (cluster.properties.is_cluster === true) {
+      // Generate fallback islands/meta for cluster children.
+      // It's done by layouting not taking into account current cluster island
+      let clusterChildren = filteredPoints
+        .filter(clusteredPoint => {
+          return clusteredPoint.properties.cluster_id === cluster.properties.layouted_id
+        })
+      clusterChildren.forEach(child => {
+        // Generate meta
+        const fallbackIslandProps = getIslandAndMeta(child, true)
+        fallbackIslandProps.finalIsland.properties.is_fallback = true
+        bboxIslands.push(fallbackIslandProps.finalIsland)
+        finalTransformations[child.properties.layouted_id] = {
+          is_fallback: true,
+          island_id: fallbackIslandProps.finalIsland.properties.island_id,
+          layoutScale: fallbackIslandProps.finalScale,
+          center: child.geometry.coordinates
+        }
+      })
+    }
+
+
+
+
+    islands.push(finalIsland)
+
   }
 
   console.log('Layouted ', numLayouted, 'islands')

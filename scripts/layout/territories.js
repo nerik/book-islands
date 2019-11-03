@@ -115,9 +115,9 @@ const execBBoxChunk = () => {
       const clusterCenterMrct = turf.toMercator(cluster)
       const islandMrctTransposed = transposeAndScale(clusterCenterMrct, islandMrct, scale)
       const island = turf.toWgs84(islandMrctTransposed)
-      // TODO for now just generate "dirty" territories ovelapping islands
+      // TODO for now just generate "dirty" territories overlapping islands
       // will then have to generate "lines"
-      // TODO generate real weights
+      console.log(clusterChildren)
       const clusterWeights = clusterChildren.map(p => 1)
       let resultPromise
       let syncResult
