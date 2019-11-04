@@ -76,14 +76,15 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       let polygons = []
       let authorsIds = []
       const island = islands.find(i => i.properties.layouted_id === layoutedId)
-      if (island) {
-        if (finalMeta.is_cluster === true) {
-          polygons = territories.filter(t => t.properties.cluster_layouted_id === layoutedId)
-          authorsIds = polygons.map(p => p.properties.author_id)
-        } else {
-          polygons = [island]
-          authorsIds = [island.properties.id]
-        }
+      // if (island === undefined) {
+      //   console.log(layoutedId)
+      // }
+      if (finalMeta.is_cluster === true) {
+        polygons = territories.filter(t => t.properties.cluster_layouted_id === layoutedId)
+        authorsIds = polygons.map(p => p.properties.author_id)
+      } else {
+        polygons = [island]
+        authorsIds = [island.properties.id]
       }
 
       // console.log(polygons, authorsIds)

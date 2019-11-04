@@ -1,6 +1,7 @@
 const d3 = require('d3')
 module.exports = {
-  BOOKS_CSV: 'in/google-books/books.csv',
+  // BOOKS_CSV: 'in/google-books/books.csv',
+  BOOKS_CSV: 'in/google-books/books_with_mid.csv',
   BOOKS_DB: 'in/google-books/books.db',
   BOOKS_DB_TABLE: 'books',
   AUTHORS: 'out/db/authors.json',
@@ -21,6 +22,7 @@ module.exports = {
   UMAP_CAT_STATS: 'out/umap/umap_cat_stats.json',
   UMAP_GEO: 'out/umap/umap.geo.json',
   CLUSTERS: 'out/layout/clusters.geo.json',
+  LAYOUTED_CLUSTERS: 'out/layout/layouted_clusters.geo.json',
   BASE_ISLANDS_META: 'out/layout/baseIslands.meta.json',
   ISLANDS: 'out/layout/islands.geo.json',
   ISLANDS_LOWDEF: 'out/layout/islands_lowdef.geo.json',
@@ -40,18 +42,18 @@ module.exports = {
   HEIGHT_TILES: 'tiles/height',
   HEIGHT_TILE_SIZE: 256,
   HEIGHT_EMPTY_TILE: 'scripts/tiles/height/blank.png',
-  // TEST_BBOX: {
-  //   minX: 20,
-  //   minY: -80,
-  //   maxX: 25,
-  //   maxY: -30
-  // },
   TEST_BBOX: {
-    minX: -180,
-    minY: -80,
-    maxX: 180,
-    maxY: 80
+    minX: -10,
+    minY: -52,
+    maxX: 0,
+    maxY: -42
   },
+  // TEST_BBOX: {
+  //   minX: -180,
+  //   minY: -80,
+  //   maxX: 180,
+  //   maxY: 80
+  // },
   BBOX_CHUNKS:[
     // -240 and 220 it is due the umap offsets
     [-240, -80, -90, 0],
@@ -70,6 +72,7 @@ module.exports = {
   TERRITORIES_RANK_SCALE: d3.scaleThreshold()
     .domain([0, 1, 200, 6000])
     .range([1,1,2,3,4]),
+  USE_PROGRESS_BAR: false,
   STORAGE_BUCKET_DATA: 'cilex-books-map-data',
   STORAGE_BUCKET_TILES: 'cilex-books-map-tiles',
 }

@@ -37,10 +37,12 @@ const getSharedEdgesWith = (poly1, poly2) => {
   return _.uniqBy(sharedEdges, v => v.join(','))
 }
 
-const getPoly = (v, index, bbox) => {
+// Gets a GeoJSON polygon from a voronoi net polygon cell index
+// It is bounded to overall island bbox
+const getPoly = (v, index, islandBBox) => {
   const pts = v.cellPolygon(index)
   const poly = turf.polygon([pts])
-  const int = turf.intersect(bbox, poly)
+  const int = turf.intersect(islandBBox, poly)
   return turf.coordAll(int)
 }
 
@@ -71,13 +73,16 @@ const getNeighbors = (d, index, cells) => {
 
 
 
-const drawPreview = (cells, territoriesSegments, territoriesBorderSegments, isMulti) => {
-  console.log('draw prev')
+const drawPreview = (cells, territoriesSegments, territoriesBorderSegments, islandPoints, filename) => {
   const { createCanvas } = require('canvas')
   var fs = require('fs')
 
   var canvas = createCanvas(1000, 1000, 'png')
   var context = canvas.getContext('2d')
+
+  const COLORS = [
+    '#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99','#b15928',
+  ]
 
 
   const drawCell = (cell) => {
@@ -90,7 +95,7 @@ const drawPreview = (cells, territoriesSegments, territoriesBorderSegments, isMu
     context.strokeStyle = 'gray'
   
     context.beginPath()
-    let color = 'lightgrey'
+    let color = (cell.territory === null) ? 'lightgray' : COLORS[cell.territory % COLORS.length]
 
     context.fillStyle = color
     context.moveTo(poly[0][0], poly[0][1])
@@ -106,7 +111,6 @@ const drawPreview = (cells, territoriesSegments, territoriesBorderSegments, isMu
   cells.filter(c => c !== null).forEach(cell => drawCell(cell))
   context.lineWidth = 2
   territoriesSegments
-    .filter(($, i) => isMulti.includes(i))
     .forEach((polygonsSegs) => {
       polygonsSegs.forEach((polygonSegs) => {
         context.beginPath()
@@ -136,8 +140,21 @@ const drawPreview = (cells, territoriesSegments, territoriesBorderSegments, isMu
   //   context.stroke()
   // })
 
+  // Island
+  context.beginPath()
+  context.strokeStyle = 'black'
+  context.lineWidth = 1
+  context.moveTo(islandPoints[0][0], islandPoints[0][1])
+  for (let i = 1, n = islandPoints.length - 2; i < n; ++i) {
+    context.lineTo(islandPoints[i][0], islandPoints[i][1])
+  }
+  context.closePath()
+  context.stroke()
+
+
   var buf = canvas.toBuffer()
-  fs.writeFileSync('./test2.png', buf)
+  fs.writeFileSync(filename, buf)
+  if (VERBOSE) console.log('Wrote to' , filename)
 }
 
 
@@ -152,9 +169,17 @@ const isPtInBorder = (pt, rangeX, rangeY) => {
       pt[1] === rangeY[1])
 }
 
-const MAX_CONQUEST_ITERATIONS = 1000000
 
-module.exports = (clusterPoints, clusterWeights, island) => {
+
+
+
+
+const MAX_CONQUEST_ITERATIONS = 1000000
+const MIN_VORONOI_POINTS = 3000
+const VORONOI_POINTS_MULT = 20000
+const VERBOSE = false
+
+const getClusterTerritories = (clusterPoints, clusterWeights, island, layouted_id) => {
   const islandBbox = turf.bbox(island)
   const islandW = islandBbox[2] - islandBbox[0]
   const islandH = islandBbox[3] - islandBbox[1]
@@ -163,7 +188,8 @@ module.exports = (clusterPoints, clusterWeights, island) => {
   const rangeX = [1, 1000]
   const rangeY = [1, 1000]
   // const totalPoints = Math.max(1000, Math.round(islandW * islandH * .005))
-  const totalPoints = Math.max(3000, Math.round(islandW * islandH * 200000))
+  const totalPoints = Math.max(MIN_VORONOI_POINTS, Math.round(islandW * islandH * VORONOI_POINTS_MULT))
+  if (VERBOSE) console.log('Creating ', totalPoints, ' points for voronoi')
 
   const islandCoords = island.geometry.coordinates[0]
 
@@ -171,8 +197,8 @@ module.exports = (clusterPoints, clusterWeights, island) => {
   const xMax = d3.max(islandCoords.map(p => p[0]))
   const yMin = d3.min(islandCoords.map(p => p[1]))
   const yMax = d3.max(islandCoords.map(p => p[1]))
-  // console.log(xMin, xMax, yMin, yMax)
 
+  // TODO Add paddding!!
   const scaleX = d3.scaleLinear()
     .domain([xMin, xMax])
     .range(rangeX)
@@ -181,7 +207,7 @@ module.exports = (clusterPoints, clusterWeights, island) => {
     .domain([yMax, yMin])
     .range(rangeY)
 
-  // generate noise
+  // Generate noise that will be used as voronoi centers
   const newPoints = []
   let numPoints = 0
   while (numPoints < totalPoints) {
@@ -192,9 +218,11 @@ module.exports = (clusterPoints, clusterWeights, island) => {
     numPoints++
   }
 
+  // Add island polygon points as voronoi centers
   const islandPoints = islandCoords
     .map(p => [scaleX(p[0]), scaleY(p[1])])
-  
+  const allPoints = newPoints.concat(islandPoints)
+
 
   const allClusters = clusterPoints
     .map(f => {
@@ -202,12 +230,9 @@ module.exports = (clusterPoints, clusterWeights, island) => {
       return [scaleX(p[0]), scaleY(p[1])]
     })
 
-  const allPoints = newPoints.concat(islandPoints)
 
 
-
-
-  // Generate delaunay trianngulation + voronoi
+  // Generate delaunay triangulation + voronoi
   let t = performance.now()
   const delaunay = d3Delaunay.Delaunay.from(allPoints)
   const {points} = delaunay
@@ -215,15 +240,18 @@ module.exports = (clusterPoints, clusterWeights, island) => {
 
   // prepare data structures
   const cells = []
-  const bbox = turf.polygon([[[rangeX[0], rangeY[0]], [rangeX[1], rangeY[0]], [rangeX[1], rangeY[1]], [rangeX[0], rangeY[1]], [rangeX[0], rangeY[0]]]])
+  const islandBBox = turf.polygon([[[rangeX[0], rangeY[0]], [rangeX[1], rangeY[0]], [rangeX[1], rangeY[1]], [rangeX[0], rangeY[1]], [rangeX[0], rangeY[0]]]])
 
+  // Collect all existing cells existing in voronoi.
+  // Those cell later get tagged as belonging to a territory
   for (let j = 0; j < (points.length/2) - 1 ; j++) {
     const coords = [points[j*2], points[j*2+1]]
     let poly
     try {
-      poly = getPoly(voronoi, j, bbox)
+      poly = getPoly(voronoi, j, islandBBox)
     }  catch(e) { 
-      throw new Error('Faulty voronoi')
+      // console.log(e)
+      // throw new Error('Faulty voronoi')
       // TODO Overwhelmingly happens that there is just one missing polygon.
       //    We might be getting away with this by recreating it 
       cells.push(null)
@@ -243,20 +271,26 @@ module.exports = (clusterPoints, clusterWeights, island) => {
     })
   }
   if (cells.filter(c => c === null).length) {
-    console.log('Missing cells:', cells.filter(c => c === null).length)
+    if (VERBOSE) console.log('Missing cells:', cells.filter(c => c === null).length)
   }
   
   cells.filter(c => c !== null).forEach(cell => {
     cell.neighbors = getNeighbors(delaunay, cell.index, cells)
   })
   
-  // console.log('Delaunay done in ', performance.now() - t)
+  if (VERBOSE) console.log('Delaunay done in ', performance.now() - t)
 
 
   // Conquest ---
   let currentPickedCount = 0
+  // Match clusters with territories
   const territories = allClusters.map((cluster, i) => {
+    // Attach a starting cell to each cluster/territory (the cell which contains the cluster center)
+    // TODO CHECK CLUSTER COORDS HERE?
     const startingCellIndex = delaunay.find(cluster[0], cluster[1])
+    if (!cells[startingCellIndex]) {
+      throw new Error('Faulty voronoi')
+    }
     const territory = {
       index: i,
       weight: clusterWeights[i],
@@ -273,10 +307,13 @@ module.exports = (clusterPoints, clusterWeights, island) => {
   let freeLandCellsIndexes = cells.filter(c => c !== null && c.territory === null && c.sea === false).map(c => c.index)
   let freeLandPureCellsIndexes = cells.filter(c => c !== null && c.territory === null && c.sea === false && c.shore === false).map(c => c.index)
 
-  const territoriesIterations = _.shuffle(_.flatten(territories.map((t, i) => {
+  // Prepare an array to iterate over depending on cluster weight
+  // ie if weights are [3,2,1], should generate [3,3,3,2,2,1,1], and then shuffle that
+  let territoriesIterations = _.flatten(territories.map((t, i) => {
     const weight = Math.round(t.weight * 100)
     return new Array(weight).fill(i)
-  })))
+  }))
+  territoriesIterations = _.shuffle(territoriesIterations)
 
   
   t = performance.now()
@@ -354,14 +391,16 @@ module.exports = (clusterPoints, clusterWeights, island) => {
       break
     }
   }
-  // console.log('Conquest done in ', performance.now() - t)
-
+  if (VERBOSE) console.log('Conquest done in ', performance.now() - t)
 
 
 
 
   // Collect geometries/segmenting -----
   t = performance.now()
+
+  // First, for each territory, collect frontier cells (any cell that touches another territory)
+  // and border cells (cells that are attached to the bounding box)
   territories.forEach(territory => {
     const territoryCells = cells
       .filter(c => c !== null && c.territory === territory.index)
@@ -372,6 +411,8 @@ module.exports = (clusterPoints, clusterWeights, island) => {
         const neighborsIndexes = c.neighbors
         const neighbors = cells
           .filter(c => c !== null && neighborsIndexes.includes(c.index))
+
+        // All neighboring cells that belong to a different territory
         const neighborsForeign = neighbors
           .filter(c => c.territory !== territory.index)
         return {
@@ -382,23 +423,28 @@ module.exports = (clusterPoints, clusterWeights, island) => {
       })
     territory.frontierCells = neighborContainers.filter(c => c.neighborsForeign.length)
   
-    // get border cells
+    // Get border cells (cells that are attached to the bounding box)
+    // We need those in order to close territory polygons
     territory.borderCells = territoryCells.filter(c => {
       return c.poly.some(p => isPtInBorder(p, rangeX, rangeY))
     })
   })
 
+
+
   const territoriesBorderSegments = []
-  const isMulti = []
+
+  // For each territory, thanks to cells collected earlier, we will now collect territory segments
   const territoriesSegments = territories.map(territory => {
 
     const segments = []
     const borderSegments = []
 
-    // collect frontier segs
+    // Collect all frontier segments
     territory.frontierCells.forEach(frontierCell => {
       frontierCell.neighborsForeign.map(foreignCell => {
-      // console.log(frontierCell, foreignCell)
+        // If frontier cell shares an edge with foreign cell, we can create a segment that
+        // can be used for a final territory polygon/line
         const sharedEdges = getSharedEdgesWith(frontierCell.poly, foreignCell.poly)
         if (sharedEdges && sharedEdges.length) {
           segments.push(sharedEdges)
@@ -406,7 +452,7 @@ module.exports = (clusterPoints, clusterWeights, island) => {
       })
     })
 
-    // collect border segs
+    // Collect border segments
     territory.borderCells.forEach(edgeCell => {
       const borderPts = [] 
       edgeCell.poly.forEach(pt => {
@@ -423,7 +469,7 @@ module.exports = (clusterPoints, clusterWeights, island) => {
     territoriesBorderSegments[territory.index] = borderSegments
     const uniqSegments = _.uniqBy(segments, v => v.join(','))
 
-    // Now to create ordered (ie segemnts follow in order) polygons
+    // Now to create ordered (ie segments follow in order) polygons
     const polygonsOrderedSegs = []
 
     let firstSeg = uniqSegments.splice(0, 1)[0]
@@ -455,7 +501,6 @@ module.exports = (clusterPoints, clusterWeights, island) => {
         firstSeg = uniqSegments.splice(0, 1)[0]
         currentPolygonOrderedSegs = [firstSeg]
         currentEnd = firstSeg[1]
-        isMulti.push(territory.index)
       }
 
       if (!uniqSegments.length) {
@@ -469,28 +514,33 @@ module.exports = (clusterPoints, clusterWeights, island) => {
       }
     }
 
-    // only keep biggest polygon. If second size polygon is not an imperfection
-    // (ie its really small, means we will have a broken frontier)
+    // If segmenting went well, we should have only one continuous polygon
+    // When multiple disjointed polygons appear, we can tolerate that if second biggest
+    // polygon is really small, in which case we'll just ignore all small polygons.
+    // Otherwise throw an error and maybe try the whole process again.
     if (polygonsOrderedSegs.length === 1) {
       return polygonsOrderedSegs
     }
     const polygonSizes = polygonsOrderedSegs.map(ps => ps.length).sort((a, b) => b - a)
-    if (polygonSizes[1] > 6) {
+    const MAX_JUNK_POLYGON_SIZE = 10
+    if (VERBOSE) console.log('All polygon sizes:', polygonSizes)
+    if (polygonSizes[1] > MAX_JUNK_POLYGON_SIZE) {
+      if (VERBOSE) console.log('I removed a big polygon' + polygonSizes[1])
       throw new Error('I removed a big polygon' + polygonSizes[1])
     }
     const biggestPolygon = _.maxBy(polygonsOrderedSegs, ps => ps.length)
     return [biggestPolygon]
   })
+  if (VERBOSE) console.log('collected segs')
 
 
-
-  const geoJSONIsland = turf.buffer((island), 0.05)
+  const geoJSONIsland = turf.buffer(island, 0.2)
   const geoJSONPolygons = territoriesSegments.map((polygonsOrderedSegs, i) => {
     const polygons = polygonsOrderedSegs.map((polygonOrderedSegs) => {
       const pts = []
       for (let i = 0; i < polygonOrderedSegs.length; i++) {
-        const segStart = polygonOrderedSegs[i][0]
-        const pt = [scaleX.invert(segStart[0]), scaleY.invert(segStart[1])]
+        const segmentStartPoint = polygonOrderedSegs[i][0]
+        const pt = [scaleX.invert(segmentStartPoint[0]), scaleY.invert(segmentStartPoint[1])]
         pts.push(pt)
       }
       const lineString = turf.lineString(pts)
@@ -518,9 +568,9 @@ module.exports = (clusterPoints, clusterWeights, island) => {
   // const geoJSON = turf.featureCollection(geoJSONPolygons.filter(p => p !== null))
   // console.log(JSON.stringify(geoJSON))
 
-  // console.log('Segmenting done in ', performance.now() - t)
-  // if (isMulti.length) {
-  //   drawPreview(cells, territoriesSegments, territoriesBorderSegments, isMulti)
-  // }
+  if (VERBOSE) console.log('Segmenting done in ', performance.now() - t)
+  drawPreview(cells, territoriesSegments, territoriesBorderSegments, islandPoints, `./${clusterPoints.length}_${layouted_id}.png`)
   return { polygons, lines: [] }
 }
+
+module.exports = getClusterTerritories

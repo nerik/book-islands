@@ -19,27 +19,6 @@ const clusters = JSON.parse(fs.readFileSync(CLUSTERS, 'utf-8'))
 
 console.log('Read inputs.')
 
-// const baseIslands = JSON.parse(fs.readFileSync(BASE_ISLANDS_LOWDEF, 'utf-8'))
-// First project all base island to mercator and translate them to map origin
-// TODO move to base island gen?
-// const baseIslandsMrct = {
-//   'type': 'FeatureCollection',
-// }
-// baseIslandsMrct.features = baseIslands.features.map(island => {
-//   const islandMrct = turf.toMercator(island)
-//   const mrctCenter = turf.coordAll(turf.toMercator(turf.point(island.properties.center)))[0]
-//   islandMrct.properties.center = mrctCenter
-//   islandMrct.properties.area = turf.area(islandMrct)
-//   // latest transformations apply first
-//   const matrix = compose(
-//     // translate to map origin
-//     translate(-islandMrct.properties.center[0], -islandMrct.properties.center[1]),
-//   )
-//   islandMrct.geometry.coordinates[0] = applyToPoints(matrix, islandMrct.geometry.coordinates[0])
-//   // mrct.properties.bbox = turf.bbox(mrct)
-//   return islandMrct
-// })
-
 // Tries to scale up or down an island so that it fits best cluster points
 const findScaleFit = (clusterPointsMrct, clusterCenterMrct, islandMrct) => {
   const transposedNoScale = transposeAndScale(clusterCenterMrct, islandMrct, 1)
@@ -134,7 +113,7 @@ const points = clusters.features
   
 
 const filteredClusters = clusters.features
-  // the clusters geoJSON contains clusters + noise, remove noise
+  // the clusters geoJSON contains clusters + standalone, remove standalone
   .filter(cluster => cluster.properties.is_cluster === true)
   .filter(
     cluster => 
@@ -167,9 +146,9 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   const pb = progressBar(bboxFilteredClusters.length)
 
   bboxFilteredClusters.forEach(cluster => {
-    const clusterId = cluster.properties.cluster_id
+    const clusterId = cluster.properties.layouted_id
     const allClusterPoints = points
-      .filter(p => p.properties.cluster_id === cluster.properties.cluster_id)
+      .filter(p => p.properties.cluster_id === clusterId)
     
     const allClusterPointsMrct = allClusterPoints.map(p => turf.toMercator(p))
 
@@ -203,7 +182,6 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       }
 
       const islandAtScale = turf.toWgs84(islandAtScaleMrct)
-      const islandArea = turf.area(islandAtScale)
 
       const fitScore = (clusterCanHaveScore)
         ? getFitScoreFast(islandAtScale, clusterEnveloppeArea)
@@ -214,7 +192,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
         newScale,
         islandAtScale,
         fitScore,
-        // clusterCanHaveScore,º
+        // clusterCanHaveScore,
       }
     })
 
