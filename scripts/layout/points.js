@@ -59,19 +59,20 @@ const territoryLabels = []
 const bookPoints = []
 BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   console.log('Current chunk:', bboxChunk, chunkIndex)
+  // Load meta to get base islands ids and transformations that need to be applied (scale+center)
   const finalMetasPath = ISLANDS_FINAL_META.replace('.json', `_${chunkIndex}.json`)
   const finalMetas = JSON.parse(fs.readFileSync(finalMetasPath, 'utf-8'))
+  // Load layouted islands in low def to compute island centers and get coastal points
   const islandsPath = ISLANDS_LOWDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
   const islands = JSON.parse(fs.readFileSync(islandsPath, 'utf-8')).features
+  // Load territories to compute territory centers
   const territoriesPath = TERRITORY_POLYGONS.replace('.geo.json', `_${chunkIndex}.geo.json`)
   const territories = JSON.parse(fs.readFileSync(territoriesPath, 'utf-8')).features
 
   console.log('Has', finalMetas.length, 'islands')
 
   finalMetas
-    // .filter(finalMeta => finalMeta.error === undefined)
     .forEach(finalMeta => {
-    // console.log(finalMeta)
       const layoutedId = finalMeta.layouted_id
       let polygons = []
       let authorsIds = []
@@ -84,14 +85,13 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
         authorsIds = polygons.map(p => p.properties.author_id)
       } else {
         polygons = [island]
-        authorsIds = [island.properties.id]
+        authorsIds = [island.properties.author_id]
       }
 
       // console.log(polygons, authorsIds)
       // console.log('---')
-
-
       const authors = getAuthors(authorsIds)
+      
 
       const authorsBooks = authors.map(author => ({
         author,
@@ -113,8 +113,8 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
 
 
         // generate available points for terr
-        // TODO sort real points by territory
-        // TODO take real points randomly until exhausted
+        // TODO sort "real" points (cities, peaks etc) by territory
+        // TODO take "real" points (cities, peaks etc) points randomly until exhausted
         const territoryCoastalPoints = island.geometry.coordinates[0].filter(coords => {
           return checkCityInTerritory(coords, territory)
         })
@@ -124,9 +124,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
         const islandCities = []
         authorBooks.books.forEach(book => {
 
-          // generate available points for terr
-          // TODO sort real points by territory
-          // TODO take real points randomly until exhausted
+          // generate available points for territory
           let city
           while (!city) {
             if (territoryCoastalPoints.length) {
@@ -137,7 +135,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
                 city = randomPt
               }
             } else {
-            // console.log('no more coastal pt')
+            // console.log('no more coastal pts')
               const randomPt = turf.randomPoint(1, { bbox: territoryBbox }).features[0]
               if (turf.booleanPointInPolygon(randomPt, territory) && isCityIsolatedEnough(randomPt, islandCities)) {
               // console.log('adding rd pt')

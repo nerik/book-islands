@@ -66,7 +66,6 @@ const execBBoxChunk = () => {
   const finalMeta = []
 
   const writeChunk = () => {
-    console.log(chunkIndex)
     console.log('Cluster success: ', numClustersSucceeded, '/', numClustersTried)
     console.log('Created ', territoriesPolygons.length, 'territories')
 
@@ -85,10 +84,11 @@ const execBBoxChunk = () => {
 
   // when bbox is empty (because TEST_BBOX is used), skip
   if (bboxFilteredPoints.length === 0) {
+    console.log('chunkIndex', chunkIndex)
+    writeChunk()
     if (chunkIndex === BBOX_CHUNKS.length - 1) {
       done()
     } else {
-      writeChunk()
       chunkIndex++
       execBBoxChunk()
     }
@@ -115,11 +115,11 @@ const execBBoxChunk = () => {
       const clusterCenterMrct = turf.toMercator(cluster)
       const islandMrctTransposed = transposeAndScale(clusterCenterMrct, islandMrct, scale)
       const island = turf.toWgs84(islandMrctTransposed)
-      // TODO for now just generate "dirty" territories overlapping islands
-      // will then have to generate "lines"
+
+
       const clusterWeights = clusterChildren.map(c => 1 + 0.5 * Math.sqrt(c.properties.layoutPriorityScore))
-      console.log(clusterWeights)
-      console.log( clusterChildren.map(c => c.properties.author_id))
+      // console.log(clusterWeights)
+      // console.log( clusterChildren.map(c => c.properties.author_id))
       let resultPromise
       let syncResult
       if (USE_WORKERS !== true) {
@@ -137,9 +137,6 @@ const execBBoxChunk = () => {
             territory.properties = {
               cluster_layouted_id: layoutedId,
               author_id: clusterChildren[i].properties.author_id,
-              // cluster_r: clusterPoints[i].properties.cluster_r,
-              // cluster_g: clusterPoints[i].properties.cluster_g,
-              // cluster_b: clusterPoints[i].properties.cluster_b,
             }
             territoriesPolygons.push(territory)
           })
