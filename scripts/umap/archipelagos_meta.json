@@ -17,17 +17,11 @@
     "translate": [10, -60],
     "bounds": [-110, -45, 67, -80]
   },
-<<<<<<< HEAD
-  "education_combined": {
-    "scale": [1, 1],
-    "translate": [-120, -50]
-=======
   "education": {
     "file": "education",
     "scale": [0.3, 0.5],
     "translate": [-135, 15],
     "bounds": [-177, 47, -105, -8]
->>>>>>> ca6056b587ebf4376e7fdb4552b0e02487aaac86
   },
   "history": {
     "file": "history",
