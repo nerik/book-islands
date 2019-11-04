@@ -1,7 +1,6 @@
 const d3 = require('d3')
 module.exports = {
-  // BOOKS_CSV: 'in/google-books/books.csv',
-  BOOKS_CSV: 'in/google-books/books_with_mid.csv',
+  BOOKS_CSV: 'in/google-books/books.csv',
   BOOKS_DB: 'in/google-books/books.db',
   BOOKS_DB_TABLE: 'books',
   AUTHORS: 'out/db/authors.json',

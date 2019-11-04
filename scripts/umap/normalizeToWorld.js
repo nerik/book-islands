@@ -4,6 +4,7 @@ const fs = require('fs')
 const path = require('path')
 const _ = require('lodash')
 const parse = require('csv-parse/lib/sync')
+const authorSlug = require('../util/authorSlug')
 const d3 = require('d3')
 const turf = require('@turf/turf')
 const { UMAP_CAT, UMAP_GEO, UMAP_CAT_META } = require('../constants')
@@ -20,14 +21,16 @@ const umapFeatures = Object.values(umapsMeta).flatMap(
     )
 
     const umapNormalized = umap.map((umapCoordinate, index) => {
-      const author = umapAuthors[index]
+      const [author_id, author] = umapAuthors[index]
       const [, x, y] = umapCoordinate
 
       return {
         x: parseFloat(x),
         y: parseFloat(y),
-        author: author[1],
-        authorId: author[0]
+        author,
+        author_id,
+        author_slug: authorSlug({author, category: file }),
+        category: file,
       }
     })
 
@@ -50,7 +53,8 @@ const umapFeatures = Object.values(umapsMeta).flatMap(
         lat(record.y)
       ])
       point.properties.id = record.author
-      point.properties.authorId = record.authorId
+      point.properties.author_id = record.author_id
+      point.properties.author_slug = record.author_slug
       point.properties.category = file
       return point
     })

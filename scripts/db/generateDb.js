@@ -1,34 +1,37 @@
 #!/usr/bin/env node
 
+/* QUERY USED TO GENERATE THE .csv in BIG QUERY
+WITH books_with_cover AS (
+  SELECT books.*, books_cover.url as cover_url
+  FROM `cilex-books-245511.cilex_books.143k_books_with_14_categories` books
+  INNER JOIN `cilex-books-245511.cilex_books.books_cover` books_cover ON books.gid = books_cover.id
+ )
+SELECT
+  books_with_cover.gid as id, books_with_cover.category, books_with_cover.score, books_with_cover.title, books_with_cover.cover_url, books_info.author, books_info.summary, books_info.description , books_info.publication_year, books_info.publication_year_extra
+FROM books_with_cover INNER JOIN `cilex-books-245511.cilex_books.290k_mid_resume` books_info ON books_with_cover.gid = books_info.id`
+*/
+
+
 const fs = require('fs')
 const Papa = require('papaparse')
 const sqlite3 = require('sqlite3').verbose()
+const authorSlug = require('../util/authorSlug')
 const { BOOKS_CSV, BOOKS_DB, BOOKS_DB_TABLE } = require('../constants')
 
 const file = fs.createReadStream(BOOKS_CSV)
 const TABLE_FIELDS = [
   { name: 'id', type: 'STRING' },
-  { name: 'author_extra', type: 'STRING' },
-  { name: 'birth_year', type: 'STRING' },
-  { name: 'author', type: 'STRING' },
-  { name: 'title', type: 'STRING' },
-  { name: 'publication_year_extra', type: 'STRING' },
   { name: 'category', type: 'STRING' },
+  { name: 'title', type: 'STRING' },
+  { name: 'score', type: 'STRING' },
+  { name: 'author', type: 'STRING' },
+  { name: 'author_slug', type: 'STRING' }, // Extra field to use as slug of author and category
   { name: 'summary', type: 'STRING' },
-  { name: 's_lang', type: 'STRING' },
   { name: 'description', type: 'STRING' },
-  { name: 'd_lang', type: 'STRING' },
-  { name: 'publication_city', type: 'STRING' },
-  { name: 'publication_country', type: 'STRING' },
   { name: 'publication_year', type: 'STRING' },
-  { name: 'isbn', type: 'STRING' },
-  { name: 'mid', type: 'STRING' },
-  { name: 'book_key', type: 'STRING' },
-  { name: 'type', type: 'STRING' },
-  { name: 'text', type: 'STRING' },
-  { name: 'relatedness_signal_projected_query_popularity', type: 'STRING' },
+  { name: 'publication_year_extra', type: 'STRING' },
   { name: 'cover_url', type: 'STRING' },
-  { name: 'public_id', type: 'STRING' }
+  { name: 'public_id', type: 'STRING' } // Extra field added in the database from the cover_url
 ]
 
 console.log('New database generation started')
@@ -55,18 +58,18 @@ const insertData = () => {
   const fields = TABLE_FIELDS.map(({ name }) => name).join(',')
   const values = TABLE_FIELDS.map(() => '? ').join(',')
   console.log('Starting csv parsing and columns insert')
-  let index = 0
   Papa.parse(file, {
+    header: true,
     step: function(result) {
-      if (index === 0) {
-        index ++
-        return
-      }
-      const cover_url = result.data[result.data.length - 1]
       var regex = /.*id=(?<id>[a-zA-Z0-9_-]*).*/gi
-      var regexResults = regex.exec(cover_url)
+      var regexResults = regex.exec(result.data.cover_url)
       let publicId = regexResults && regexResults[1]
-      db.run(`INSERT INTO ${BOOKS_DB_TABLE} (${fields}) VALUES (${values})`, result.data.concat(publicId))
+      const resultValues = TABLE_FIELDS.map(({ name }) => {
+        if (name === 'author_slug') return authorSlug(result.data)
+        if (name === 'public_id') return publicId
+        return result.data[name] || ''
+      })
+      db.run(`INSERT INTO ${BOOKS_DB_TABLE} (${fields}) VALUES (${values})`, resultValues)
     },
     complete: function() {
       console.log('Data import finished')
