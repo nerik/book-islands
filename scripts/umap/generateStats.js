@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // get umaps bbox and normalize all of them (keeping their relative scale)
-// generate basic clusters + colors + names 
+// generate basic clusters + colors + names
 
 const fs = require('fs')
 const path = require('path')
@@ -14,7 +14,6 @@ const Supercluster = require('supercluster')
 const { UMAP_CAT, UMAP_CAT_STATS } = require('../constants')
 
 const umapCatsPaths = fs.readdirSync(UMAP_CAT)
-
 
 const rdChan = () => Math.floor(Math.random() * 255)
 const rdCol = () => `rgb(${rdChan()},${rdChan()},${rdChan()})`
@@ -41,7 +40,7 @@ const umapCats = umapCatsPaths.map(p => {
     bbox: [xMin, yMin, xMax, yMax]
   }
   // const color = rdCol()
-  // // const clusters = 
+  // // const clusters =
 
 })
 

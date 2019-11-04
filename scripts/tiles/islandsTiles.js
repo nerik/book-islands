@@ -28,13 +28,13 @@ console.log(cmd)
 exec(cmd)
 exec(`mb-util --image_format=pbf ${mbtiles} ${tiles} --silent`)
 
-const allPathsLowdef = BBOX_CHUNKS.map((bbox, chunkIndex) =>
-  ISLANDS_LOWDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
-)
-  // .filter((b, i) => i < 2)
-  .join(' ')
+// const allPathsLowdef = BBOX_CHUNKS.map((bbox, chunkIndex) =>
+//   ISLANDS_LOWDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
+// )
+//   // .filter((b, i) => i < 2)
+//   .join(' ')
 
-const cmdLowdef = `tippecanoe -o ${mbtilesLowdef} -zg --drop-densest-as-needed -l islands ${allPathsLowdef}`
-console.log(cmdLowdef)
-exec(cmdLowdef)
-exec(`mb-util --image_format=pbf ${mbtilesLowdef} ${tilesLowdef} --silent`)
+// const cmdLowdef = `tippecanoe -o ${mbtilesLowdef} -zg --drop-densest-as-needed -l islands ${allPathsLowdef}`
+// console.log(cmdLowdef)
+// exec(cmdLowdef)
+// exec(`mb-util --image_format=pbf ${mbtilesLowdef} ${tilesLowdef} --silent`)

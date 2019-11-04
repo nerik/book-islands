@@ -69,14 +69,14 @@ const execBBoxChunk = () => {
     console.log(chunkIndex)
     console.log('Cluster success: ', numClustersSucceeded, '/', numClustersTried)
     console.log('Created ', territoriesPolygons.length, 'territories')
-  
+
     const territoryPolygonsPath = TERRITORY_POLYGONS.replace('.geo.json', `_${chunkIndex}.geo.json`)
     const territoryLinesPath = TERRITORY_LINES.replace('.geo.json', `_${chunkIndex}.geo.json`)
     fs.writeFileSync(territoryPolygonsPath, JSON.stringify(turf.featureCollection(territoriesPolygons)))
     fs.writeFileSync(territoryLinesPath, JSON.stringify(turf.featureCollection(territoriesLines)))
     console.log ('Wrote', territoryPolygonsPath)
     console.log ('Wrote', territoryLinesPath)
-  
+
     const finalMetaPath = ISLANDS_FINAL_META.replace('.json', `_${chunkIndex}.json`)
     fs.writeFileSync(finalMetaPath, JSON.stringify(finalMeta))
     console.log ('Wrote', finalMetaPath)

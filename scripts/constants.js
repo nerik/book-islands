@@ -18,6 +18,7 @@ module.exports = {
   CITIES_STATS: 'out/baseIslands/cities_stats.json',
   HGT_DATA: 'in/hgt',
   UMAP_CAT: 'in/umap/cat',
+  UMAP_CAT_META: 'scripts/umap/archipelagos_meta.json',
   UMAP_CAT_STATS: 'out/umap/umap_cat_stats.json',
   UMAP_GEO: 'out/umap/umap.geo.json',
   CLUSTERS: 'out/layout/clusters.geo.json',
@@ -36,6 +37,7 @@ module.exports = {
   SEARCH_DB_RANKED_LIMIT: 10000,
   ISLANDS_TILES: 'tiles/islands',
   TERRITORIES_TILES: 'tiles/territories',
+  MAX_ZOOM_GENERATED: 15,
   POINTS_TILES: 'tiles/points',
   HEIGHT_TILES: 'tiles/height',
   HEIGHT_TILE_SIZE: 256,
@@ -53,13 +55,15 @@ module.exports = {
   //   maxY: 80
   // },
   BBOX_CHUNKS:[
-    [-180, -80, -10, 0],
-    [-10 , -80, 0  , 0],
-    [-180, 0  , 0  , 80],
-    [0   , 0  , 180, 80],
-    [0   , -80, 10, 0],
-    [10  , -80, 20, 0],
-    [20  , -80, 180, 0]
+    // -240 and 220 it is due the umap offsets
+    [-240, -80, -90, 0],
+    [-90 , -80, 0  , 0],
+    [0   , -80, 90 , 0],
+    [90  , -80, 220, 0],
+    [-240, 0, -90, 80],
+    [-90 , 0, 0  , 80],
+    [0   , 0, 90 , 80],
+    [90  , 0, 220, 80],
   ],
   MAX_BASE_ISLAND_SCALE_UP: 2,
   CITIES_RANK_SCALE: d3.scaleThreshold()
@@ -69,4 +73,6 @@ module.exports = {
     .domain([0, 1, 200, 6000])
     .range([1,1,2,3,4]),
   USE_PROGRESS_BAR: false,
+  STORAGE_BUCKET_DATA: 'cilex-books-map-data',
+  STORAGE_BUCKET_TILES: 'cilex-books-map-tiles',
 }
