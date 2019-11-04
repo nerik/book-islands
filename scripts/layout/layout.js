@@ -266,8 +266,9 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       )
 
       const finalIsland = turf.toWgs84(islandAtFinalScale)
+
       finalIsland.properties = {
-        layouted_id,
+        layouted_id: _cluster.properties.layouted_id,
         r: bboxRatio(turf.bbox(finalIsland))
       }
       finalIsland.bbox = turf.bbox(finalIsland)

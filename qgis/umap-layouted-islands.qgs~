@@ -22,7 +22,7 @@
     <layer-tree-layer expanded="1" id="clusters_geo_ad6167c9_c94e_4e2f_965c_7fd25c6a6ce6" name="clusters.geo" providerKey="ogr" checked="Qt::Unchecked" source="../out/layout/clusters.geo.json">
       <customproperties/>
     </layer-tree-layer>
-    <layer-tree-layer expanded="1" id="layouted_clusters_geo_baeb9556_1974_4e2f_b626_27b4f2d678b1" name="layouted_clusters.geo" providerKey="ogr" checked="Qt::Checked" source="../out/layout/layouted_clusters.geo.json">
+    <layer-tree-layer expanded="1" id="layouted_clusters_geo_baeb9556_1974_4e2f_b626_27b4f2d678b1" name="layouted_clusters.geo" providerKey="ogr" checked="Qt::Unchecked" source="../out/layout/layouted_clusters.geo.json">
       <customproperties/>
     </layer-tree-layer>
     <layer-tree-layer expanded="1" id="territory_polygons_1_geo_db4a50d4_8731_45a3_b62c_eff63fe4e9de" name="territory_polygons_1.geo" providerKey="ogr" checked="Qt::Checked" source="../out/layout/territory_polygons_1.geo.json">
@@ -55,10 +55,10 @@
   <mapcanvas annotationsVisible="1" name="theMapCanvas">
     <units>degrees</units>
     <extent>
-      <xmin>-9.76855802302418041</xmin>
-      <ymin>-46.09203958107204357</ymin>
-      <xmax>-4.94429928023116716</xmax>
-      <ymax>-43.94792458427522774</ymax>
+      <xmin>-10.60927007520465537</xmin>
+      <ymin>-47.65598856417668117</ymin>
+      <xmax>-2.64442632163888458</xmax>
+      <ymax>-44.11605800703655689</ymax>
     </extent>
     <rotation>0</rotation>
     <destinationsrs>
@@ -81,9 +81,9 @@
         <legendlayerfile visible="0" isInOverview="0" layerid="clusters_geo_ad6167c9_c94e_4e2f_965c_7fd25c6a6ce6"/>
       </filegroup>
     </legendlayer>
-    <legendlayer showFeatureCount="0" drawingOrder="-1" open="true" name="layouted_clusters.geo" checked="Qt::Checked">
+    <legendlayer showFeatureCount="0" drawingOrder="-1" open="true" name="layouted_clusters.geo" checked="Qt::Unchecked">
       <filegroup open="true" hidden="false">
-        <legendlayerfile visible="1" isInOverview="0" layerid="layouted_clusters_geo_baeb9556_1974_4e2f_b626_27b4f2d678b1"/>
+        <legendlayerfile visible="0" isInOverview="0" layerid="layouted_clusters_geo_baeb9556_1974_4e2f_b626_27b4f2d678b1"/>
       </filegroup>
     </legendlayer>
     <legendlayer showFeatureCount="0" drawingOrder="-1" open="true" name="territory_polygons_1.geo" checked="Qt::Checked">
@@ -1470,6 +1470,7 @@ def my_form_open(dialog, layer, feature):
       <SingleCategoryDiagramRenderer attributeLegend="1" diagramType="Histogram">
         <DiagramCategory sizeScale="3x:0,0,0,0,0,0" labelPlacementMethod="XHeight" maxScaleDenominator="1e+8" minScaleDenominator="0" enabled="0" barWidth="5" height="15" opacity="1" sizeType="MM" rotationOffset="270" lineSizeType="MM" scaleBasedVisibility="0" backgroundAlpha="255" width="15" penWidth="0" backgroundColor="#ffffff" scaleDependency="Area" diagramOrientation="Up" penColor="#000000" penAlpha="255" lineSizeScale="3x:0,0,0,0,0,0" minimumSize="0">
           <fontProperties description=".AppleSystemUIFont,13,-1,5,50,0,0,0,0,0" style=""/>
+          <attribute field="" label="" color="#000000"/>
         </DiagramCategory>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings showAll="1" priority="0" placement="1" dist="0" zIndex="0" linePlacementFlags="18" obstacle="0">
