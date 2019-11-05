@@ -19,7 +19,7 @@ const {
 } = require('../constants')
 
 const POOL_PATH = __dirname + '/util/territoryWorker.js'
-const USE_WORKERS = false
+const USE_WORKERS = true
 
 const points = JSON.parse(fs.readFileSync(LAYOUTED_CLUSTERS, 'utf-8'))
 const baseIslandsMrct = JSON.parse(
@@ -84,7 +84,7 @@ const execBBoxChunk = () => {
     'clusters'
   )
 
-  const pool = workerpool.pool(POOL_PATH)
+  const pool = workerpool.pool(POOL_PATH, { workerType: 'process' })
   let numClustersTried = 0
   let numClustersSucceeded = 0
   let numFeatures = 0
