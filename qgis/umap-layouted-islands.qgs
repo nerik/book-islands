@@ -31,7 +31,7 @@
     <layer-tree-layer id="layouted_clusters_geo_baeb9556_1974_4e2f_b626_27b4f2d678b1" expanded="1" name="layouted_clusters.geo" checked="Qt::Checked" providerKey="ogr" source="../out/layout/layouted_clusters.geo.json">
       <customproperties/>
     </layer-tree-layer>
-    <layer-tree-layer id="territory_polygons_1_geo_db4a50d4_8731_45a3_b62c_eff63fe4e9de" expanded="1" name="territory_polygons_1.geo" checked="Qt::Checked" providerKey="ogr" source="../out/layout/territory_polygons_1.geo.json">
+    <layer-tree-layer id="territory_polygons_1_geo_db4a50d4_8731_45a3_b62c_eff63fe4e9de" expanded="1" name="territory_polygons_1.geo" checked="Qt::Unchecked" providerKey="ogr" source="../out/layout/territory_polygons_1.geo.json">
       <customproperties/>
     </layer-tree-layer>
     <layer-tree-layer id="territory_polygons_hi_1_geo_281a600e_e37a_4d39_b9da_88dbcd20b893" expanded="1" name="territory_polygons_hi_1.geo" checked="Qt::Checked" providerKey="ogr" source="../out/layout/territory_polygons_hi_1.geo.json">
@@ -75,10 +75,10 @@
   <mapcanvas annotationsVisible="1" name="theMapCanvas">
     <units>degrees</units>
     <extent>
-      <xmin>-7.00946304386910235</xmin>
-      <ymin>-45.40177023790656818</ymin>
-      <xmax>-4.10891211185555072</xmax>
-      <ymax>-44.11263649034692236</ymax>
+      <xmin>-8.22450563256732003</xmin>
+      <ymin>-46.74003834146893155</ymin>
+      <xmax>-7.8257891299075677</xmax>
+      <ymax>-46.56283100695375765</ymax>
     </extent>
     <rotation>0</rotation>
     <destinationsrs>
@@ -116,9 +116,9 @@
         <legendlayerfile visible="1" layerid="layouted_clusters_geo_baeb9556_1974_4e2f_b626_27b4f2d678b1" isInOverview="0"/>
       </filegroup>
     </legendlayer>
-    <legendlayer showFeatureCount="0" name="territory_polygons_1.geo" checked="Qt::Checked" drawingOrder="-1" open="true">
+    <legendlayer showFeatureCount="0" name="territory_polygons_1.geo" checked="Qt::Unchecked" drawingOrder="-1" open="true">
       <filegroup hidden="false" open="true">
-        <legendlayerfile visible="1" layerid="territory_polygons_1_geo_db4a50d4_8731_45a3_b62c_eff63fe4e9de" isInOverview="0"/>
+        <legendlayerfile visible="0" layerid="territory_polygons_1_geo_db4a50d4_8731_45a3_b62c_eff63fe4e9de" isInOverview="0"/>
       </filegroup>
     </legendlayer>
     <legendlayer showFeatureCount="0" name="territory_polygons_hi_1.geo" checked="Qt::Checked" drawingOrder="-1" open="true">
@@ -2027,8 +2027,15 @@ def my_form_open(dialog, layer, feature):
         </properties>
       </DiagramLayerSettings>
       <fieldConfiguration>
-        <field name="cluster_layouted_id">
-          <editWidget type="TextEdit">
+        <field name="cluster_id">
+          <editWidget type="">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="layouted_id">
+          <editWidget type="">
             <config>
               <Option/>
             </config>
@@ -2043,21 +2050,25 @@ def my_form_open(dialog, layer, feature):
         </field>
       </fieldConfiguration>
       <aliases>
-        <alias name="" field="cluster_layouted_id" index="0"/>
-        <alias name="" field="author_id" index="1"/>
+        <alias name="" field="cluster_id" index="0"/>
+        <alias name="" field="layouted_id" index="1"/>
+        <alias name="" field="author_id" index="2"/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <defaults>
-        <default applyOnUpdate="0" field="cluster_layouted_id" expression=""/>
+        <default applyOnUpdate="0" field="cluster_id" expression=""/>
+        <default applyOnUpdate="0" field="layouted_id" expression=""/>
         <default applyOnUpdate="0" field="author_id" expression=""/>
       </defaults>
       <constraints>
-        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="cluster_layouted_id"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="cluster_id"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="layouted_id"/>
         <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="author_id"/>
       </constraints>
       <constraintExpressions>
-        <constraint exp="" field="cluster_layouted_id" desc=""/>
+        <constraint exp="" field="cluster_id" desc=""/>
+        <constraint exp="" field="layouted_id" desc=""/>
         <constraint exp="" field="author_id" desc=""/>
       </constraintExpressions>
       <attributeactions>
@@ -2222,6 +2233,7 @@ def my_form_open(dialog, layer, feature):
       <SingleCategoryDiagramRenderer diagramType="Histogram" attributeLegend="1">
         <DiagramCategory lineSizeScale="3x:0,0,0,0,0,0" scaleDependency="Area" sizeScale="3x:0,0,0,0,0,0" diagramOrientation="Up" labelPlacementMethod="XHeight" backgroundColor="#ffffff" lineSizeType="MM" maxScaleDenominator="1e+8" sizeType="MM" penWidth="0" penAlpha="255" enabled="0" rotationOffset="270" opacity="1" minScaleDenominator="0" barWidth="5" height="15" width="15" scaleBasedVisibility="0" backgroundAlpha="255" penColor="#000000" minimumSize="0">
           <fontProperties description=".AppleSystemUIFont,13,-1,5,50,0,0,0,0,0" style=""/>
+          <attribute label="" field="" color="#000000"/>
         </DiagramCategory>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings priority="0" obstacle="0" zIndex="0" dist="0" placement="1" showAll="1" linePlacementFlags="18">
@@ -2233,13 +2245,51 @@ def my_form_open(dialog, layer, feature):
           </Option>
         </properties>
       </DiagramLayerSettings>
-      <fieldConfiguration/>
-      <aliases/>
+      <fieldConfiguration>
+        <field name="cluster_id">
+          <editWidget type="">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="layouted_id">
+          <editWidget type="">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="author_id">
+          <editWidget type="">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+      </fieldConfiguration>
+      <aliases>
+        <alias name="" field="cluster_id" index="0"/>
+        <alias name="" field="layouted_id" index="1"/>
+        <alias name="" field="author_id" index="2"/>
+      </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
-      <defaults/>
-      <constraints/>
-      <constraintExpressions/>
+      <defaults>
+        <default applyOnUpdate="0" field="cluster_id" expression=""/>
+        <default applyOnUpdate="0" field="layouted_id" expression=""/>
+        <default applyOnUpdate="0" field="author_id" expression=""/>
+      </defaults>
+      <constraints>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="cluster_id"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="layouted_id"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="author_id"/>
+      </constraints>
+      <constraintExpressions>
+        <constraint exp="" field="cluster_id" desc=""/>
+        <constraint exp="" field="layouted_id" desc=""/>
+        <constraint exp="" field="author_id" desc=""/>
+      </constraintExpressions>
       <attributeactions>
         <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
       </attributeactions>
