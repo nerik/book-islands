@@ -1,25 +1,28 @@
+const path = require('path')
 const turf = require('@turf/turf')
 const _ = require('lodash')
 const d3 = require('d3')
 const d3Delaunay = require('d3-delaunay')
 const { performance } = require('perf_hooks')
 
+const IMAGES_FOLDER = 'scripts/layout/debug-clusters-images/'
+
 const pip = function (point, vs) {
   // ray-casting algorithm based on
   // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
-  
+
   var x = point[0], y = point[1]
-  
+
   var inside = false
   for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
     var xi = vs[i][0], yi = vs[i][1]
     var xj = vs[j][0], yj = vs[j][1]
-      
+
     var intersect = ((yi > y) != (yj > y))
           && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)
     if (intersect) inside = !inside
   }
-  
+
   return inside
 }
 
@@ -87,13 +90,13 @@ const drawPreview = (cells, territoriesSegments, territoriesBorderSegments, isla
 
   const drawCell = (cell) => {
     const poly = cell.poly
-  
+
     // console.log(cell.territory !== null && allFrontierCells[cell.territory])
     // const isFrontier = cell.territory !== null && allFrontierCells[cell.territory].map(c => c.index).includes(cell.index)
     // context.lineWidth = (isFrontier) ? 2 : 1
     // context.strokeStyle = (isFrontier) ? 'blue' : 'grey'
     context.strokeStyle = 'gray'
-  
+
     context.beginPath()
     let color = (cell.territory === null) ? 'lightgray' : COLORS[cell.territory % COLORS.length]
 
@@ -106,8 +109,8 @@ const drawPreview = (cells, territoriesSegments, territoriesBorderSegments, isla
     context.fill()
     context.closePath()
   }
-  
-  
+
+
   cells.filter(c => c !== null).forEach(cell => drawCell(cell))
   context.lineWidth = 2
   territoriesSegments
@@ -153,7 +156,7 @@ const drawPreview = (cells, territoriesSegments, territoriesBorderSegments, isla
 
 
   var buf = canvas.toBuffer()
-  fs.writeFileSync(filename, buf)
+  fs.writeFileSync(path.join(IMAGES_FOLDER, filename), buf)
   if (VERBOSE) console.log('Wrote to' , filename)
 }
 
@@ -249,11 +252,11 @@ const getClusterTerritories = (clusterPoints, clusterWeights, island, layouted_i
     let poly
     try {
       poly = getPoly(voronoi, j, islandBBox)
-    }  catch(e) { 
+    }  catch(e) {
       // console.log(e)
       // throw new Error('Faulty voronoi')
       // TODO Overwhelmingly happens that there is just one missing polygon.
-      //    We might be getting away with this by recreating it 
+      //    We might be getting away with this by recreating it
       cells.push(null)
       continue
     }
@@ -273,11 +276,11 @@ const getClusterTerritories = (clusterPoints, clusterWeights, island, layouted_i
   if (cells.filter(c => c === null).length) {
     if (VERBOSE) console.log('Missing cells:', cells.filter(c => c === null).length)
   }
-  
+
   cells.filter(c => c !== null).forEach(cell => {
     cell.neighbors = getNeighbors(delaunay, cell.index, cells)
   })
-  
+
   if (VERBOSE) console.log('Delaunay done in ', performance.now() - t)
 
 
@@ -315,16 +318,16 @@ const getClusterTerritories = (clusterPoints, clusterWeights, island, layouted_i
   }))
   territoriesIterations = _.shuffle(territoriesIterations)
 
-  
+
   t = performance.now()
-  
+
   let currentTerritoryIteration = 0
   let iterationsSinceSuccess = 0
 
   for (let i = 0; i < MAX_CONQUEST_ITERATIONS; i++) {
     const territoryIndex = territoriesIterations[currentTerritoryIteration]
     const currentTerritory = territories[territoryIndex]
-  
+
     // Find a cell neighbour to the territory
     // 1. Pick a random cell already belonging to the territory
     const territoryCellsIndexes = currentTerritory.nonLandLockedCellsIndexes
@@ -332,22 +335,22 @@ const getClusterTerritories = (clusterPoints, clusterWeights, island, layouted_i
     const rdTerritoryCell = Math.floor(Math.random()*numTerritoryCells)
     const territoryRdCellIndex = territoryCellsIndexes[rdTerritoryCell]
     const territoryRdCell = cells[territoryRdCellIndex]
-  
-    // 2. Get random cell neighbours 
+
+    // 2. Get random cell neighbours
     const territoryRdCellNeighborsIndexes = territoryRdCell.neighbors
-    
+
     // if random cell is a sea, do not pick another sea (avoids conquering through sea)
-    const territoryRdCellNeighborsLandIndexes = (territoryRdCell.sea === false) 
+    const territoryRdCellNeighborsLandIndexes = (territoryRdCell.sea === false)
       ? territoryRdCellNeighborsIndexes
       : _.intersection(territoryRdCellNeighborsIndexes, freeLandPureCellsIndexes)
-  
+
     // pick cells that are neighbours of random territory cell
     const territoryRdCellFreeNeighborsLandIndexes = _.intersection(territoryRdCellNeighborsLandIndexes, freeCellsIndexes)
-  
+
     const numTerritoryRdCellNeighborsFree = territoryRdCellFreeNeighborsLandIndexes.length
     if (numTerritoryRdCellNeighborsFree === 0) {
       // console.log('Cant find free neighbour cell for territory', territoryIndex, ' cell:', territoryRdCell.index)
-  
+
       // try to remove current cell from the pool (nonLandLockedCellsIndexes)
       // when it is completely surrounded by same-territory cells
       const pickedCellNeighbors = territoryRdCell.neighbors
@@ -372,20 +375,20 @@ const getClusterTerritories = (clusterPoints, clusterWeights, island, layouted_i
         freeLandPureCellsIndexes.splice(freeLandCellsIndexes.indexOf(pickedCellIndex), 1)
       }
     }
-  
-  
+
+
     currentTerritoryIteration++
     if (currentTerritoryIteration >= territoriesIterations.length) {
       currentTerritoryIteration = 0
     }
-  
+
     if (freeLandCellsIndexes.length === 0) {
       // console.log('Stopping at', i, 'iterations')
       break
     }
-  
-    // Sometimes, territories might be completely drawn but somehow free land cells counter is not === 0 
-    // so it gets stuck at max iterations. 
+
+    // Sometimes, territories might be completely drawn but somehow free land cells counter is not === 0
+    // so it gets stuck at max iterations.
     if (iterationsSinceSuccess >= 1000) {
       // console.log('Couldnt find cells after trying ', iterationsSinceSuccess, 'times, aborting')
       break
@@ -404,7 +407,7 @@ const getClusterTerritories = (clusterPoints, clusterWeights, island, layouted_i
   territories.forEach(territory => {
     const territoryCells = cells
       .filter(c => c !== null && c.territory === territory.index)
-    
+
     // get frontier cells
     const neighborContainers = territoryCells
       .map(c => {
@@ -419,10 +422,10 @@ const getClusterTerritories = (clusterPoints, clusterWeights, island, layouted_i
           index: c.index,
           poly: c.poly,
           neighborsForeign
-        } 
+        }
       })
     territory.frontierCells = neighborContainers.filter(c => c.neighborsForeign.length)
-  
+
     // Get border cells (cells that are attached to the bounding box)
     // We need those in order to close territory polygons
     territory.borderCells = territoryCells.filter(c => {
@@ -454,7 +457,7 @@ const getClusterTerritories = (clusterPoints, clusterWeights, island, layouted_i
 
     // Collect border segments
     territory.borderCells.forEach(edgeCell => {
-      const borderPts = [] 
+      const borderPts = []
       edgeCell.poly.forEach(pt => {
         if (isPtInBorder(pt, rangeX, rangeY)) {
           borderPts.push(pt)
@@ -486,7 +489,7 @@ const getClusterTerritories = (clusterPoints, clusterWeights, island, layouted_i
       )
       if (nextSegFromEndIndex > -1) {
         const nextSeg = uniqSegments.splice(nextSegFromEndIndex, 1)[0]
-        const nextSegReordered = (nextSeg[0][0] === currentEnd[0] && nextSeg[0][1] === currentEnd[1]) ? 
+        const nextSegReordered = (nextSeg[0][0] === currentEnd[0] && nextSeg[0][1] === currentEnd[1]) ?
           [nextSeg[0], nextSeg[1]] :
           [nextSeg[1], nextSeg[0]]
         currentPolygonOrderedSegs.push(nextSegReordered)

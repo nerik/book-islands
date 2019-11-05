@@ -11,6 +11,24 @@
             "program": "${workspaceFolder}/index.js"
         },
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Generate database",
+            "program": "${workspaceFolder}/scripts/db/generateDb.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Clusters",
+            "program": "${workspaceFolder}/scripts/layout/clusterByPop.js"
+        },
+        {
+          "type": "node",
+          "request": "launch",
+          "name": "Score",
+          "program": "${workspaceFolder}/scripts/layout/score.js"
+        },
+        {
           "type": "node",
           "request": "launch",
           "name": "Layout",

@@ -10,9 +10,9 @@ const avg = require('../util/avg')
 const { AUTHORS, UMAP_GEO, CLUSTERS } = require('../constants')
 
 // overall cluster size (ie radius of the circle which will contain cluster children)
-const CLUSTER_RADIUS_MULT = 5
+const CLUSTER_RADIUS_MULT = 20
 // minimum priority value to form a cluster (priority is computed from author score, see getAuthorLayoutPriority)
-const MIN_CLUSTER_PRIORITY = 10 
+const MIN_CLUSTER_PRIORITY = 1.5
 // TODO We might want to have these values depend on the archipel the potential cluster will belong
 
 const features = JSON.parse(fs.readFileSync(UMAP_GEO, 'utf-8')).features
@@ -20,15 +20,15 @@ const authors = JSON.parse(fs.readFileSync(AUTHORS, 'utf-8'))
 
 const authorDict = {}
 authors.forEach(author => {
-  authorDict[author.id] = author
+  authorDict[author.author_slug] = author
 })
 
 const authorsInUmapNotInDB = []
 const orderedFeatures = features.map(feature => {
-  const authorId = feature.properties.id
-  const author = authorDict[authorId]
+  const { author_slug } = feature.properties
+  const author = authorDict[author_slug]
   if (!author) {
-    authorsInUmapNotInDB.push(authorId)
+    authorsInUmapNotInDB.push(author_slug)
     // console.log('Author exist in UMAP but not in DB:', authorId)
     return null
   }
@@ -48,6 +48,7 @@ const orderedFeatures = features.map(feature => {
       // generate a cluster radius:
       // squareroot this fucker to avoid a very big Shakespeare cluster and account
       // for radius/circle area relation)
+
       const radius = CLUSTER_RADIUS_MULT * Math.sqrt(Math.sqrt(feature.properties.priority))
       return {
         ...feature,
@@ -79,11 +80,10 @@ let finalClusters = clusters.map(cluster => {
   const feature = {
     ...cluster,
     properties: {
-      author_id: cluster.properties.id,
-      // TODO !!!! AUTHOR NAME + ID
+      author_id: cluster.properties.author_slug,
       author_name: cluster.properties.author_name,
       is_cluster: true,
-      layouted_id: `cluster_${cluster.properties.id}`,
+      layouted_id: `cluster_${cluster.properties.author_slug}`,
       cluster_r,
       cluster_g,
       cluster_b,
@@ -107,12 +107,12 @@ const finalStandalonePoints = orderedFeatures.map(point => {
 
 
   if (closestCluster === undefined) {
-    properties.layouted_id = `standalone_${point.properties.id}`
+    properties.layouted_id = `standalone_${point.properties.author_slug}`
     properties.cluster_r = 100
     properties.cluster_g = 100
     properties.cluster_b = 100
   } else {
-    properties.layouted_id = `clustered_${point.properties.id}`
+    properties.layouted_id = `clustered_${point.properties.author_slug}`
     properties.cluster_id = closestCluster.properties.layouted_id
     properties.cluster_r = closestCluster.properties.cluster_r
     properties.cluster_g = closestCluster.properties.cluster_g
@@ -127,8 +127,7 @@ const finalStandalonePoints = orderedFeatures.map(point => {
       sum_popularity: point.properties.sum_popularity,
       avg_popularity: point.properties.avg_popularity,
       books_count: point.properties.books_count,
-      author_id: point.properties.id,
-      // TODO !!!! AUTHOR NAME + ID
+      author_id: point.properties.author_slug,
       author_name: point.properties.author_name,
     }
   }
@@ -143,7 +142,7 @@ finalClusters = finalClusters.map(cluster => {
       return clusteredPoint.properties.cluster_id === cluster.properties.layouted_id
     })
 
-  
+
   return {
     ...cluster,
     children
@@ -180,6 +179,7 @@ finalClusters = finalClusters.map(cluster => {
 
 // If a cluster center falls into another bigger cluster's enveloppe,
 // merge it to avoid complicated layout further
+
 let mergedClusters = []
 finalClusters.forEach(cluster => {
   const biggerCluster = mergedClusters.find(mergedCluster =>
