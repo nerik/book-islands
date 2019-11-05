@@ -21,7 +21,7 @@ SCRIPTS
 ./scripts/tiles/pointsTiles.js
 
 ./scripts/tiles/height/download.js
-./scripts/tiles/height/produceTiles.js
+./scripts/tiles/height/heightTiles.js
 
 RUN
 yarn serve
