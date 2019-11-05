@@ -9,7 +9,8 @@ const transposeAndScale = require('../util/transposeAndScale')
 const pointWithinBBox = require('../util/pointWithinBBox')
 
 const {
-  BASE_ISLANDS, ISLANDS_FINAL_META, ISLANDS, ISLETS,
+  BASE_ISLANDS, ISLANDS_FINAL_META, ISLETS, TERRITORY_POLYGONS,
+  ISLANDS, TERRITORY_POLYGONS_HIDEF,
   BBOX_CHUNKS
 } = require('../constants')
 
@@ -44,6 +45,10 @@ const next = () => {
   })
   const allIslandsLayoutedIds = Object.keys(islandsMeta)
 
+  const territoriesPath = TERRITORY_POLYGONS.replace('.geo.json', `_${chunkIndex}.geo.json`)
+  const territories = JSON.parse(fs.readFileSync(territoriesPath, 'utf-8')).features
+  console.log(territories[0])
+
   const islandsLayoutedIds = allIslandsLayoutedIds
     .filter(islandLayoutedId => {
       const meta = islandsMeta[islandLayoutedId]
@@ -55,6 +60,7 @@ const next = () => {
   console.log('Will collect', allIslandsLayoutedIds.length)
 
   const islands = []
+  const intersectedTerritories = []
   let numFaulty = 0
   const pb = progressBar(islandsLayoutedIds.length)
 
@@ -65,6 +71,7 @@ const next = () => {
       numFaulty++
       return
     }
+    // 1. Collect and transform hi def base island ------------
     const island = baseIslandsDict[meta.island_id]
     const centerMrct = turf.toMercator(turf.point(meta.center))
 
@@ -77,6 +84,7 @@ const next = () => {
 
     islands.push(transposedIslandWgs84)
 
+    // 2. Collect islets --------------------------------
     const islandIslets = islets.features.filter(islet => islet.properties.island_id === meta.island_id)
     // console.log('islets', islandIslets.length)
     const isletsMrct = islandIslets.map(f => turf.toMercator(f))
@@ -88,7 +96,24 @@ const next = () => {
       f.properties.layouted_id = islandLayoutedId
       islands.push(f)
     })
+
+    // 3. Collect territories and intersect them with hi def island ------ 
+    const islandTerritories = territories.filter(t => t.properties.cluster_id === meta.layouted_id)
+    if (islandTerritories.length) {
+      console.log(islandTerritories)
+      islandTerritories.forEach(territory => {
+        const intersected = turf.intersect(territory, transposedIslandWgs84)
+        if (intersected) {
+          intersectedTerritories.push(intersected)
+        }
+      })
+    }
   })
+
+  
+  const territoryPath = TERRITORY_POLYGONS_HIDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
+  fs.writeFileSync(territoryPath, JSON.stringify(turf.featureCollection(intersectedTerritories)))
+  console.log ('Wrote', territoryPath)
 
   console.log(islandsLayoutedIds.length, 'islands with', numFaulty, 'faulty')
 

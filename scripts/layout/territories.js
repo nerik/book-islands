@@ -135,7 +135,8 @@ const execBBoxChunk = () => {
           const {lines, polygons} = result
           polygons.forEach((territory, i) => {
             territory.properties = {
-              cluster_layouted_id: layoutedId,
+              cluster_id: layoutedId,
+              layouted_id: clusterChildren[i].properties.layouted_id,
               author_id: clusterChildren[i].properties.author_id,
             }
             territoriesPolygons.push(territory)

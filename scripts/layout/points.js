@@ -81,7 +81,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       //   console.log(layoutedId)
       // }
       if (finalMeta.is_cluster === true) {
-        polygons = territories.filter(t => t.properties.cluster_layouted_id === layoutedId)
+        polygons = territories.filter(t => t.properties.cluster_id === layoutedId)
         authorsIds = polygons.map(p => p.properties.author_id)
       } else {
         polygons = [island]

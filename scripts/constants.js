@@ -30,6 +30,7 @@ module.exports = {
   ISLANDS_FINAL_META: 'out/layout/islands_final.meta.json',
   TERRITORY_LINES: 'out/layout/territory_lines.geo.json',
   TERRITORY_POLYGONS: 'out/layout/territory_polygons.geo.json',
+  TERRITORY_POLYGONS_HIDEF: 'out/layout/territory_polygons_hi.geo.json',
   TERRITORY_LABELS: 'out/layout/territory_labels.geo.json',
   BOOKS_POINTS: 'out/layout/books_points.geo.json',
   SEARCH_DB: 'out/search-db/search-db-all.csv',
@@ -72,7 +73,7 @@ module.exports = {
   TERRITORIES_RANK_SCALE: d3.scaleThreshold()
     .domain([0, 1, 200, 6000])
     .range([1,1,2,3,4]),
-  USE_PROGRESS_BAR: false,
+  USE_PROGRESS_BAR: true,
   STORAGE_BUCKET_DATA: 'cilex-books-map-data',
   STORAGE_BUCKET_TILES: 'cilex-books-map-tiles',
 }
