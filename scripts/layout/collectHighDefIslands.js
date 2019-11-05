@@ -105,6 +105,9 @@ const next = () => {
         const intersected = turf.intersect(territory, transposedIslandWgs84)
         if (intersected) {
           intersectedTerritories.push(intersected)
+        } else {
+          // WTF
+          intersectedTerritories.push(territory)
         }
       })
     }

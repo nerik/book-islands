@@ -534,7 +534,7 @@ const getClusterTerritories = (clusterPoints, clusterWeights, island, layouted_i
   if (VERBOSE) console.log('collected segs')
 
 
-  const geoJSONIsland = turf.buffer(island, 1)
+  const geoJSONIsland = turf.buffer(island, 0.2)
   const geoJSONPolygons = territoriesSegments.map((polygonsOrderedSegs, i) => {
     const polygons = polygonsOrderedSegs.map((polygonOrderedSegs) => {
       const pts = []
