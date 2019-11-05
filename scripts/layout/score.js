@@ -41,7 +41,7 @@ const findScaleFit = (clusterPointsMrct, clusterCenterMrct, islandMrct) => {
     }
     currentScale += STEP_INCREMENT * dir
     // console.log('now trying with scl::', currentScale)
-    
+
     const islandAtScaleMrct = transposeAndScale(clusterCenterMrct, islandMrct, currentScale)
     const fits = pointsWithinFeature(clusterPointsMrct, islandAtScaleMrct)
     // scaling down and it now doesnt fit anymore: use prev
@@ -71,7 +71,7 @@ const findScaleFit = (clusterPointsMrct, clusterCenterMrct, islandMrct) => {
 }
 
 const getFitScore = (islandAtScale, clusterBuffers) => {
-  
+
   // intersect buffers with island
   const intersected = clusterBuffers.map(b => {
     return turf.intersect(b, islandAtScale)
@@ -110,13 +110,13 @@ const getFitScoreFast = (islandAtScale, clusterEnveloppeArea) => {
 
 const points = clusters.features
   .filter(cluster => cluster.properties.is_cluster !== true)
-  
+
 
 const filteredClusters = clusters.features
   // the clusters geoJSON contains clusters + standalone, remove standalone
   .filter(cluster => cluster.properties.is_cluster === true)
   .filter(
-    cluster => 
+    cluster =>
       cluster.geometry.coordinates[0] > TEST_BBOX.minX &&
     cluster.geometry.coordinates[0] < TEST_BBOX.maxX &&
     cluster.geometry.coordinates[1] > TEST_BBOX.minY &&
@@ -131,25 +131,25 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   //   return
   // }
   console.log('Current chunk:', bboxChunk, chunkIndex)
-    
+
   const testFeatures = []
   const scores = {}
 
-  
+
   const bboxFilteredClusters = filteredClusters
     .filter(cluster => {
       return (pointWithinBBox(cluster, bboxChunk))
     })
-  
+
   console.log('Will score', bboxFilteredClusters.length, '/', filteredClusters.length)
-  
+
   const pb = progressBar(bboxFilteredClusters.length)
 
   bboxFilteredClusters.forEach(cluster => {
     const clusterId = cluster.properties.layouted_id
     const allClusterPoints = points
       .filter(p => p.properties.cluster_id === clusterId)
-    
+
     const allClusterPointsMrct = allClusterPoints.map(p => turf.toMercator(p))
 
     const clusterCenterMrct = turf.toMercator(cluster)
@@ -161,7 +161,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
         // this can fail when points are colinear, which happens to happens with the UMAP output
         clusterEnveloppeArea = turf.area(clusterEnveloppe)
       } catch (e) {
-        
+
       }
     }
 
@@ -172,7 +172,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       const islandMrct = _.cloneDeep(baseIslandMrct)
       const { newScale, islandAtScaleMrct, error } =
         findScaleFit(allClusterPointsMrct, clusterCenterMrct, islandMrct)
-      
+
       if (error !== undefined) {
         return {
           island_id,

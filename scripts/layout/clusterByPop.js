@@ -81,7 +81,6 @@ let finalClusters = clusters.map(cluster => {
     ...cluster,
     properties: {
       author_id: cluster.properties.author_slug,
-      // TODO !!!! AUTHOR NAME + ID
       author_name: cluster.properties.author_name,
       is_cluster: true,
       layouted_id: `cluster_${cluster.properties.author_slug}`,
@@ -129,7 +128,6 @@ const finalStandalonePoints = orderedFeatures.map(point => {
       avg_popularity: point.properties.avg_popularity,
       books_count: point.properties.books_count,
       author_id: point.properties.author_slug,
-      // TODO !!!! AUTHOR NAME + ID
       author_name: point.properties.author_name,
     }
   }

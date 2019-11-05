@@ -106,7 +106,7 @@ const getIslandAtFinalScale = (clusterCenterMrct, islandMrct, startScale, island
 
   // How much should we decrease scale when trying again
   const STEP_DECREMENT = .05
-  
+
   // Multiplicator applied when it finally fits. Avoid big cluster islands being too close to everything
   const FINAL_SCALE_MULT = .8
   const maxNumIterations = Math.ceil(startScale/STEP_DECREMENT)
@@ -189,7 +189,7 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
   const maxArea = layoutPriorityScore * MAP_PRIORITY_SCORE_WITH_AREA
 
   // scale down everything by this factor
-  const OVERALL_SCALE_FACTOR = .5
+  const OVERALL_SCALE_FACTOR = 0.5
 
   const maxNumIterations = Math.ceil(MAX_SCALE/STEP_DECREMENT) - 1
   let currentScale = MAX_SCALE
@@ -201,6 +201,10 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
     }
     const islandAtScaleMrct = transposeAndScale(clusterCenterMrct, islandMrct, currentScale)
     const islandAtScaleArea = turf.area(turf.toWgs84(islandAtScaleMrct))
+    // TODO: review why island doesn't always use the same size
+    // if (layoutPriorityScore === 0.5) {
+    //   console.log(currentScale)
+    // }
     // n++
     if (islandAtScaleArea <= maxArea) {
       break
@@ -344,14 +348,14 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
     // ----- 3. Edit OTHER points/clusters after island has been layouted -----------
     if (cluster.properties.is_cluster === true) {
     // Loop through remaining standalone and clustered points (no clusters)
-    // 
+    //
     // If point within just created island:
     //   If just created island is not a cluster, create it???
     //   Attach point to island cluster
-    //   If point belonged to another cluster 
+    //   If point belonged to another cluster
     //     Check if other cluster is not already layouted !!
     //       Remove point from other cluster
-    //       If other cluster is left with only one 
+    //       If other cluster is left with only one
     //          Demote cluster to standalone pt
       filteredPoints
       // no clusters
@@ -392,7 +396,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
             if (previousParentClusterId !== undefined) {
               const previousParentCluster = filteredPoints
                 .find(pt => pt.properties.layouted_id === previousParentClusterId)
-            
+
               // remove point from previous parent cluster
               const childIndex = previousParentCluster.properties.children.findIndex(id => id === pointLayoutedId)
               previousParentCluster.properties.children.splice(childIndex, 1)

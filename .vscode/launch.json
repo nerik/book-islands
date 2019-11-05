@@ -25,6 +25,12 @@
         {
           "type": "node",
           "request": "launch",
+          "name": "Score",
+          "program": "${workspaceFolder}/scripts/layout/score.js"
+        },
+        {
+          "type": "node",
+          "request": "launch",
           "name": "Layout",
           "program": "${workspaceFolder}/scripts/layout/layout.js"
         },
