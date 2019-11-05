@@ -17,6 +17,12 @@
             "program": "${workspaceFolder}/scripts/db/generateDb.js"
         },
         {
+          "type": "node",
+          "request": "launch",
+          "name": "Normalize UMAPs to world",
+          "program": "${workspaceFolder}/scripts/umap/normalizeToWorld.js"
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "Clusters",
@@ -43,6 +49,12 @@
         {
           "type": "node",
           "request": "launch",
+          "name": "Points",
+          "program": "${workspaceFolder}/scripts/layout/points.js"
+        },
+        {
+          "type": "node",
+          "request": "launch",
           "name": "Download needed height data",
           "program": "${workspaceFolder}/scripts/tiles/height/download.js"
         },
@@ -50,13 +62,7 @@
           "type": "node",
           "request": "launch",
           "name": "Produce height tiles",
-          "program": "${workspaceFolder}/scripts/tiles/height/tile-reduce.js"
-        },
-        {
-          "type": "node",
-          "request": "launch",
-          "name": "Normalize UMAPs to world",
-          "program": "${workspaceFolder}/scripts/umap/normalizeToWorld.js"
+          "program": "${workspaceFolder}/scripts/tiles/height/heightTiles.js"
         }
     ]
 }

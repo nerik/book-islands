@@ -13,8 +13,8 @@ const {
 const authors = JSON.parse(fs.readFileSync(AUTHORS, 'utf-8'))
 const authorsDict = {}
 authors.forEach(author => {
-  const id = author.id
-  authorsDict[id] = author
+  const { author_slug } = author
+  authorsDict[author_slug] = author
 })
 
 const getAuthors = (ids) => {
@@ -91,7 +91,6 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       // console.log(polygons, authorsIds)
       // console.log('---')
       const authors = getAuthors(authorsIds)
-      
 
       const authorsBooks = authors.map(author => ({
         author,
