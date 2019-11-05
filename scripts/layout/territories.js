@@ -259,7 +259,8 @@ const execBBoxChunk = () => {
 
           numFeatures++
           console.log(numFeatures, bboxFilteredPoints.length)
-          if (numFeatures === bboxFilteredPoints.length) {
+          // TODO review if this is needed for all BBOXs
+          if (numFeatures === bboxFilteredPoints.length -1) {
             console.log(chunkIndex, BBOX_CHUNKS.length - 1)
             pool.terminate()
             pb.stop()

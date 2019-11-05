@@ -19,6 +19,7 @@ SCRIPTS
 
 ./scripts/tiles/islandsTiles.js
 ./scripts/tiles/pointsTiles.js
+./scripts/tiles/territoriesTiles.js
 
 ./scripts/tiles/height/download.js
 ./scripts/tiles/height/heightTiles.js
