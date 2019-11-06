@@ -16,7 +16,7 @@ const allPaths = BBOX_CHUNKS.map((bbox, chunkIndex) =>
   TERRITORY_POLYGONS.replace('.geo.json', `_${chunkIndex}.geo.json`)
 ).join(' ')
 
-const cmd = `tippecanoe -o ${mbtiles} -zg --drop-densest-as-needed -l territories --minimum-zoom=5 --maximum-zoom=${MAX_ZOOM_GENERATED} ${allPaths}`
+const cmd = `tippecanoe -o ${mbtiles} --minimum-zoom=5 --maximum-zoom=${MAX_ZOOM_GENERATED} --drop-densest-as-needed -l territories ${allPaths}`
 
 console.log(cmd)
 exec(cmd)
