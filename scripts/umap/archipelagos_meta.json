@@ -27,13 +27,17 @@
     "file": "history",
     "scale": [0.7, 0.7],
     "translate": [-80, -26],
-    "bounds": [-163, 25, -20, -76]
+    "bounds": [-163, 25, -20, -76],
+    "clusterRadiusMult": 50,
+    "minClusterPriority": 2.5
   },
   "hobbies": {
     "file": "hobbies",
     "scale": [0.25, 0.25],
     "translate": [-40, 60],
-    "bounds": [-83, 75, -7, 50]
+    "bounds": [-83, 75, -7, 50],
+    "clusterRadiusMult": 15,
+    "minClusterPriority": 1
   },
   "law_and_government": {
     "file": "law_and_government",
@@ -51,13 +55,17 @@
     "file": "novels",
     "scale": [1.2, 1],
     "translate": [75, 2],
-    "bounds": [-90, 53, 220, -77]
+    "bounds": [-90, 53, 220, -77],
+    "clusterRadiusMult": 80,
+    "minClusterPriority": 4
   },
   "people_and_society": {
     "file": "people_and_society",
     "scale": [0.25, 0.25],
     "translate": [0, 55],
-    "bounds": [-35, 70, 22, 42]
+    "bounds": [-35, 70, 22, 42],
+    "clusterRadiusMult": 10,
+    "minClusterPriority": 1
   },
   "philosophy": {
     "file": "philosophy",
@@ -69,7 +77,9 @@
     "file": "poetry",
     "scale": [0.4, 1.1],
     "translate": [134, 30],
-    "bounds": [83, 78, 175, 3]
+    "bounds": [83, 78, 175, 3],
+    "clusterRadiusMult": 40,
+    "minClusterPriority": 2
   },
   "religion_and_belief": {
     "file": "religion_and_belief",
@@ -81,6 +91,8 @@
     "file": "science",
     "scale": [0.8, 0.65],
     "translate": [-5, 10],
-    "bounds": [-147, 63, 83, -30]
+    "bounds": [-147, 63, 83, -30],
+    "clusterRadiusMult": 40,
+    "minClusterPriority": 2
   }
 }
