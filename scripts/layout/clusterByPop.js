@@ -38,7 +38,8 @@ const orderedFeatures = features.map(feature => {
 })
   .filter(f => f !== null)
   .map(feature => {
-    const categoryMeta = umapsMeta[feature.category] || {}
+    const categoryMeta = umapsMeta[feature.properties.category] || {}
+
     // overall cluster size (ie radius of the circle which will contain cluster children)
     const CLUSTER_RADIUS_MULT = categoryMeta.clusterRadiusMult || 20
     // minimum priority value to form a cluster (priority is computed from author score, see getAuthorLayoutPriority)

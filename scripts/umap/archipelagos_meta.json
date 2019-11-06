@@ -3,13 +3,17 @@
     "file": "arts_and_entertainment",
     "scale": [0.6, 0.7],
     "translate": [90, 40],
-    "bounds": [15, 80, 160, 0]
+    "bounds": [15, 80, 160, 0],
+    "clusterRadiusMult": 5,
+    "minClusterPriority": 2.5
   },
   "children_literature": {
     "file": "children_literature",
     "scale": [0.6, 0.6],
     "translate": [160, -77],
-    "bounds": [100, -46, 179, -78]
+    "bounds": [100, -46, 179, -78],
+    "clusterRadiusMult": 40,
+    "minClusterPriority": 1
   },
   "classics": {
     "file": "classics",
@@ -28,8 +32,8 @@
     "scale": [0.7, 0.7],
     "translate": [-80, -26],
     "bounds": [-163, 25, -20, -76],
-    "clusterRadiusMult": 50,
-    "minClusterPriority": 2.5
+    "clusterRadiusMult": 25,
+    "minClusterPriority": 0.7
   },
   "hobbies": {
     "file": "hobbies",
@@ -37,7 +41,7 @@
     "translate": [-40, 60],
     "bounds": [-83, 75, -7, 50],
     "clusterRadiusMult": 15,
-    "minClusterPriority": 1
+    "minClusterPriority": 1.8
   },
   "law_and_government": {
     "file": "law_and_government",
@@ -56,8 +60,8 @@
     "scale": [1.2, 1],
     "translate": [75, 2],
     "bounds": [-90, 53, 220, -77],
-    "clusterRadiusMult": 80,
-    "minClusterPriority": 4
+    "clusterRadiusMult": 70,
+    "minClusterPriority": 0.8
   },
   "people_and_society": {
     "file": "people_and_society",
@@ -65,7 +69,7 @@
     "translate": [0, 55],
     "bounds": [-35, 70, 22, 42],
     "clusterRadiusMult": 10,
-    "minClusterPriority": 1
+    "minClusterPriority": 2.3
   },
   "philosophy": {
     "file": "philosophy",
@@ -79,7 +83,7 @@
     "translate": [134, 30],
     "bounds": [83, 78, 175, 3],
     "clusterRadiusMult": 40,
-    "minClusterPriority": 2
+    "minClusterPriority": 1
   },
   "religion_and_belief": {
     "file": "religion_and_belief",
@@ -92,7 +96,7 @@
     "scale": [0.8, 0.65],
     "translate": [-5, 10],
     "bounds": [-147, 63, 83, -30],
-    "clusterRadiusMult": 40,
-    "minClusterPriority": 2
+    "clusterRadiusMult": 70,
+    "minClusterPriority": 1
   }
 }
