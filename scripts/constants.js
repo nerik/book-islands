@@ -36,23 +36,23 @@ module.exports = {
   SEARCH_DB_RANKED_LIMIT: 10000,
   ISLANDS_TILES: 'tiles/islands',
   TERRITORIES_TILES: 'tiles/territories',
-  MAX_ZOOM_GENERATED: 20,
+  MAX_ZOOM_GENERATED: 16,
   POINTS_TILES: 'tiles/points',
   HEIGHT_TILES: 'tiles/height',
   HEIGHT_TILE_SIZE: 256,
   HEIGHT_EMPTY_TILE: 'scripts/tiles/height/blank.png',
-  // TEST_BBOX: {
-  //   minX: -10,
-  //   minY: -52,
-  //   maxX: 0,
-  //   maxY: -42
-  // },
   TEST_BBOX: {
-    minX: -180,
-    minY: -80,
-    maxX: 180,
-    maxY: 80
+    minX: -10,
+    minY: -52,
+    maxX: 0,
+    maxY: -42
   },
+  // TEST_BBOX: {
+  //   minX: -180,
+  //   minY: -80,
+  //   maxX: 180,
+  //   maxY: 80
+  // },
   BBOX_CHUNKS:[
     // -240 and 220 it is due the umap offsets
     [-240, -80, -90, 0],

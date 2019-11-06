@@ -77,9 +77,10 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       let polygons = []
       let authorsIds = []
       const island = islands.find(i => i.properties.layouted_id === layoutedId)
-      // if (island === undefined) {
-      //   console.log(layoutedId)
-      // }
+      if (!island) {
+        console.log('Island not found', layoutedId)
+        return
+      }
       if (finalMeta.is_cluster === true) {
         polygons = territories.filter(t => t.properties.cluster_layouted_id === layoutedId)
         authorsIds = polygons.map(p => p.properties.author_id)
