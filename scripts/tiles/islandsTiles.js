@@ -4,7 +4,7 @@ const exec = require('child_process').execSync
 const fs = require('fs')
 const rimraf = require('rimraf')
 
-const { ISLANDS_LOWDEF, ISLANDS, ISLANDS_TILES, BBOX_CHUNKS } = require('../constants')
+const { MAX_ZOOM_GENERATED, ISLANDS_LOWDEF, ISLANDS, ISLANDS_TILES, BBOX_CHUNKS } = require('../constants')
 
 const mbtiles = `${ISLANDS_TILES}/main.mbtiles`
 const tiles = `${ISLANDS_TILES}/tiles`
@@ -23,7 +23,7 @@ const allPaths = BBOX_CHUNKS.map((bbox, chunkIndex) =>
   // .filter((b, i) => i < 2)
   .join(' ')
 
-const cmd = `tippecanoe -o ${mbtiles} -zg --drop-densest-as-needed -l islands ${allPaths}`
+const cmd = `tippecanoe -o ${mbtiles} -zg --drop-densest-as-needed -l islands ${allPaths} --maximum-zoom=${MAX_ZOOM_GENERATED}`
 console.log(cmd)
 exec(cmd)
 exec(`mb-util --image_format=pbf ${mbtiles} ${tiles} --silent`)
