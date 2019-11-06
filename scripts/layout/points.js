@@ -107,6 +107,8 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
           : turf.centroid(territory)
 
         labelCenterPt.properties.id = authorBooks.author.id
+        labelCenterPt.properties.slug = authorBooks.author.author_slug
+        labelCenterPt.properties.popularity = Math.round(authorBooks.author.sum_popularity)
         labelCenterPt.properties.rank = TERRITORIES_RANK_SCALE(authorPop)
         territoryLabels.push(labelCenterPt)
 

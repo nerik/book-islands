@@ -7,8 +7,8 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch index",
-            "program": "${workspaceFolder}/index.js"
+            "name": "Index",
+            "program": "${workspaceFolder}/scripts/layout/createSearchDatabase.js"
         },
         {
             "type": "node",
