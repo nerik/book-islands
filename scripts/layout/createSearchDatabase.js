@@ -7,7 +7,7 @@ const {
   TERRITORY_LABELS,
   SEARCH_DB,
   SEARCH_DB_RANKED,
-  SEARCH_DB_RANKED_LIMIT
+  SEARCH_DB_RANKED_LIMIT,
 } = require('../constants')
 
 const authors = JSON.parse(fs.readFileSync(TERRITORY_LABELS, 'utf-8')).features
@@ -23,7 +23,7 @@ const parseAuthor = (author) => {
     author.properties.id,
     author.properties.rank,
     trunc(author.geometry.coordinates[0]),
-    trunc(author.geometry.coordinates[1])
+    trunc(author.geometry.coordinates[1]),
   ]
 }
 

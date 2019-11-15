@@ -15,16 +15,14 @@ const {
   TERRITORY_POLYGONS,
   ISLANDS_FINAL_META,
   TEST_BBOX,
-  BBOX_CHUNKS
+  BBOX_CHUNKS,
 } = require('../constants')
 
 const POOL_PATH = __dirname + '/util/territoryWorker.js'
 const USE_WORKERS = true
 
 const points = JSON.parse(fs.readFileSync(LAYOUTED_CLUSTERS, 'utf-8'))
-const baseIslandsMrct = JSON.parse(
-  fs.readFileSync(BASE_ISLANDS_LOWDEF_MRCT, 'utf-8')
-)
+const baseIslandsMrct = JSON.parse(fs.readFileSync(BASE_ISLANDS_LOWDEF_MRCT, 'utf-8'))
 
 const filteredPoints = points.features
   .filter((cluster) => {
@@ -41,10 +39,7 @@ const filteredPoints = points.features
   })
   // Remove clusterED points (but keep clusters + standalone points)
   .filter((cluster) => {
-    return (
-      cluster.properties.is_cluster === true ||
-      cluster.properties.cluster_id === undefined
-    )
+    return cluster.properties.is_cluster === true || cluster.properties.cluster_id === undefined
   })
 
 console.log(
@@ -67,22 +62,11 @@ const execBBoxChunk = () => {
     return pointWithinBBox(cluster, bboxChunk)
   })
 
-  const islandsMetaPath = ISLANDS_CANDIDATES_META.replace(
-    '.json',
-    `_${chunkIndex}.json`
-  )
+  const islandsMetaPath = ISLANDS_CANDIDATES_META.replace('.json', `_${chunkIndex}.json`)
   const islandsMeta = JSON.parse(fs.readFileSync(islandsMetaPath, 'utf-8'))
 
-  const numClusters = bboxFilteredPoints.filter(
-    (p) => p.properties.is_cluster === true
-  ).length
-  console.log(
-    'For chunk:',
-    bboxFilteredPoints.length,
-    'points, ',
-    numClusters,
-    'clusters'
-  )
+  const numClusters = bboxFilteredPoints.filter((p) => p.properties.is_cluster === true).length
+  console.log('For chunk:', bboxFilteredPoints.length, 'points, ', numClusters, 'clusters')
 
   const pool = workerpool.pool(POOL_PATH, { workerType: 'process' })
   let numClustersTried = 0
@@ -95,37 +79,20 @@ const execBBoxChunk = () => {
   const finalMeta = []
 
   const writeChunk = () => {
-    console.log(
-      'Cluster success: ',
-      numClustersSucceeded,
-      '/',
-      numClustersTried
-    )
+    console.log('Cluster success: ', numClustersSucceeded, '/', numClustersTried)
     console.log('Created ', territoriesPolygons.length, 'territories')
 
-    const territoryPolygonsPath = TERRITORY_POLYGONS.replace(
-      '.geo.json',
-      `_${chunkIndex}.geo.json`
-    )
-    const territoryLinesPath = TERRITORY_LINES.replace(
-      '.geo.json',
-      `_${chunkIndex}.geo.json`
-    )
+    const territoryPolygonsPath = TERRITORY_POLYGONS.replace('.geo.json', `_${chunkIndex}.geo.json`)
+    const territoryLinesPath = TERRITORY_LINES.replace('.geo.json', `_${chunkIndex}.geo.json`)
     fs.writeFileSync(
       territoryPolygonsPath,
       JSON.stringify(turf.featureCollection(territoriesPolygons))
     )
-    fs.writeFileSync(
-      territoryLinesPath,
-      JSON.stringify(turf.featureCollection(territoriesLines))
-    )
+    fs.writeFileSync(territoryLinesPath, JSON.stringify(turf.featureCollection(territoriesLines)))
     console.log('Wrote', territoryPolygonsPath)
     console.log('Wrote', territoryLinesPath)
 
-    const finalMetaPath = ISLANDS_FINAL_META.replace(
-      '.json',
-      `_${chunkIndex}.json`
-    )
+    const finalMetaPath = ISLANDS_FINAL_META.replace('.json', `_${chunkIndex}.json`)
     fs.writeFileSync(finalMetaPath, JSON.stringify(finalMeta))
     console.log('Wrote', finalMetaPath)
   }
@@ -156,21 +123,13 @@ const execBBoxChunk = () => {
       const cluster = point
       numClustersTried++
       const clusterChildren = points.features.filter(
-        (f) =>
-          f.properties.is_cluster === false &&
-          f.properties.cluster_id === layoutedId
+        (f) => f.properties.is_cluster === false && f.properties.cluster_id === layoutedId
       )
 
       const scale = islandMeta.layoutScale
-      const islandMrct = baseIslandsMrct.features.find(
-        (i) => i.properties.island_id === island_id
-      )
+      const islandMrct = baseIslandsMrct.features.find((i) => i.properties.island_id === island_id)
       const clusterCenterMrct = turf.toMercator(cluster)
-      const islandMrctTransposed = transposeAndScale(
-        clusterCenterMrct,
-        islandMrct,
-        scale
-      )
+      const islandMrctTransposed = transposeAndScale(clusterCenterMrct, islandMrct, scale)
       const island = turf.toWgs84(islandMrctTransposed)
 
       const clusterWeights = clusterChildren.map(
@@ -181,21 +140,16 @@ const execBBoxChunk = () => {
       let resultPromise
       let syncResult
       if (USE_WORKERS !== true) {
-        syncResult = tryGetTerritories(
-          cluster,
-          clusterChildren,
-          island,
-          clusterWeights
-        )
+        syncResult = tryGetTerritories(cluster, clusterChildren, island, clusterWeights)
       } else {
         resultPromise = pool.exec('tryGetTerritories', [
           cluster,
           clusterChildren,
           island,
-          clusterWeights
+          clusterWeights,
         ])
       }
-      (
+      ;(
         resultPromise ||
         new Promise((resolve) => {
           resolve(syncResult)
@@ -215,7 +169,7 @@ const execBBoxChunk = () => {
               territory.properties = {
                 cluster_id: layoutedId,
                 layouted_id: clusterChildren[i].properties.layouted_id,
-                author_id: clusterChildren[i].properties.author_id
+                author_id: clusterChildren[i].properties.author_id,
               }
               territoriesPolygons.push(territory)
             })
@@ -228,7 +182,7 @@ const execBBoxChunk = () => {
               island_id,
               scale: islandMeta.layoutScale,
               error: islandMeta.error,
-              center: cluster.geometry.coordinates
+              center: cluster.geometry.coordinates,
             })
             numClustersSucceeded++
           }
@@ -252,7 +206,7 @@ const execBBoxChunk = () => {
                   island_id: clusterChildIslandMeta.island_id,
                   scale: clusterChildIslandMeta.layoutScale,
                   error: clusterChildIslandMeta.error,
-                  center: clusterChild.geometry.coordinates
+                  center: clusterChild.geometry.coordinates,
                 })
               }
             })
@@ -261,7 +215,7 @@ const execBBoxChunk = () => {
           numFeatures++
           console.log(numFeatures, bboxFilteredPoints.length)
           // TODO review if this is needed for all BBOXs
-          if (numFeatures === bboxFilteredPoints.length -1) {
+          if (numFeatures === bboxFilteredPoints.length - 1) {
             console.log(chunkIndex, BBOX_CHUNKS.length - 1)
             pool.terminate()
             pb.stop()
@@ -287,7 +241,7 @@ const execBBoxChunk = () => {
         scale: islandMeta.layoutScale,
         error: islandMeta.error,
         center: point.geometry.coordinates,
-        author_id: point.properties.author_id
+        author_id: point.properties.author_id,
       })
       numFeatures++
     }

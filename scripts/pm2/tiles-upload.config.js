@@ -3,7 +3,7 @@ const { STORAGE_BUCKET_TILES } = require('../constants')
 const cacheAge = 1000 // 1296000
 
 module.exports = {
-  apps : [
+  apps: [
     {
       name: 'upload-islands',
       script: `gsutil -h "Cache-Control:public,max-age=${cacheAge}" -h "Content-Encoding:gzip" -m cp -r tiles/islands gs://${STORAGE_BUCKET_TILES}`,
@@ -23,6 +23,6 @@ module.exports = {
       name: 'upload-heights',
       script: `gsutil -h "Cache-Control:public,max-age=${cacheAge}" -m cp -r tiles/height gs://${STORAGE_BUCKET_TILES}`,
       autorestart: false,
-    }
+    },
   ],
 }

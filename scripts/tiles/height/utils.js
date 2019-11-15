@@ -1,4 +1,3 @@
-
 const fs = require('fs')
 const path = require('path')
 const request = require('request')
@@ -7,7 +6,7 @@ const util = require('util')
 const turf = require('@turf/turf')
 const cover = require('@mapbox/tile-cover')
 
-function zeroPad (v, l) {
+function zeroPad(v, l) {
   let r = v.toString()
   while (r.length < l) {
     r = '0' + r
@@ -15,7 +14,7 @@ function zeroPad (v, l) {
   return r
 }
 
-function converSNWE ({ lat, lng }) {
+function converSNWE({ lat, lng }) {
   return util.format(
     '%s%s%s%s',
     lat < 0 ? 'S' : 'N',
@@ -46,7 +45,6 @@ function heightToRGB(height, baseval = -10000, interval = 0.1) {
   const b = f((nh - f(nh)) * 256)
   return { r, g, b }
 }
-
 
 function getBboxTiles(bbox, zoomLevel) {
   const limits = { min_zoom: zoomLevel, max_zoom: zoomLevel }
@@ -115,5 +113,5 @@ module.exports = {
   getBboxTiles,
   bboxOverlaps,
   downloadFile,
-  unZip: unZip
+  unZip: unZip,
 }

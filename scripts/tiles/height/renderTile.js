@@ -17,5 +17,4 @@ async function renderTile(coordinates, tile, tileSize = HEIGHT_TILE_SIZE) {
   }
 }
 
-
 module.exports = renderTile

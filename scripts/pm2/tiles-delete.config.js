@@ -1,7 +1,7 @@
 const { STORAGE_BUCKET_TILES } = require('../constants')
 
 module.exports = {
-  apps : [
+  apps: [
     {
       name: 'delete-islands',
       script: `gsutil -m rm -r gs://${STORAGE_BUCKET_TILES}/islands`,

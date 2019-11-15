@@ -1,4 +1,4 @@
-const {scale, translate, compose, applyToPoints} = require('transformation-matrix')
+const { scale, translate, compose, applyToPoints } = require('transformation-matrix')
 
 module.exports = (center, polygon, newScale = 1) => {
   // latest transformations apply first
@@ -6,18 +6,18 @@ module.exports = (center, polygon, newScale = 1) => {
     // translate to target center
     translate(center.geometry.coordinates[0], center.geometry.coordinates[1]),
     // apply transformation(s)
-    scale(newScale, newScale),
+    scale(newScale, newScale)
   )
-  
+
   const newPolygon = {
     type: 'Feature',
     geometry: {
       type: 'Polygon',
-      coordinates: []
+      coordinates: [],
     },
-    properties: polygon.properties
+    properties: polygon.properties,
   }
   // TODO that [0] wont work with multipolygons
-  newPolygon.geometry.coordinates[0] = applyToPoints(matrix, polygon.geometry.coordinates[0]) 
+  newPolygon.geometry.coordinates[0] = applyToPoints(matrix, polygon.geometry.coordinates[0])
   return newPolygon
 }

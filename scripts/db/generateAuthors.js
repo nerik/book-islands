@@ -9,8 +9,9 @@ let authors
 
 const sqlite3 = require('sqlite3').verbose()
 const db = new sqlite3.Database(BOOKS_DB_PATH, sqlite3.OPEN_READONLY, (err) => {
-  if (err) console.log('Error openingdb:',err)
-  db.all(`
+  if (err) console.log('Error openingdb:', err)
+  db.all(
+    `
     SELECT
       author as id,
       author_slug,
@@ -22,11 +23,12 @@ const db = new sqlite3.Database(BOOKS_DB_PATH, sqlite3.OPEN_READONLY, (err) => {
       group_concat(score, '|') popularities
       FROM ${BOOKS_DB_TABLE}
       GROUP BY author_slug
-      ORDER BY sum_popularity DESC`, (err, rows) => {
-    if (err) console.log('Error reading rows', err)
-    authors = rows
-    fs.writeFileSync(AUTHORS, JSON.stringify(authors))
-    console.log('Wrote to', AUTHORS)
-  })
-
+      ORDER BY sum_popularity DESC`,
+    (err, rows) => {
+      if (err) console.log('Error reading rows', err)
+      authors = rows
+      fs.writeFileSync(AUTHORS, JSON.stringify(authors))
+      console.log('Wrote to', AUTHORS)
+    }
+  )
 })

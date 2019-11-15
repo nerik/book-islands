@@ -11,7 +11,6 @@ SELECT
 FROM books_with_cover INNER JOIN `cilex-books-245511.cilex_books.290k_mid_resume` books_info ON books_with_cover.gid = books_info.id`
 */
 
-
 const fs = require('fs')
 const Papa = require('papaparse')
 const sqlite3 = require('sqlite3').verbose()
@@ -31,7 +30,7 @@ const TABLE_FIELDS = [
   { name: 'publication_year', type: 'STRING' },
   { name: 'publication_year_extra', type: 'STRING' },
   { name: 'cover_url', type: 'STRING' },
-  { name: 'public_id', type: 'STRING' } // Extra field added in the database from the cover_url
+  { name: 'public_id', type: 'STRING' }, // Extra field added in the database from the cover_url
 ]
 
 console.log('New database generation started')
@@ -46,10 +45,7 @@ let db = new sqlite3.Database(BOOKS_DB, (err) => {
   } else {
     console.log(`Creating database ${BOOKS_DB_TABLE} table`)
     const tableHeaders = TABLE_FIELDS.map(({ name, type }) => `${name} ${type}`).join(',')
-    db.run(
-      `CREATE TABLE IF NOT EXISTS ${BOOKS_DB_TABLE}(${tableHeaders})`,
-      insertData
-    )
+    db.run(`CREATE TABLE IF NOT EXISTS ${BOOKS_DB_TABLE}(${tableHeaders})`, insertData)
   }
 })
 
@@ -75,7 +71,6 @@ const insertData = () => {
       console.log('Data import finished')
       console.log(`Closing ${BOOKS_DB}`)
       db.close()
-    }
+    },
   })
 }
-

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const fs = require('fs')
 const turf = require('@turf/turf')
-const exec = require('child_process').execSync 
+const exec = require('child_process').execSync
 
 // columns: [
 //   'geonameid',
@@ -38,8 +38,8 @@ const exec = require('child_process').execSync
 // sqlite> .import in/cities/allCountries.txt geonames
 // sqlite> .quit
 
-
 const { GEONAMES_DB, GEONAMES_POP_PLACES } = require('../constants')
 
-exec(`sqlite3 -header -separator "," ${GEONAMES_DB} \'SELECT geonameid,name,latitude,longitude,feature_class,feature_code,population FROM geonames WHERE feature_code="PPL";\' > ${GEONAMES_POP_PLACES}`)
-
+exec(
+  `sqlite3 -header -separator "," ${GEONAMES_DB} \'SELECT geonameid,name,latitude,longitude,feature_class,feature_code,population FROM geonames WHERE feature_code="PPL";\' > ${GEONAMES_POP_PLACES}`
+)

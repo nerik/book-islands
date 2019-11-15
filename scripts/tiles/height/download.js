@@ -31,7 +31,7 @@ function getDownloadLinks(bbox) {
   for (let lat = startY; lat < endY; lat++) {
     for (let lng = startX; lng < endX; lng++) {
       const coordinates = converSNWE({ lat, lng })
-      links.push({ name: coordinates, link: `${baseUrl}/${coordinates}.hgt.zip`})
+      links.push({ name: coordinates, link: `${baseUrl}/${coordinates}.hgt.zip` })
     }
   }
   return links
@@ -43,13 +43,13 @@ async function downloadAndUnzip(link) {
     await downloadFile(link.link, tempPath)
     try {
       await unZip(tempPath, HGT_DATA)
-    } catch(e) {
+    } catch (e) {
       console.log('Error unziping file', e)
       return false
     }
     fs.unlinkSync(tempPath)
     return true
-  } catch(e) {
+  } catch (e) {
     if (e.toJSON) {
       const errorCode = e.toJSON().statusCode
       console.log(`Error downloading file ${link.name}`, errorCode)
@@ -66,12 +66,12 @@ async function prepareOffline(islandsBbox = baseIslandsBboxs) {
   for (let i = 0; i < islandsBbox.length; i++) {
     const island = islandsBbox[i]
     const links = getDownloadLinks(island.bbox)
-    downloadLinks =  downloadLinks.concat(links)
+    downloadLinks = downloadLinks.concat(links)
   }
   const prevDownloadLinks = hasLinksReady ? JSON.parse(fs.readFileSync(linksPath, 'utf-8')) : []
   downloadLinks = _.uniqBy(downloadLinks, 'link')
-  downloadLinks = downloadLinks.map(l => {
-    const prevLink = prevDownloadLinks.find(prevL => prevL.link === l.link)
+  downloadLinks = downloadLinks.map((l) => {
+    const prevLink = prevDownloadLinks.find((prevL) => prevL.link === l.link)
     const downloaded = prevLink !== undefined && prevLink.downloaded
     return { ...l, downloaded }
   })
@@ -79,7 +79,7 @@ async function prepareOffline(islandsBbox = baseIslandsBboxs) {
   console.log(`File links to download generated in ${linksPath}`)
 
   console.log('Downloading data')
-  const linksToDownload = downloadLinks.filter(l => !l.downloaded)
+  const linksToDownload = downloadLinks.filter((l) => !l.downloaded)
   const pb = progressBar(linksToDownload.length)
   for (let i = 0; i < linksToDownload.length; i++) {
     const link = linksToDownload[i]
@@ -92,7 +92,7 @@ async function prepareOffline(islandsBbox = baseIslandsBboxs) {
   }
   console.log('\n')
   console.log(`Data ready in ${HGT_DATA} path`)
-  console.log(`Total time downloading ${Math.floor((performance.now() - tt)) / 1000} s`)
+  console.log(`Total time downloading ${Math.floor(performance.now() - tt) / 1000} s`)
   pb.stop()
   process.exit()
 }
