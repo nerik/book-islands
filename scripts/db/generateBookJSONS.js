@@ -11,11 +11,9 @@ const db = new sqlite3.Database(BOOKS_DB, sqlite3.OPEN_READONLY, (err) => {
   db.all(`SELECT * FROM ${BOOKS_DB_TABLE}`, (err, rows) => {
     const pb = progressBar(rows.length)
     if (err) console.log(err)
-    rows.forEach(row => {
+    rows.forEach((row) => {
       fs.writeFileSync(`${BOOKS_JSON}/${row.id}.json`, JSON.stringify(row))
       pb.increment()
     })
-
   })
-
 })

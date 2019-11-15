@@ -2,30 +2,32 @@
 
 const fs = require('fs')
 const turf = require('@turf/turf')
-const JSONStream = require( 'JSONStream')
+const JSONStream = require('JSONStream')
 const progressBar = require('../util/progressBar')
 const transposeToWorldCenter = require('../util/transposeToWorldCenter')
 const transposeAndScale = require('../util/transposeAndScale')
 const pointWithinBBox = require('../util/pointWithinBBox')
 
 const {
-  BASE_ISLANDS, ISLANDS_FINAL_META, ISLETS, TERRITORY_POLYGONS,
-  ISLANDS, TERRITORY_POLYGONS_HIDEF,
-  BBOX_CHUNKS
+  BASE_ISLANDS,
+  ISLANDS_FINAL_META,
+  ISLETS,
+  TERRITORY_POLYGONS,
+  ISLANDS,
+  TERRITORY_POLYGONS_HIDEF,
+  BBOX_CHUNKS,
 } = require('../constants')
 
 const baseIslands = JSON.parse(fs.readFileSync(BASE_ISLANDS, 'utf-8'))
 const islets = JSON.parse(fs.readFileSync(ISLETS, 'utf-8'))
 
 const baseIslandsDict = {}
-baseIslands.features.forEach(baseIsland => {
+baseIslands.features.forEach((baseIsland) => {
   baseIslandsDict[baseIsland.properties.island_id] = baseIsland
 })
 
-const bboxChunks = BBOX_CHUNKS
-  .map((bboxChunk, chunkIndex) => ({ bboxChunk, chunkIndex }))
-  // .filter(chunk => chunk.chunkIndex === 1)
-
+const bboxChunks = BBOX_CHUNKS.map((bboxChunk, chunkIndex) => ({ bboxChunk, chunkIndex }))
+// .filter(chunk => chunk.chunkIndex === 1)
 
 let currentChunkPos = 0
 
@@ -33,14 +35,14 @@ const next = () => {
   if (!bboxChunks[currentChunkPos]) {
     console.log('All done.')
     return
-  } 
+  }
   const { bboxChunk, chunkIndex } = bboxChunks[currentChunkPos]
   console.log('Current chunk:', bboxChunk, chunkIndex)
 
   const islandsMetaPath = ISLANDS_FINAL_META.replace('.json', `_${chunkIndex}.json`)
   const islandsMetaArray = JSON.parse(fs.readFileSync(islandsMetaPath, 'utf-8'))
   const islandsMeta = {}
-  islandsMetaArray.forEach(m => {
+  islandsMetaArray.forEach((m) => {
     islandsMeta[m.layouted_id] = m
   })
   const allIslandsLayoutedIds = Object.keys(islandsMeta)
@@ -49,13 +51,12 @@ const next = () => {
   const territories = JSON.parse(fs.readFileSync(territoriesPath, 'utf-8')).features
   console.log(territories[0])
 
-  const islandsLayoutedIds = allIslandsLayoutedIds
-    .filter(islandLayoutedId => {
-      const meta = islandsMeta[islandLayoutedId]
-      // if (!meta || meta.error) return false
-      const center = meta.center
-      return (pointWithinBBox(center, bboxChunk))
-    })
+  const islandsLayoutedIds = allIslandsLayoutedIds.filter((islandLayoutedId) => {
+    const meta = islandsMeta[islandLayoutedId]
+    // if (!meta || meta.error) return false
+    const center = meta.center
+    return pointWithinBBox(center, bboxChunk)
+  })
 
   console.log('Will collect', allIslandsLayoutedIds.length)
 
@@ -64,7 +65,7 @@ const next = () => {
   let numFaulty = 0
   const pb = progressBar(islandsLayoutedIds.length)
 
-  islandsLayoutedIds.forEach(islandLayoutedId => {
+  islandsLayoutedIds.forEach((islandLayoutedId) => {
     pb.increment()
     const meta = islandsMeta[islandLayoutedId]
     if (meta.island_id === undefined) {
@@ -85,23 +86,31 @@ const next = () => {
     islands.push(transposedIslandWgs84)
 
     // 2. Collect islets --------------------------------
-    const islandIslets = islets.features.filter(islet => islet.properties.island_id === meta.island_id)
+    const islandIslets = islets.features.filter(
+      (islet) => islet.properties.island_id === meta.island_id
+    )
     // console.log('islets', islandIslets.length)
-    const isletsMrct = islandIslets.map(f => turf.toMercator(f))
-    const isletsTransposedToCenterMrct = isletsMrct.map(f => transposeToWorldCenter(f, islandMrct))
-    const isletsTransposed = isletsTransposedToCenterMrct.map(f => transposeAndScale(centerMrct, f, meta.scale))
-    const isletsTransposedWgs84 = isletsTransposed.map(f => turf.toWgs84(f))
-    isletsTransposedWgs84.forEach(f => {
+    const isletsMrct = islandIslets.map((f) => turf.toMercator(f))
+    const isletsTransposedToCenterMrct = isletsMrct.map((f) =>
+      transposeToWorldCenter(f, islandMrct)
+    )
+    const isletsTransposed = isletsTransposedToCenterMrct.map((f) =>
+      transposeAndScale(centerMrct, f, meta.scale)
+    )
+    const isletsTransposedWgs84 = isletsTransposed.map((f) => turf.toWgs84(f))
+    isletsTransposedWgs84.forEach((f) => {
       f.properties.islet = true
       f.properties.layouted_id = islandLayoutedId
       islands.push(f)
     })
 
-    // 3. Collect territories and intersect them with hi def island ------ 
-    const islandTerritories = territories.filter(t => t.properties.cluster_id === meta.layouted_id)
+    // 3. Collect territories and intersect them with hi def island ------
+    const islandTerritories = territories.filter(
+      (t) => t.properties.cluster_id === meta.layouted_id
+    )
     if (islandTerritories.length) {
       console.log(islandTerritories)
-      islandTerritories.forEach(territory => {
+      islandTerritories.forEach((territory) => {
         const intersected = turf.intersect(territory, transposedIslandWgs84)
         if (intersected) {
           intersectedTerritories.push(intersected)
@@ -113,19 +122,22 @@ const next = () => {
     }
   })
 
-  
   const territoryPath = TERRITORY_POLYGONS_HIDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
   fs.writeFileSync(territoryPath, JSON.stringify(turf.featureCollection(intersectedTerritories)))
-  console.log ('Wrote', territoryPath)
+  console.log('Wrote', territoryPath)
 
   console.log(islandsLayoutedIds.length, 'islands with', numFaulty, 'faulty')
 
   const path = ISLANDS.replace('.geo.json', `_${chunkIndex}.geo.json`)
-  
-  const transformStream = JSONStream.stringify('{"type":"FeatureCollection","features":[', '\n,\n', ']}')
+
+  const transformStream = JSONStream.stringify(
+    '{"type":"FeatureCollection","features":[',
+    '\n,\n',
+    ']}'
+  )
   const outputStream = fs.createWriteStream(path)
   transformStream.pipe(outputStream)
-  islands.forEach( transformStream.write )
+  islands.forEach(transformStream.write)
   outputStream.on('finish', () => {
     console.log('Wrote', path)
     currentChunkPos++
@@ -135,5 +147,3 @@ const next = () => {
   transformStream.end()
 }
 next()
-
-

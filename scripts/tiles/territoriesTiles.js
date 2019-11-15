@@ -8,7 +8,6 @@ const { TERRITORY_POLYGONS_HIDEF, TERRITORIES_TILES, BBOX_CHUNKS } = require('..
 const mbtiles = `${TERRITORIES_TILES}/main.mbtiles`
 const tiles = `${TERRITORIES_TILES}/tiles`
 
-
 rimraf.sync(TERRITORIES_TILES)
 fs.mkdirSync(TERRITORIES_TILES)
 

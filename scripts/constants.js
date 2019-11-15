@@ -46,7 +46,7 @@ module.exports = {
     minX: -10,
     minY: -52,
     maxX: 0,
-    maxY: -42
+    maxY: -42,
   },
   // TEST_BBOX: {
   //   minX: -180,
@@ -54,24 +54,26 @@ module.exports = {
   //   maxX: 180,
   //   maxY: 80
   // },
-  BBOX_CHUNKS:[
+  BBOX_CHUNKS: [
     // -240 and 220 it is due the umap offsets
     [-240, -80, -90, 0],
-    [-90 , -80, 0  , 0],
-    [0   , -80, 90 , 0],
-    [90  , -80, 220, 0],
+    [-90, -80, 0, 0],
+    [0, -80, 90, 0],
+    [90, -80, 220, 0],
     [-240, 0, -90, 80],
-    [-90 , 0, 0  , 80],
-    [0   , 0, 90 , 80],
-    [90  , 0, 220, 80],
+    [-90, 0, 0, 80],
+    [0, 0, 90, 80],
+    [90, 0, 220, 80],
   ],
   MAX_BASE_ISLAND_SCALE_UP: 2,
-  CITIES_RANK_SCALE: d3.scaleThreshold()
+  CITIES_RANK_SCALE: d3
+    .scaleThreshold()
     .domain([0, 1, 200, 6000])
-    .range([1,1,2,3,4]),
-  TERRITORIES_RANK_SCALE: d3.scaleThreshold()
+    .range([1, 1, 2, 3, 4]),
+  TERRITORIES_RANK_SCALE: d3
+    .scaleThreshold()
     .domain([0, 1, 200, 6000])
-    .range([1,1,2,3,4]),
+    .range([1, 1, 2, 3, 4]),
   USE_PROGRESS_BAR: true,
   STORAGE_BUCKET_DATA: 'cilex-books-map-data',
   STORAGE_BUCKET_TILES: 'cilex-books-map-tiles',

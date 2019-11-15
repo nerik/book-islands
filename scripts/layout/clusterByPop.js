@@ -14,30 +14,31 @@ const authors = JSON.parse(fs.readFileSync(AUTHORS, 'utf-8'))
 const umapsMeta = JSON.parse(fs.readFileSync(UMAP_CAT_META, 'utf-8'))
 
 const authorDict = {}
-authors.forEach(author => {
+authors.forEach((author) => {
   authorDict[author.author_slug] = author
 })
 
 const authorsInUmapNotInDB = []
-const orderedFeatures = features.map(feature => {
-  const { author_slug } = feature.properties
-  const author = authorDict[author_slug]
-  if (!author) {
-    authorsInUmapNotInDB.push(author_slug)
-    // console.log('Author exist in UMAP but not in DB:', authorId)
-    return null
-  }
-  return {
-    ...feature,
-    properties: {
-      ...feature.properties,
-      ...author,
-      priority: getAuthorLayoutPriority(author)
+const orderedFeatures = features
+  .map((feature) => {
+    const { author_slug } = feature.properties
+    const author = authorDict[author_slug]
+    if (!author) {
+      authorsInUmapNotInDB.push(author_slug)
+      // console.log('Author exist in UMAP but not in DB:', authorId)
+      return null
     }
-  }
-})
-  .filter(f => f !== null)
-  .map(feature => {
+    return {
+      ...feature,
+      properties: {
+        ...feature.properties,
+        ...author,
+        priority: getAuthorLayoutPriority(author),
+      },
+    }
+  })
+  .filter((f) => f !== null)
+  .map((feature) => {
     const categoryMeta = umapsMeta[feature.properties.category] || {}
 
     // overall cluster size (ie radius of the circle which will contain cluster children)
@@ -59,7 +60,7 @@ const orderedFeatures = features.map(feature => {
           ...feature.properties,
           will_cluster: true,
         },
-        radius
+        radius,
       }
     }
     return feature
@@ -71,15 +72,19 @@ orderedFeatures.sort((a, b) => {
 
 console.log(authorsInUmapNotInDB.length, 'authors are in umap output but not in DB')
 
-const clusters = orderedFeatures.filter(f => f.properties.will_cluster === true)
-console.log(clusters.length, 'clusters in first pass with a total of', orderedFeatures.length, 'points')
-
+const clusters = orderedFeatures.filter((f) => f.properties.will_cluster === true)
+console.log(
+  clusters.length,
+  'clusters in first pass with a total of',
+  orderedFeatures.length,
+  'points'
+)
 
 // Prepare Final clusters
 const rdChan = () => Math.floor(Math.random() * 255)
-const rdCol = () => [rdChan(),rdChan(),rdChan()]
-let finalClusters = clusters.map(cluster => {
-  const [cluster_r,cluster_g,cluster_b] = rdCol()
+const rdCol = () => [rdChan(), rdChan(), rdChan()]
+let finalClusters = clusters.map((cluster) => {
+  const [cluster_r, cluster_g, cluster_b] = rdCol()
   const feature = {
     ...cluster,
     properties: {
@@ -91,23 +96,21 @@ let finalClusters = clusters.map(cluster => {
       cluster_g,
       cluster_b,
     },
-    radius: cluster.radius
+    radius: cluster.radius,
   }
   return feature
 })
 
-
 // Attach standalone leaves to clusters when they are below a certain radius
-const finalStandalonePoints = orderedFeatures.map(point => {
+const finalStandalonePoints = orderedFeatures.map((point) => {
   const properties = {
-    is_cluster: false
+    is_cluster: false,
   }
   const closestCluster = _.minBy(finalClusters, (cluster) => {
     const dist = turf.distance(cluster, point)
     const inCluster = dist < cluster.radius
-    return (inCluster) ? dist : null
+    return inCluster ? dist : null
   })
-
 
   if (closestCluster === undefined) {
     properties.layouted_id = `standalone_${point.properties.author_slug}`
@@ -132,33 +135,35 @@ const finalStandalonePoints = orderedFeatures.map(point => {
       books_count: point.properties.books_count,
       author_id: point.properties.author_slug,
       author_name: point.properties.author_name,
-    }
+    },
   }
   return finalPoint
 })
 
-const clusteredPoints = finalStandalonePoints.filter(point => point.properties.cluster_id !== undefined)
+const clusteredPoints = finalStandalonePoints.filter(
+  (point) => point.properties.cluster_id !== undefined
+)
 
-finalClusters = finalClusters.map(cluster => {
-  const children = clusteredPoints
-    .filter(clusteredPoint => {
-      return clusteredPoint.properties.cluster_id === cluster.properties.layouted_id
-    })
-
+finalClusters = finalClusters.map((cluster) => {
+  const children = clusteredPoints.filter((clusteredPoint) => {
+    return clusteredPoint.properties.cluster_id === cluster.properties.layouted_id
+  })
 
   return {
     ...cluster,
-    children
+    children,
   }
 })
 
-
 // Remove non viable (0/1-point) clusters
-finalClusters = finalClusters.filter(cluster => {
+finalClusters = finalClusters.filter((cluster) => {
   const clusterChildren = cluster.children
   if (clusterChildren.length === 1) {
     delete clusterChildren[0].properties.cluster_id
-    clusterChildren[0].properties.layouted_id = clusterChildren[0].properties.layouted_id.replace('clustered_', 'standalone_')
+    clusterChildren[0].properties.layouted_id = clusterChildren[0].properties.layouted_id.replace(
+      'clustered_',
+      'standalone_'
+    )
     clusterChildren[0].properties.cluster_r = 100
     clusterChildren[0].properties.cluster_g = 100
     clusterChildren[0].properties.cluster_b = 100
@@ -169,12 +174,12 @@ finalClusters = finalClusters.filter(cluster => {
 console.log('Num final clusters after removing non-viable clusters:', finalClusters.length)
 
 // Compute cluster centers
-finalClusters = finalClusters.map(cluster => {
+finalClusters = finalClusters.map((cluster) => {
   const clusterChildren = cluster.children
   const center = turf.centroid(turf.featureCollection(clusterChildren))
   const newCluster = {
     ...cluster,
-    geometry: center.geometry
+    geometry: center.geometry,
   }
 
   return newCluster
@@ -184,14 +189,15 @@ finalClusters = finalClusters.map(cluster => {
 // merge it to avoid complicated layout further
 
 let mergedClusters = []
-finalClusters.forEach(cluster => {
-  const biggerCluster = mergedClusters.find(mergedCluster =>
-    mergedCluster.envelope !== null && turf.booleanPointInPolygon(cluster, mergedCluster.envelope)
+finalClusters.forEach((cluster) => {
+  const biggerCluster = mergedClusters.find(
+    (mergedCluster) =>
+      mergedCluster.envelope !== null && turf.booleanPointInPolygon(cluster, mergedCluster.envelope)
   )
   if (biggerCluster) {
     // cluster center falls within another cluster envelope:
     // do not add cluster in final mergedClusters, and reattach its children to the bigger cluster
-    cluster.children.forEach(clusterChild => {
+    cluster.children.forEach((clusterChild) => {
       clusterChild.properties.cluster_id = biggerCluster.properties.layouted_id
       clusterChild.properties.cluster_r = biggerCluster.properties.cluster_r
       clusterChild.properties.cluster_g = biggerCluster.properties.cluster_g
@@ -203,15 +209,14 @@ finalClusters.forEach(cluster => {
   const clusterWithEnvelope = {
     ...cluster,
     // compute a convex shape of all points - can be null if cluster only has 2 points
-    envelope: turf.convex(turf.featureCollection(cluster.children))
+    envelope: turf.convex(turf.featureCollection(cluster.children)),
   }
   mergedClusters.push(clusterWithEnvelope)
 })
 
-
 // Compute cluster stats
 const cluster_point_counts = []
-mergedClusters = mergedClusters.map(cluster => {
+mergedClusters = mergedClusters.map((cluster) => {
   const clusterChildren = cluster.children
 
   cluster_point_counts.push(clusterChildren.length)
@@ -219,19 +224,17 @@ mergedClusters = mergedClusters.map(cluster => {
     ...cluster,
     properties: {
       ...cluster.properties,
-      ...computeClusterStats(clusterChildren)
-    }
+      ...computeClusterStats(clusterChildren),
+    },
   }
 })
 
 // Cleanup clusters
-mergedClusters.forEach(cluster => {
+mergedClusters.forEach((cluster) => {
   delete cluster.children
   delete cluster.envelope
   delete cluster.radius
 })
-
-
 
 // console.log(finalStandalonePoints.find(p => p.properties.author_id === 'Kingsley Amis'))
 // console.log(mergedClusters[0])
@@ -240,7 +243,7 @@ mergedClusters.forEach(cluster => {
 console.log('Average cluster # children: ', avg(cluster_point_counts))
 
 const all = finalStandalonePoints.concat(mergedClusters)
-console.log(all.filter(p => !p.properties.author_id))
+console.log(all.filter((p) => !p.properties.author_id))
 
 fs.writeFileSync(CLUSTERS, JSON.stringify(turf.featureCollection(all)))
 console.log('Wrote ', CLUSTERS)

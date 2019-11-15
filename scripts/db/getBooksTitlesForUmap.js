@@ -12,10 +12,9 @@ const db = new sqlite3.Database(BOOKS_DB, sqlite3.OPEN_READONLY, (err) => {
   if (err) console.log(err)
   db.all(`SELECT id, title, score FROM ${BOOKS_DB_TABLE}`, (err, rows) => {
     if (err) console.log(err)
-    rows.forEach(r => {
+    rows.forEach((r) => {
       bookTitles[r.id] = [r.title, parseFloat(r.score)]
     })
     fs.writeFileSync(TITLES_PATH, JSON.stringify(bookTitles))
   })
-
 })

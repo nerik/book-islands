@@ -8,7 +8,6 @@ const { TERRITORY_LABELS, BOOKS_POINTS, POINTS_TILES, MAX_ZOOM_GENERATED } = req
 const p = `${POINTS_TILES}/main`
 const t = `${POINTS_TILES}/tiles`
 
-
 rimraf.sync(POINTS_TILES)
 fs.mkdirSync(POINTS_TILES)
 

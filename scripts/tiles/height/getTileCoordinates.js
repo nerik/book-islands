@@ -53,7 +53,7 @@ const getTileCoordinates = async (data, tile, writeData, done) => {
           const floorCoordinates = { lat: Math.floor(realLat), lng: Math.floor(realLng) }
           const hgt = new Hgt(`${HGT_DATA}/${srtmCoordinatesString}.hgt`, floorCoordinates)
           elevation = hgt.getElevation([realLat, realLng])
-        } catch(e) {
+        } catch (e) {
           // console.log(e)
         }
         const { r, g, b } = heightToRGB(elevation)
@@ -63,7 +63,7 @@ const getTileCoordinates = async (data, tile, writeData, done) => {
     }
   }
 
-  if(coordinates.length > 0) {
+  if (coordinates.length > 0) {
     await renderTile(coordinates, tile)
   }
   done()

@@ -1,7 +1,7 @@
 const { STORAGE_BUCKET_TILES } = require('../constants')
 
 module.exports = {
-  apps : [
+  apps: [
     {
       name: 'backup-islands',
       script: `gsutil -m mv -r gs://${STORAGE_BUCKET_TILES}/islands gs://${STORAGE_BUCKET_TILES}/islands2`,
@@ -21,6 +21,6 @@ module.exports = {
       name: 'backup-heights',
       script: `gsutil -m mv -r gs://${STORAGE_BUCKET_TILES}/height gs://${STORAGE_BUCKET_TILES}/height2`,
       autorestart: false,
-    }
+    },
   ],
 }

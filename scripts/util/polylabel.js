@@ -53,7 +53,8 @@ function polylabel(polygon, precision, debug) {
     // update the best cell if we found a better one
     if (cell.d > bestCell.d) {
       bestCell = cell
-      if (debug) console.log('found best %d after %d probes', Math.round(1e4 * cell.d) / 1e4, numProbes)
+      if (debug)
+        console.log('found best %d after %d probes', Math.round(1e4 * cell.d) / 1e4, numProbes)
     }
 
     // do not drill down further if there's no chance of a better solution
@@ -100,8 +101,8 @@ function pointToPolygonDist(x, y, polygon) {
       var a = ring[i]
       var b = ring[j]
 
-      if ((a[1] > y !== b[1] > y) &&
-                (x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0])) inside = !inside
+      if (a[1] > y !== b[1] > y && x < ((b[0] - a[0]) * (y - a[1])) / (b[1] - a[1]) + a[0])
+        inside = !inside
 
       minDistSq = Math.min(minDistSq, getSegDistSq(x, y, a, b))
     }
@@ -131,20 +132,17 @@ function getCentroidCell(polygon) {
 
 // get squared distance from a point to a segment
 function getSegDistSq(px, py, a, b) {
-
   var x = a[0]
   var y = a[1]
   var dx = b[0] - x
   var dy = b[1] - y
 
   if (dx !== 0 || dy !== 0) {
-
     var t = ((px - x) * dx + (py - y) * dy) / (dx * dx + dy * dy)
 
     if (t > 1) {
       x = b[0]
       y = b[1]
-
     } else if (t > 0) {
       x += dx * t
       y += dy * t
