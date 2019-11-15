@@ -1,0 +1,10 @@
+{
+  "apps": [
+    {
+      "name": "generate-heights",
+      "script": "./scripts/tiles/height/download.js && ./scripts/tiles/height/heightTiles.js",
+      "autorestart": false,
+      "node_args": "--max_old_space_size=68192"
+    }
+  ]
+}

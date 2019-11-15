@@ -12,7 +12,7 @@ const t = `${POINTS_TILES}/tiles`
 rimraf.sync(POINTS_TILES)
 fs.mkdirSync(POINTS_TILES)
 
-const cmd = `tippecanoe -o ${p}.mbtiles --minimum-zoom=5 --maximum-zoom=${MAX_ZOOM_GENERATED} --base-zoom=5 --named-layer='author_labels':${TERRITORY_LABELS} --named-layer='books_labels':${BOOKS_POINTS}`
+const cmd = `tippecanoe -o ${p}.mbtiles --minimum-zoom=2 --maximum-zoom=${MAX_ZOOM_GENERATED} --base-zoom=5 --named-layer='author_labels':${TERRITORY_LABELS} --named-layer='books_labels':${BOOKS_POINTS}`
 console.log(cmd)
 exec(cmd)
 

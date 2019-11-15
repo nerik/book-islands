@@ -10,16 +10,18 @@ let authors
 const sqlite3 = require('sqlite3').verbose()
 const db = new sqlite3.Database(BOOKS_DB_PATH, sqlite3.OPEN_READONLY, (err) => {
   if (err) console.log('Error openingdb:',err)
-  db.all(`SELECT
+  db.all(`
+    SELECT
       author as id,
-      sum(relatedness_signal_projected_query_popularity) AS sum_popularity,
-      avg(relatedness_signal_projected_query_popularity) AS avg_popularity,
+      author_slug,
+      sum(score) AS sum_popularity,
+      avg(score) AS avg_popularity,
       count(id) books_count,
       group_concat(id, '|') ids,
       group_concat(title, '|') titles,
-      group_concat(relatedness_signal_projected_query_popularity, '|') popularities
+      group_concat(score, '|') popularities
       FROM ${BOOKS_DB_TABLE}
-      GROUP BY author
+      GROUP BY author_slug
       ORDER BY sum_popularity DESC`, (err, rows) => {
     if (err) console.log('Error reading rows', err)
     authors = rows

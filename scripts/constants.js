@@ -1,7 +1,6 @@
 const d3 = require('d3')
 module.exports = {
-  // BOOKS_CSV: 'in/google-books/books.csv',
-  BOOKS_CSV: 'in/google-books/books_with_mid.csv',
+  BOOKS_CSV: 'in/google-books/books.csv',
   BOOKS_DB: 'in/google-books/books.db',
   BOOKS_DB_TABLE: 'books',
   AUTHORS: 'out/db/authors.json',
@@ -38,7 +37,7 @@ module.exports = {
   SEARCH_DB_RANKED_LIMIT: 10000,
   ISLANDS_TILES: 'tiles/islands',
   TERRITORIES_TILES: 'tiles/territories',
-  MAX_ZOOM_GENERATED: 15,
+  MAX_ZOOM_GENERATED: 16,
   POINTS_TILES: 'tiles/points',
   HEIGHT_TILES: 'tiles/height',
   HEIGHT_TILE_SIZE: 256,

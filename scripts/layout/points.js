@@ -13,8 +13,8 @@ const {
 const authors = JSON.parse(fs.readFileSync(AUTHORS, 'utf-8'))
 const authorsDict = {}
 authors.forEach(author => {
-  const id = author.id
-  authorsDict[id] = author
+  const { author_slug } = author
+  authorsDict[author_slug] = author
 })
 
 const getAuthors = (ids) => {
@@ -77,9 +77,10 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       let polygons = []
       let authorsIds = []
       const island = islands.find(i => i.properties.layouted_id === layoutedId)
-      // if (island === undefined) {
-      //   console.log(layoutedId)
-      // }
+      if (!island) {
+        console.log('Island not found', layoutedId)
+        return
+      }
       if (finalMeta.is_cluster === true) {
         polygons = territories.filter(t => t.properties.cluster_id === layoutedId)
         authorsIds = polygons.map(p => p.properties.author_id)
@@ -91,7 +92,6 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       // console.log(polygons, authorsIds)
       // console.log('---')
       const authors = getAuthors(authorsIds)
-      
 
       const authorsBooks = authors.map(author => ({
         author,
@@ -108,6 +108,8 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
           : turf.centroid(territory)
 
         labelCenterPt.properties.id = authorBooks.author.id
+        labelCenterPt.properties.slug = authorBooks.author.author_slug
+        labelCenterPt.properties.popularity = Math.round(authorBooks.author.sum_popularity)
         labelCenterPt.properties.rank = TERRITORIES_RANK_SCALE(authorPop)
         territoryLabels.push(labelCenterPt)
 

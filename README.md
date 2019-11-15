@@ -7,7 +7,7 @@ QGIS
 SCRIPTS
 ./scripts/db/generateAuthors.js
 ./scripts/umap/normalizeToWorld.js
-./scripts/layout/cluster.js
+./scripts/layout/clusterByPop.js
 ./scripts/baseIslands/physicalToGeoJSON.js
 ./scripts/baseIslands/generateBaseIslands.js
 ./scripts/layout/score.js
@@ -19,9 +19,10 @@ SCRIPTS
 
 ./scripts/tiles/islandsTiles.js
 ./scripts/tiles/pointsTiles.js
+./scripts/tiles/territoriesTiles.js
 
 ./scripts/tiles/height/download.js
-./scripts/tiles/height/produceTiles.js
+./scripts/tiles/height/heightTiles.js
 
 RUN
 yarn serve

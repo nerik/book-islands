@@ -34,13 +34,13 @@ const authorsRecords = [csvFields].concat(
 )
 
 const rankedAuthorRecords = [csvFields].concat(
-  _.sortBy(authors, 'author.properties.rank')
+  _.uniqBy(_.orderBy(authors, 'properties.popularity', 'desc'), 'properties.id')
     .slice(0, SEARCH_DB_RANKED_LIMIT)
     .map(parseAuthor)
 )
 
-console.log(rankedAuthorRecords.length, 'records')
 console.log(authorsRecords.length, 'records')
+console.log(rankedAuthorRecords.length, 'records')
 
 const csv = csvStringify(authorsRecords)
 const csvRanked = csvStringify(rankedAuthorRecords)

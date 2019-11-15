@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const tileReduce = require('@mapbox/tile-reduce')
 const path = require('path')
 const {

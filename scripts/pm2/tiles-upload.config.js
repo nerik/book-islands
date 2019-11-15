@@ -1,6 +1,6 @@
 const { STORAGE_BUCKET_TILES } = require('../constants')
 // TODO add a high cache value, removed for testing for now
-const cacheAge = 1 // 1296000
+const cacheAge = 1000 // 1296000
 
 module.exports = {
   apps : [
