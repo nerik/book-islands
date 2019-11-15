@@ -182,7 +182,7 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
   const STEP_DECREMENT = 0.01
 
   // at which scale should we start with (tends to decrease size of big islands)
-  const MAX_SCALE = 0.2
+  const MAX_SCALE = 0.4
 
   // how to map priority score (composite of num books and popularity) to target max area
   // smaller means more risk of running out of iterations and picking lowest possible scale
