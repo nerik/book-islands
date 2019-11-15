@@ -19,19 +19,31 @@
   </projectCrs>
   <layer-tree-group>
     <customproperties/>
-    <layer-tree-layer expanded="1" id="clusters_geo_ad6167c9_c94e_4e2f_965c_7fd25c6a6ce6" name="clusters.geo" providerKey="ogr" checked="Qt::Unchecked" source="../out/layout/clusters.geo.json">
+    <layer-tree-layer id="books_points_geo_6240a244_5b21_445a_8438_9c8f3331fac2" expanded="1" name="books_points.geo" checked="Qt::Unchecked" providerKey="ogr" source="../out/layout/books_points.geo.json">
       <customproperties/>
     </layer-tree-layer>
-    <layer-tree-layer expanded="1" id="layouted_clusters_geo_baeb9556_1974_4e2f_b626_27b4f2d678b1" name="layouted_clusters.geo" providerKey="ogr" checked="Qt::Unchecked" source="../out/layout/layouted_clusters.geo.json">
+    <layer-tree-layer id="territory_labels_geo_e4ca5899_24ac_4da5_9e00_4f207290618a" expanded="1" name="territory_labels.geo" checked="Qt::Unchecked" providerKey="ogr" source="../out/layout/territory_labels.geo.json">
       <customproperties/>
     </layer-tree-layer>
-    <layer-tree-layer expanded="1" id="territory_polygons_1_geo_db4a50d4_8731_45a3_b62c_eff63fe4e9de" name="territory_polygons_1.geo" providerKey="ogr" checked="Qt::Checked" source="../out/layout/territory_polygons_1.geo.json">
+    <layer-tree-layer id="clusters_geo_ad6167c9_c94e_4e2f_965c_7fd25c6a6ce6" expanded="1" name="clusters.geo" checked="Qt::Unchecked" providerKey="ogr" source="../out/layout/clusters.geo.json">
       <customproperties/>
     </layer-tree-layer>
-    <layer-tree-layer expanded="1" id="islands_lowdef_1_geo_dcf7c115_aaac_4aba_8a5e_5bb5f3cbdfa0" name="islands_lowdef_1.geo" providerKey="ogr" checked="Qt::Checked" source="../out/layout/islands_lowdef_1.geo.json">
+    <layer-tree-layer id="layouted_clusters_geo_baeb9556_1974_4e2f_b626_27b4f2d678b1" expanded="1" name="layouted_clusters.geo" checked="Qt::Checked" providerKey="ogr" source="../out/layout/layouted_clusters.geo.json">
       <customproperties/>
     </layer-tree-layer>
-    <layer-tree-layer expanded="1" id="umap_geo_c8b3a578_3532_459b_af4a_c14a31cbd10d" name="umap.geo" providerKey="ogr" checked="Qt::Unchecked" source="../out/umap/umap.geo.json">
+    <layer-tree-layer id="territory_polygons_1_geo_db4a50d4_8731_45a3_b62c_eff63fe4e9de" expanded="1" name="territory_polygons_1.geo" checked="Qt::Checked" providerKey="ogr" source="../out/layout/territory_polygons_1.geo.json">
+      <customproperties/>
+    </layer-tree-layer>
+    <layer-tree-layer id="territory_polygons_hi_1_geo_281a600e_e37a_4d39_b9da_88dbcd20b893" expanded="1" name="territory_polygons_hi_1.geo" checked="Qt::Checked" providerKey="ogr" source="../out/layout/territory_polygons_hi_1.geo.json">
+      <customproperties/>
+    </layer-tree-layer>
+    <layer-tree-layer id="islands_lowdef_1_geo_dcf7c115_aaac_4aba_8a5e_5bb5f3cbdfa0" expanded="1" name="islands_lowdef_1.geo" checked="Qt::Unchecked" providerKey="ogr" source="../out/layout/islands_lowdef_1.geo.json">
+      <customproperties/>
+    </layer-tree-layer>
+    <layer-tree-layer id="islands_1_geo_8febbd37_8467_4d46_894f_40c46284f110" expanded="1" name="islands_1.geo" checked="Qt::Checked" providerKey="ogr" source="../out/layout/islands_1.geo.json">
+      <customproperties/>
+    </layer-tree-layer>
+    <layer-tree-layer id="umap_geo_c8b3a578_3532_459b_af4a_c14a31cbd10d" expanded="1" name="umap.geo" checked="Qt::Unchecked" providerKey="ogr" source="../out/umap/umap.geo.json">
       <customproperties/>
     </layer-tree-layer>
     <custom-order enabled="0">
@@ -40,25 +52,33 @@
       <item>islands_lowdef_1_geo_dcf7c115_aaac_4aba_8a5e_5bb5f3cbdfa0</item>
       <item>layouted_clusters_geo_baeb9556_1974_4e2f_b626_27b4f2d678b1</item>
       <item>territory_polygons_1_geo_db4a50d4_8731_45a3_b62c_eff63fe4e9de</item>
+      <item>territory_labels_geo_e4ca5899_24ac_4da5_9e00_4f207290618a</item>
+      <item>books_points_geo_6240a244_5b21_445a_8438_9c8f3331fac2</item>
+      <item>islands_1_geo_8febbd37_8467_4d46_894f_40c46284f110</item>
+      <item>territory_polygons_hi_1_geo_281a600e_e37a_4d39_b9da_88dbcd20b893</item>
     </custom-order>
   </layer-tree-group>
-  <snapping-settings mode="2" intersection-snapping="0" unit="1" tolerance="12" type="1" enabled="0">
+  <snapping-settings tolerance="12" enabled="0" mode="2" type="1" unit="1" intersection-snapping="0">
     <individual-layer-settings>
-      <layer-setting tolerance="12" type="1" id="layouted_clusters_geo_baeb9556_1974_4e2f_b626_27b4f2d678b1" enabled="0" units="1"/>
-      <layer-setting tolerance="12" type="1" id="islands_lowdef_1_geo_dcf7c115_aaac_4aba_8a5e_5bb5f3cbdfa0" enabled="0" units="1"/>
-      <layer-setting tolerance="12" type="1" id="territory_polygons_1_geo_db4a50d4_8731_45a3_b62c_eff63fe4e9de" enabled="0" units="1"/>
-      <layer-setting tolerance="12" type="1" id="umap_geo_c8b3a578_3532_459b_af4a_c14a31cbd10d" enabled="0" units="1"/>
-      <layer-setting tolerance="12" type="1" id="clusters_geo_ad6167c9_c94e_4e2f_965c_7fd25c6a6ce6" enabled="0" units="1"/>
+      <layer-setting id="layouted_clusters_geo_baeb9556_1974_4e2f_b626_27b4f2d678b1" tolerance="12" enabled="0" type="1" units="1"/>
+      <layer-setting id="islands_1_geo_8febbd37_8467_4d46_894f_40c46284f110" tolerance="12" enabled="0" type="1" units="1"/>
+      <layer-setting id="territory_polygons_hi_1_geo_281a600e_e37a_4d39_b9da_88dbcd20b893" tolerance="12" enabled="0" type="1" units="1"/>
+      <layer-setting id="clusters_geo_ad6167c9_c94e_4e2f_965c_7fd25c6a6ce6" tolerance="12" enabled="0" type="1" units="1"/>
+      <layer-setting id="islands_lowdef_1_geo_dcf7c115_aaac_4aba_8a5e_5bb5f3cbdfa0" tolerance="12" enabled="0" type="1" units="1"/>
+      <layer-setting id="umap_geo_c8b3a578_3532_459b_af4a_c14a31cbd10d" tolerance="12" enabled="0" type="1" units="1"/>
+      <layer-setting id="books_points_geo_6240a244_5b21_445a_8438_9c8f3331fac2" tolerance="12" enabled="0" type="1" units="1"/>
+      <layer-setting id="territory_labels_geo_e4ca5899_24ac_4da5_9e00_4f207290618a" tolerance="12" enabled="0" type="1" units="1"/>
+      <layer-setting id="territory_polygons_1_geo_db4a50d4_8731_45a3_b62c_eff63fe4e9de" tolerance="12" enabled="0" type="1" units="1"/>
     </individual-layer-settings>
   </snapping-settings>
   <relations/>
   <mapcanvas annotationsVisible="1" name="theMapCanvas">
     <units>degrees</units>
     <extent>
-      <xmin>-10.60927007520465537</xmin>
-      <ymin>-47.65598856417668117</ymin>
-      <xmax>-2.64442632163888458</xmax>
-      <ymax>-44.11605800703655689</ymax>
+      <xmin>-7.00946304386910235</xmin>
+      <ymin>-45.40177023790656818</ymin>
+      <xmax>-4.10891211185555072</xmax>
+      <ymax>-44.11263649034692236</ymax>
     </extent>
     <rotation>0</rotation>
     <destinationsrs>
@@ -76,29 +96,49 @@
     <rendermaptile>0</rendermaptile>
   </mapcanvas>
   <legend updateDrawingOrder="true">
-    <legendlayer showFeatureCount="0" drawingOrder="-1" open="true" name="clusters.geo" checked="Qt::Unchecked">
-      <filegroup open="true" hidden="false">
-        <legendlayerfile visible="0" isInOverview="0" layerid="clusters_geo_ad6167c9_c94e_4e2f_965c_7fd25c6a6ce6"/>
+    <legendlayer showFeatureCount="0" name="books_points.geo" checked="Qt::Unchecked" drawingOrder="-1" open="true">
+      <filegroup hidden="false" open="true">
+        <legendlayerfile visible="0" layerid="books_points_geo_6240a244_5b21_445a_8438_9c8f3331fac2" isInOverview="0"/>
       </filegroup>
     </legendlayer>
-    <legendlayer showFeatureCount="0" drawingOrder="-1" open="true" name="layouted_clusters.geo" checked="Qt::Unchecked">
-      <filegroup open="true" hidden="false">
-        <legendlayerfile visible="0" isInOverview="0" layerid="layouted_clusters_geo_baeb9556_1974_4e2f_b626_27b4f2d678b1"/>
+    <legendlayer showFeatureCount="0" name="territory_labels.geo" checked="Qt::Unchecked" drawingOrder="-1" open="true">
+      <filegroup hidden="false" open="true">
+        <legendlayerfile visible="0" layerid="territory_labels_geo_e4ca5899_24ac_4da5_9e00_4f207290618a" isInOverview="0"/>
       </filegroup>
     </legendlayer>
-    <legendlayer showFeatureCount="0" drawingOrder="-1" open="true" name="territory_polygons_1.geo" checked="Qt::Checked">
-      <filegroup open="true" hidden="false">
-        <legendlayerfile visible="1" isInOverview="0" layerid="territory_polygons_1_geo_db4a50d4_8731_45a3_b62c_eff63fe4e9de"/>
+    <legendlayer showFeatureCount="0" name="clusters.geo" checked="Qt::Unchecked" drawingOrder="-1" open="true">
+      <filegroup hidden="false" open="true">
+        <legendlayerfile visible="0" layerid="clusters_geo_ad6167c9_c94e_4e2f_965c_7fd25c6a6ce6" isInOverview="0"/>
       </filegroup>
     </legendlayer>
-    <legendlayer showFeatureCount="0" drawingOrder="-1" open="true" name="islands_lowdef_1.geo" checked="Qt::Checked">
-      <filegroup open="true" hidden="false">
-        <legendlayerfile visible="1" isInOverview="0" layerid="islands_lowdef_1_geo_dcf7c115_aaac_4aba_8a5e_5bb5f3cbdfa0"/>
+    <legendlayer showFeatureCount="0" name="layouted_clusters.geo" checked="Qt::Checked" drawingOrder="-1" open="true">
+      <filegroup hidden="false" open="true">
+        <legendlayerfile visible="1" layerid="layouted_clusters_geo_baeb9556_1974_4e2f_b626_27b4f2d678b1" isInOverview="0"/>
       </filegroup>
     </legendlayer>
-    <legendlayer showFeatureCount="0" drawingOrder="-1" open="true" name="umap.geo" checked="Qt::Unchecked">
-      <filegroup open="true" hidden="false">
-        <legendlayerfile visible="0" isInOverview="0" layerid="umap_geo_c8b3a578_3532_459b_af4a_c14a31cbd10d"/>
+    <legendlayer showFeatureCount="0" name="territory_polygons_1.geo" checked="Qt::Checked" drawingOrder="-1" open="true">
+      <filegroup hidden="false" open="true">
+        <legendlayerfile visible="1" layerid="territory_polygons_1_geo_db4a50d4_8731_45a3_b62c_eff63fe4e9de" isInOverview="0"/>
+      </filegroup>
+    </legendlayer>
+    <legendlayer showFeatureCount="0" name="territory_polygons_hi_1.geo" checked="Qt::Checked" drawingOrder="-1" open="true">
+      <filegroup hidden="false" open="true">
+        <legendlayerfile visible="1" layerid="territory_polygons_hi_1_geo_281a600e_e37a_4d39_b9da_88dbcd20b893" isInOverview="0"/>
+      </filegroup>
+    </legendlayer>
+    <legendlayer showFeatureCount="0" name="islands_lowdef_1.geo" checked="Qt::Unchecked" drawingOrder="-1" open="true">
+      <filegroup hidden="false" open="true">
+        <legendlayerfile visible="0" layerid="islands_lowdef_1_geo_dcf7c115_aaac_4aba_8a5e_5bb5f3cbdfa0" isInOverview="0"/>
+      </filegroup>
+    </legendlayer>
+    <legendlayer showFeatureCount="0" name="islands_1.geo" checked="Qt::Checked" drawingOrder="-1" open="true">
+      <filegroup hidden="false" open="true">
+        <legendlayerfile visible="1" layerid="islands_1_geo_8febbd37_8467_4d46_894f_40c46284f110" isInOverview="0"/>
+      </filegroup>
+    </legendlayer>
+    <legendlayer showFeatureCount="0" name="umap.geo" checked="Qt::Unchecked" drawingOrder="-1" open="true">
+      <filegroup hidden="false" open="true">
+        <legendlayerfile visible="0" layerid="umap_geo_c8b3a578_3532_459b_af4a_c14a31cbd10d" isInOverview="0"/>
       </filegroup>
     </legendlayer>
   </legend>
@@ -174,7 +214,252 @@
     <rendermaptile>0</rendermaptile>
   </mapcanvas>
   <projectlayers>
-    <maplayer geometry="Point" simplifyAlgorithm="0" refreshOnNotifyMessage="" simplifyDrawingTol="1" maxScale="0" minScale="1e+8" readOnly="0" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" autoRefreshEnabled="0" type="vector" labelsEnabled="0" refreshOnNotifyEnabled="0" simplifyDrawingHints="0" autoRefreshTime="0" simplifyMaxScale="1">
+    <maplayer hasScaleBasedVisibilityFlag="0" maxScale="0" refreshOnNotifyMessage="" simplifyMaxScale="1" labelsEnabled="0" type="vector" minScale="1e+8" simplifyLocal="1" simplifyDrawingHints="0" autoRefreshTime="0" readOnly="0" refreshOnNotifyEnabled="0" simplifyDrawingTol="1" simplifyAlgorithm="0" autoRefreshEnabled="0" geometry="Point">
+      <extent>
+        <xmin>-10.00993605536837983</xmin>
+        <ymin>-51.01166321127129066</ymin>
+        <xmax>0.06496904616866599</xmax>
+        <ymax>-41.99107851810136083</ymax>
+      </extent>
+      <id>books_points_geo_6240a244_5b21_445a_8438_9c8f3331fac2</id>
+      <datasource>../out/layout/books_points.geo.json</datasource>
+      <keywordList>
+        <value></value>
+      </keywordList>
+      <layername>books_points.geo</layername>
+      <srs>
+        <spatialrefsys>
+          <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+          <srsid>3452</srsid>
+          <srid>4326</srid>
+          <authid>EPSG:4326</authid>
+          <description>WGS 84</description>
+          <projectionacronym>longlat</projectionacronym>
+          <ellipsoidacronym>WGS84</ellipsoidacronym>
+          <geographicflag>true</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <resourceMetadata>
+        <identifier></identifier>
+        <parentidentifier></parentidentifier>
+        <language></language>
+        <type></type>
+        <title></title>
+        <abstract></abstract>
+        <contact>
+          <name></name>
+          <organization></organization>
+          <position></position>
+          <voice></voice>
+          <fax></fax>
+          <email></email>
+          <role></role>
+        </contact>
+        <links/>
+        <fees></fees>
+        <encoding></encoding>
+        <crs>
+          <spatialrefsys>
+            <proj4></proj4>
+            <srsid>0</srsid>
+            <srid>0</srid>
+            <authid></authid>
+            <description></description>
+            <projectionacronym></projectionacronym>
+            <ellipsoidacronym></ellipsoidacronym>
+            <geographicflag>false</geographicflag>
+          </spatialrefsys>
+        </crs>
+        <extent>
+          <spatial miny="0" maxx="0" maxy="0" minx="0" crs="" maxz="0" dimensions="2" minz="0"/>
+          <temporal>
+            <period>
+              <start></start>
+              <end></end>
+            </period>
+          </temporal>
+        </extent>
+      </resourceMetadata>
+      <provider encoding="UTF-8">ogr</provider>
+      <vectorjoins/>
+      <layerDependencies/>
+      <dataDependencies/>
+      <legend type="default-vector"/>
+      <expressionfields/>
+      <map-layer-style-manager current="default">
+        <map-layer-style name="default"/>
+      </map-layer-style-manager>
+      <auxiliaryLayer/>
+      <renderer-v2 enableorderby="0" symbollevels="0" type="singleSymbol" forceraster="0">
+        <symbols>
+          <symbol type="marker" name="0" clip_to_extent="1" alpha="1">
+            <layer enabled="1" class="SimpleMarker" pass="0" locked="0">
+              <prop v="0" k="angle"/>
+              <prop v="35,35,35,255" k="color"/>
+              <prop v="1" k="horizontal_anchor_point"/>
+              <prop v="bevel" k="joinstyle"/>
+              <prop v="diamond" k="name"/>
+              <prop v="0,0" k="offset"/>
+              <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
+              <prop v="MM" k="offset_unit"/>
+              <prop v="35,35,35,0" k="outline_color"/>
+              <prop v="solid" k="outline_style"/>
+              <prop v="0" k="outline_width"/>
+              <prop v="3x:0,0,0,0,0,0" k="outline_width_map_unit_scale"/>
+              <prop v="MM" k="outline_width_unit"/>
+              <prop v="diameter" k="scale_method"/>
+              <prop v="2" k="size"/>
+              <prop v="3x:0,0,0,0,0,0" k="size_map_unit_scale"/>
+              <prop v="MM" k="size_unit"/>
+              <prop v="1" k="vertical_anchor_point"/>
+              <data_defined_properties>
+                <Option type="Map">
+                  <Option value="" type="QString" name="name"/>
+                  <Option name="properties"/>
+                  <Option value="collection" type="QString" name="type"/>
+                </Option>
+              </data_defined_properties>
+            </layer>
+          </symbol>
+        </symbols>
+        <rotation/>
+        <sizescale/>
+      </renderer-v2>
+      <customproperties>
+        <property value="0" key="embeddedWidgets/count"/>
+        <property key="variableNames"/>
+        <property key="variableValues"/>
+      </customproperties>
+      <blendMode>0</blendMode>
+      <featureBlendMode>0</featureBlendMode>
+      <layerOpacity>1</layerOpacity>
+      <SingleCategoryDiagramRenderer diagramType="Histogram" attributeLegend="1">
+        <DiagramCategory lineSizeScale="3x:0,0,0,0,0,0" scaleDependency="Area" sizeScale="3x:0,0,0,0,0,0" diagramOrientation="Up" labelPlacementMethod="XHeight" backgroundColor="#ffffff" lineSizeType="MM" maxScaleDenominator="1e+8" sizeType="MM" penWidth="0" penAlpha="255" enabled="0" rotationOffset="270" opacity="1" minScaleDenominator="0" barWidth="5" height="15" width="15" scaleBasedVisibility="0" backgroundAlpha="255" penColor="#000000" minimumSize="0">
+          <fontProperties description=".AppleSystemUIFont,13,-1,5,50,0,0,0,0,0" style=""/>
+        </DiagramCategory>
+      </SingleCategoryDiagramRenderer>
+      <DiagramLayerSettings priority="0" obstacle="0" zIndex="0" dist="0" placement="0" showAll="1" linePlacementFlags="18">
+        <properties>
+          <Option type="Map">
+            <Option value="" type="QString" name="name"/>
+            <Option name="properties"/>
+            <Option value="collection" type="QString" name="type"/>
+          </Option>
+        </properties>
+      </DiagramLayerSettings>
+      <fieldConfiguration>
+        <field name="title">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="book_id">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="rank">
+          <editWidget type="Range">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="author_id">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+      </fieldConfiguration>
+      <aliases>
+        <alias name="" field="title" index="0"/>
+        <alias name="" field="book_id" index="1"/>
+        <alias name="" field="rank" index="2"/>
+        <alias name="" field="author_id" index="3"/>
+      </aliases>
+      <excludeAttributesWMS/>
+      <excludeAttributesWFS/>
+      <defaults>
+        <default applyOnUpdate="0" field="title" expression=""/>
+        <default applyOnUpdate="0" field="book_id" expression=""/>
+        <default applyOnUpdate="0" field="rank" expression=""/>
+        <default applyOnUpdate="0" field="author_id" expression=""/>
+      </defaults>
+      <constraints>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="title"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="book_id"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="rank"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="author_id"/>
+      </constraints>
+      <constraintExpressions>
+        <constraint exp="" field="title" desc=""/>
+        <constraint exp="" field="book_id" desc=""/>
+        <constraint exp="" field="rank" desc=""/>
+        <constraint exp="" field="author_id" desc=""/>
+      </constraintExpressions>
+      <attributeactions>
+        <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
+      </attributeactions>
+      <attributetableconfig actionWidgetStyle="dropDown" sortOrder="0" sortExpression="">
+        <columns>
+          <column hidden="0" type="field" name="title" width="-1"/>
+          <column hidden="0" type="field" name="book_id" width="-1"/>
+          <column hidden="0" type="field" name="rank" width="-1"/>
+          <column hidden="0" type="field" name="author_id" width="-1"/>
+          <column hidden="1" type="actions" width="-1"/>
+        </columns>
+      </attributetableconfig>
+      <editform></editform>
+      <editforminit/>
+      <editforminitcodesource>0</editforminitcodesource>
+      <editforminitfilepath></editforminitfilepath>
+      <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
+"""
+QGIS forms can have a Python function that is called when the form is
+opened.
+
+Use this function to add extra logic to your forms.
+
+Enter the name of the function in the "Python Init function"
+field.
+An example follows:
+"""
+from qgis.PyQt.QtWidgets import QWidget
+
+def my_form_open(dialog, layer, feature):
+	geom = feature.geometry()
+	control = dialog.findChild(QWidget, "MyLineEdit")
+]]></editforminitcode>
+      <featformsuppress>0</featformsuppress>
+      <editorlayout>generatedlayout</editorlayout>
+      <editable>
+        <field editable="1" name="author_id"/>
+        <field editable="1" name="book_id"/>
+        <field editable="1" name="rank"/>
+        <field editable="1" name="title"/>
+      </editable>
+      <labelOnTop>
+        <field name="author_id" labelOnTop="0"/>
+        <field name="book_id" labelOnTop="0"/>
+        <field name="rank" labelOnTop="0"/>
+        <field name="title" labelOnTop="0"/>
+      </labelOnTop>
+      <widgets/>
+      <conditionalstyles>
+        <rowstyles/>
+        <fieldstyles/>
+      </conditionalstyles>
+      <expressionfields/>
+      <previewExpression>book_id</previewExpression>
+      <mapTip></mapTip>
+    </maplayer>
+    <maplayer hasScaleBasedVisibilityFlag="0" maxScale="0" refreshOnNotifyMessage="" simplifyMaxScale="1" labelsEnabled="0" type="vector" minScale="1e+8" simplifyLocal="1" simplifyDrawingHints="0" autoRefreshTime="0" readOnly="0" refreshOnNotifyEnabled="0" simplifyDrawingTol="1" simplifyAlgorithm="0" autoRefreshEnabled="0" geometry="Point">
       <extent>
         <xmin>-180</xmin>
         <ymin>-80</ymin>
@@ -231,7 +516,7 @@
           </spatialrefsys>
         </crs>
         <extent>
-          <spatial maxx="0" dimensions="2" maxz="0" crs="" minx="0" maxy="0" miny="0" minz="0"/>
+          <spatial miny="0" maxx="0" maxy="0" minx="0" crs="" maxz="0" dimensions="2" minz="0"/>
           <temporal>
             <period>
               <start></start>
@@ -250,10 +535,10 @@
         <map-layer-style name="default"/>
       </map-layer-style-manager>
       <auxiliaryLayer/>
-      <renderer-v2 enableorderby="0" symbollevels="0" forceraster="0" type="singleSymbol">
+      <renderer-v2 enableorderby="0" symbollevels="0" type="singleSymbol" forceraster="0">
         <symbols>
-          <symbol type="marker" alpha="1" clip_to_extent="1" name="0">
-            <layer locked="0" class="SimpleMarker" enabled="1" pass="0">
+          <symbol type="marker" name="0" clip_to_extent="1" alpha="1">
+            <layer enabled="1" class="SimpleMarker" pass="0" locked="0">
               <prop v="0" k="angle"/>
               <prop v="229,182,54,255" k="color"/>
               <prop v="1" k="horizontal_anchor_point"/>
@@ -274,20 +559,20 @@
               <prop v="1" k="vertical_anchor_point"/>
               <data_defined_properties>
                 <Option type="Map">
-                  <Option type="QString" value="" name="name"/>
+                  <Option value="" type="QString" name="name"/>
                   <Option type="Map" name="properties">
                     <Option type="Map" name="fillColor">
-                      <Option type="bool" value="true" name="active"/>
-                      <Option type="QString" value="color_rgb( cluster_r, cluster_g, cluster_b)" name="expression"/>
-                      <Option type="int" value="3" name="type"/>
+                      <Option value="true" type="bool" name="active"/>
+                      <Option value="color_rgb( cluster_r, cluster_g, cluster_b)" type="QString" name="expression"/>
+                      <Option value="3" type="int" name="type"/>
                     </Option>
                     <Option type="Map" name="size">
-                      <Option type="bool" value="true" name="active"/>
-                      <Option type="QString" value="CASE &#xa;  WHEN &quot;is_cluster&quot; = 1 THEN 3&#xa;  ELSE 1.5&#xa;END" name="expression"/>
-                      <Option type="int" value="3" name="type"/>
+                      <Option value="true" type="bool" name="active"/>
+                      <Option value="CASE &#xa;  WHEN &quot;is_cluster&quot; = 1 THEN 3&#xa;  ELSE 1.5&#xa;END" type="QString" name="expression"/>
+                      <Option value="3" type="int" name="type"/>
                     </Option>
                   </Option>
-                  <Option type="QString" value="collection" name="type"/>
+                  <Option value="collection" type="QString" name="type"/>
                 </Option>
               </data_defined_properties>
             </layer>
@@ -297,25 +582,25 @@
         <sizescale/>
       </renderer-v2>
       <customproperties>
-        <property key="embeddedWidgets/count" value="0"/>
+        <property value="0" key="embeddedWidgets/count"/>
         <property key="variableNames"/>
         <property key="variableValues"/>
       </customproperties>
       <blendMode>0</blendMode>
       <featureBlendMode>0</featureBlendMode>
       <layerOpacity>1</layerOpacity>
-      <SingleCategoryDiagramRenderer attributeLegend="1" diagramType="Histogram">
-        <DiagramCategory sizeScale="3x:0,0,0,0,0,0" labelPlacementMethod="XHeight" maxScaleDenominator="1e+8" minScaleDenominator="0" enabled="0" barWidth="5" height="15" opacity="1" sizeType="MM" rotationOffset="270" lineSizeType="MM" scaleBasedVisibility="0" backgroundAlpha="255" width="15" penWidth="0" backgroundColor="#ffffff" scaleDependency="Area" diagramOrientation="Up" penColor="#000000" penAlpha="255" lineSizeScale="3x:0,0,0,0,0,0" minimumSize="0">
+      <SingleCategoryDiagramRenderer diagramType="Histogram" attributeLegend="1">
+        <DiagramCategory lineSizeScale="3x:0,0,0,0,0,0" scaleDependency="Area" sizeScale="3x:0,0,0,0,0,0" diagramOrientation="Up" labelPlacementMethod="XHeight" backgroundColor="#ffffff" lineSizeType="MM" maxScaleDenominator="1e+8" sizeType="MM" penWidth="0" penAlpha="255" enabled="0" rotationOffset="270" opacity="1" minScaleDenominator="0" barWidth="5" height="15" width="15" scaleBasedVisibility="0" backgroundAlpha="255" penColor="#000000" minimumSize="0">
           <fontProperties description=".AppleSystemUIFont,13,-1,5,50,0,0,0,0,0" style=""/>
-          <attribute field="" label="" color="#000000"/>
+          <attribute label="" field="" color="#000000"/>
         </DiagramCategory>
       </SingleCategoryDiagramRenderer>
-      <DiagramLayerSettings showAll="1" priority="0" placement="0" dist="0" zIndex="0" linePlacementFlags="18" obstacle="0">
+      <DiagramLayerSettings priority="0" obstacle="0" zIndex="0" dist="0" placement="0" showAll="1" linePlacementFlags="18">
         <properties>
           <Option type="Map">
-            <Option type="QString" value="" name="name"/>
+            <Option value="" type="QString" name="name"/>
             <Option name="properties"/>
-            <Option type="QString" value="collection" name="type"/>
+            <Option value="collection" type="QString" name="type"/>
           </Option>
         </properties>
       </DiagramLayerSettings>
@@ -383,15 +668,8 @@
             </config>
           </editWidget>
         </field>
-        <field name="old_cluster">
-          <editWidget type="TextEdit">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
-        <field name="radius">
-          <editWidget type="TextEdit">
+        <field name="author_id">
+          <editWidget type="">
             <config>
               <Option/>
             </config>
@@ -413,86 +691,82 @@
         </field>
       </fieldConfiguration>
       <aliases>
-        <alias field="is_cluster" index="0" name=""/>
-        <alias field="layouted_id" index="1" name=""/>
-        <alias field="cluster_id" index="2" name=""/>
-        <alias field="cluster_r" index="3" name=""/>
-        <alias field="cluster_g" index="4" name=""/>
-        <alias field="cluster_b" index="5" name=""/>
-        <alias field="sum_popularity" index="6" name=""/>
-        <alias field="avg_popularity" index="7" name=""/>
-        <alias field="books_count" index="8" name=""/>
-        <alias field="old_cluster" index="9" name=""/>
-        <alias field="radius" index="10" name=""/>
-        <alias field="cluster_point_count" index="11" name=""/>
-        <alias field="children" index="12" name=""/>
+        <alias name="" field="is_cluster" index="0"/>
+        <alias name="" field="layouted_id" index="1"/>
+        <alias name="" field="cluster_id" index="2"/>
+        <alias name="" field="cluster_r" index="3"/>
+        <alias name="" field="cluster_g" index="4"/>
+        <alias name="" field="cluster_b" index="5"/>
+        <alias name="" field="sum_popularity" index="6"/>
+        <alias name="" field="avg_popularity" index="7"/>
+        <alias name="" field="books_count" index="8"/>
+        <alias name="" field="author_id" index="9"/>
+        <alias name="" field="cluster_point_count" index="10"/>
+        <alias name="" field="children" index="11"/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <defaults>
-        <default field="is_cluster" applyOnUpdate="0" expression=""/>
-        <default field="layouted_id" applyOnUpdate="0" expression=""/>
-        <default field="cluster_id" applyOnUpdate="0" expression=""/>
-        <default field="cluster_r" applyOnUpdate="0" expression=""/>
-        <default field="cluster_g" applyOnUpdate="0" expression=""/>
-        <default field="cluster_b" applyOnUpdate="0" expression=""/>
-        <default field="sum_popularity" applyOnUpdate="0" expression=""/>
-        <default field="avg_popularity" applyOnUpdate="0" expression=""/>
-        <default field="books_count" applyOnUpdate="0" expression=""/>
-        <default field="old_cluster" applyOnUpdate="0" expression=""/>
-        <default field="radius" applyOnUpdate="0" expression=""/>
-        <default field="cluster_point_count" applyOnUpdate="0" expression=""/>
-        <default field="children" applyOnUpdate="0" expression=""/>
+        <default applyOnUpdate="0" field="is_cluster" expression=""/>
+        <default applyOnUpdate="0" field="layouted_id" expression=""/>
+        <default applyOnUpdate="0" field="cluster_id" expression=""/>
+        <default applyOnUpdate="0" field="cluster_r" expression=""/>
+        <default applyOnUpdate="0" field="cluster_g" expression=""/>
+        <default applyOnUpdate="0" field="cluster_b" expression=""/>
+        <default applyOnUpdate="0" field="sum_popularity" expression=""/>
+        <default applyOnUpdate="0" field="avg_popularity" expression=""/>
+        <default applyOnUpdate="0" field="books_count" expression=""/>
+        <default applyOnUpdate="0" field="author_id" expression=""/>
+        <default applyOnUpdate="0" field="cluster_point_count" expression=""/>
+        <default applyOnUpdate="0" field="children" expression=""/>
       </defaults>
       <constraints>
-        <constraint exp_strength="0" field="is_cluster" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="layouted_id" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="cluster_id" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="cluster_r" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="cluster_g" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="cluster_b" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="sum_popularity" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="avg_popularity" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="books_count" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="old_cluster" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="radius" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="cluster_point_count" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="children" constraints="0" notnull_strength="0" unique_strength="0"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="is_cluster"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="layouted_id"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="cluster_id"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="cluster_r"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="cluster_g"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="cluster_b"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="sum_popularity"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="avg_popularity"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="books_count"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="author_id"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="cluster_point_count"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="children"/>
       </constraints>
       <constraintExpressions>
-        <constraint field="is_cluster" exp="" desc=""/>
-        <constraint field="layouted_id" exp="" desc=""/>
-        <constraint field="cluster_id" exp="" desc=""/>
-        <constraint field="cluster_r" exp="" desc=""/>
-        <constraint field="cluster_g" exp="" desc=""/>
-        <constraint field="cluster_b" exp="" desc=""/>
-        <constraint field="sum_popularity" exp="" desc=""/>
-        <constraint field="avg_popularity" exp="" desc=""/>
-        <constraint field="books_count" exp="" desc=""/>
-        <constraint field="old_cluster" exp="" desc=""/>
-        <constraint field="radius" exp="" desc=""/>
-        <constraint field="cluster_point_count" exp="" desc=""/>
-        <constraint field="children" exp="" desc=""/>
+        <constraint exp="" field="is_cluster" desc=""/>
+        <constraint exp="" field="layouted_id" desc=""/>
+        <constraint exp="" field="cluster_id" desc=""/>
+        <constraint exp="" field="cluster_r" desc=""/>
+        <constraint exp="" field="cluster_g" desc=""/>
+        <constraint exp="" field="cluster_b" desc=""/>
+        <constraint exp="" field="sum_popularity" desc=""/>
+        <constraint exp="" field="avg_popularity" desc=""/>
+        <constraint exp="" field="books_count" desc=""/>
+        <constraint exp="" field="author_id" desc=""/>
+        <constraint exp="" field="cluster_point_count" desc=""/>
+        <constraint exp="" field="children" desc=""/>
       </constraintExpressions>
       <attributeactions>
-        <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
+        <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
       </attributeactions>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+      <attributetableconfig actionWidgetStyle="dropDown" sortOrder="0" sortExpression="">
         <columns>
-          <column type="field" width="-1" name="is_cluster" hidden="0"/>
-          <column type="field" width="-1" name="layouted_id" hidden="0"/>
-          <column type="field" width="-1" name="cluster_id" hidden="0"/>
-          <column type="field" width="-1" name="cluster_r" hidden="0"/>
-          <column type="field" width="-1" name="cluster_g" hidden="0"/>
-          <column type="field" width="-1" name="cluster_b" hidden="0"/>
-          <column type="field" width="-1" name="cluster_point_count" hidden="0"/>
-          <column type="field" width="-1" name="sum_popularity" hidden="0"/>
-          <column type="field" width="-1" name="avg_popularity" hidden="0"/>
-          <column type="field" width="-1" name="books_count" hidden="0"/>
-          <column type="actions" width="-1" hidden="1"/>
-          <column type="field" width="-1" name="radius" hidden="0"/>
-          <column type="field" width="-1" name="children" hidden="0"/>
-          <column type="field" width="-1" name="old_cluster" hidden="0"/>
+          <column hidden="0" type="field" name="is_cluster" width="-1"/>
+          <column hidden="0" type="field" name="layouted_id" width="-1"/>
+          <column hidden="0" type="field" name="cluster_id" width="-1"/>
+          <column hidden="0" type="field" name="cluster_r" width="-1"/>
+          <column hidden="0" type="field" name="cluster_g" width="-1"/>
+          <column hidden="0" type="field" name="cluster_b" width="-1"/>
+          <column hidden="0" type="field" name="cluster_point_count" width="-1"/>
+          <column hidden="0" type="field" name="sum_popularity" width="-1"/>
+          <column hidden="0" type="field" name="avg_popularity" width="-1"/>
+          <column hidden="0" type="field" name="books_count" width="-1"/>
+          <column hidden="1" type="actions" width="-1"/>
+          <column hidden="0" type="field" name="radius" width="-1"/>
+          <column hidden="0" type="field" name="children" width="-1"/>
+          <column hidden="0" type="field" name="old_cluster" width="-1"/>
         </columns>
       </attributetableconfig>
       <editform>.</editform>
@@ -541,26 +815,26 @@ def my_form_open(dialog, layer, feature):
         <field editable="1" name="will_cluster"/>
       </editable>
       <labelOnTop>
-        <field labelOnTop="0" name="avg_popularity"/>
-        <field labelOnTop="0" name="books_count"/>
-        <field labelOnTop="0" name="centers"/>
-        <field labelOnTop="0" name="children"/>
-        <field labelOnTop="0" name="cluster_b"/>
-        <field labelOnTop="0" name="cluster_g"/>
-        <field labelOnTop="0" name="cluster_id"/>
-        <field labelOnTop="0" name="cluster_point_count"/>
-        <field labelOnTop="0" name="cluster_r"/>
-        <field labelOnTop="0" name="id"/>
-        <field labelOnTop="0" name="ids"/>
-        <field labelOnTop="0" name="is_cluster"/>
-        <field labelOnTop="0" name="layouted_id"/>
-        <field labelOnTop="0" name="old_cluster"/>
-        <field labelOnTop="0" name="popularities"/>
-        <field labelOnTop="0" name="priority"/>
-        <field labelOnTop="0" name="radius"/>
-        <field labelOnTop="0" name="sum_popularity"/>
-        <field labelOnTop="0" name="titles"/>
-        <field labelOnTop="0" name="will_cluster"/>
+        <field name="avg_popularity" labelOnTop="0"/>
+        <field name="books_count" labelOnTop="0"/>
+        <field name="centers" labelOnTop="0"/>
+        <field name="children" labelOnTop="0"/>
+        <field name="cluster_b" labelOnTop="0"/>
+        <field name="cluster_g" labelOnTop="0"/>
+        <field name="cluster_id" labelOnTop="0"/>
+        <field name="cluster_point_count" labelOnTop="0"/>
+        <field name="cluster_r" labelOnTop="0"/>
+        <field name="id" labelOnTop="0"/>
+        <field name="ids" labelOnTop="0"/>
+        <field name="is_cluster" labelOnTop="0"/>
+        <field name="layouted_id" labelOnTop="0"/>
+        <field name="old_cluster" labelOnTop="0"/>
+        <field name="popularities" labelOnTop="0"/>
+        <field name="priority" labelOnTop="0"/>
+        <field name="radius" labelOnTop="0"/>
+        <field name="sum_popularity" labelOnTop="0"/>
+        <field name="titles" labelOnTop="0"/>
+        <field name="will_cluster" labelOnTop="0"/>
       </labelOnTop>
       <widgets/>
       <conditionalstyles>
@@ -571,12 +845,183 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>layouted_id</previewExpression>
       <mapTip></mapTip>
     </maplayer>
-    <maplayer geometry="Polygon" simplifyAlgorithm="0" refreshOnNotifyMessage="" simplifyDrawingTol="1" maxScale="0" minScale="1e+8" readOnly="0" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" autoRefreshEnabled="0" type="vector" labelsEnabled="0" refreshOnNotifyEnabled="0" simplifyDrawingHints="1" autoRefreshTime="0" simplifyMaxScale="1">
+    <maplayer hasScaleBasedVisibilityFlag="0" maxScale="0" refreshOnNotifyMessage="" simplifyMaxScale="1" labelsEnabled="0" type="vector" minScale="1e+8" simplifyLocal="1" simplifyDrawingHints="1" autoRefreshTime="0" readOnly="0" refreshOnNotifyEnabled="0" simplifyDrawingTol="1" simplifyAlgorithm="0" autoRefreshEnabled="0" geometry="Polygon">
       <extent>
-        <xmin>-10.01346405683710117</xmin>
-        <ymin>-51.01726100508401629</ymin>
-        <xmax>0.17408639050429295</xmax>
-        <ymax>-41.98614390644782901</ymax>
+        <xmin>-10.01057733808209527</xmin>
+        <ymin>-51.01337291651218209</ymin>
+        <xmax>0.07001167710322991</xmax>
+        <ymax>-41.99101804850904784</ymax>
+      </extent>
+      <id>islands_1_geo_8febbd37_8467_4d46_894f_40c46284f110</id>
+      <datasource>../out/layout/islands_1.geo.json</datasource>
+      <keywordList>
+        <value></value>
+      </keywordList>
+      <layername>islands_1.geo</layername>
+      <srs>
+        <spatialrefsys>
+          <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+          <srsid>3452</srsid>
+          <srid>4326</srid>
+          <authid>EPSG:4326</authid>
+          <description>WGS 84</description>
+          <projectionacronym>longlat</projectionacronym>
+          <ellipsoidacronym>WGS84</ellipsoidacronym>
+          <geographicflag>true</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <resourceMetadata>
+        <identifier></identifier>
+        <parentidentifier></parentidentifier>
+        <language></language>
+        <type></type>
+        <title></title>
+        <abstract></abstract>
+        <links/>
+        <fees></fees>
+        <encoding></encoding>
+        <crs>
+          <spatialrefsys>
+            <proj4></proj4>
+            <srsid>0</srsid>
+            <srid>0</srid>
+            <authid></authid>
+            <description></description>
+            <projectionacronym></projectionacronym>
+            <ellipsoidacronym></ellipsoidacronym>
+            <geographicflag>false</geographicflag>
+          </spatialrefsys>
+        </crs>
+        <extent/>
+      </resourceMetadata>
+      <provider encoding="UTF-8">ogr</provider>
+      <vectorjoins/>
+      <layerDependencies/>
+      <dataDependencies/>
+      <legend type="default-vector"/>
+      <expressionfields/>
+      <map-layer-style-manager current="default">
+        <map-layer-style name="default"/>
+      </map-layer-style-manager>
+      <auxiliaryLayer/>
+      <renderer-v2 enableorderby="0" symbollevels="0" type="singleSymbol" forceraster="0">
+        <symbols>
+          <symbol type="fill" name="0" clip_to_extent="1" alpha="1">
+            <layer enabled="1" class="SimpleFill" pass="0" locked="0">
+              <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
+              <prop v="231,113,72,255" k="color"/>
+              <prop v="bevel" k="joinstyle"/>
+              <prop v="0,0" k="offset"/>
+              <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
+              <prop v="MM" k="offset_unit"/>
+              <prop v="35,35,35,255" k="outline_color"/>
+              <prop v="solid" k="outline_style"/>
+              <prop v="0.26" k="outline_width"/>
+              <prop v="MM" k="outline_width_unit"/>
+              <prop v="solid" k="style"/>
+              <data_defined_properties>
+                <Option type="Map">
+                  <Option value="" type="QString" name="name"/>
+                  <Option name="properties"/>
+                  <Option value="collection" type="QString" name="type"/>
+                </Option>
+              </data_defined_properties>
+            </layer>
+          </symbol>
+        </symbols>
+        <rotation/>
+        <sizescale/>
+      </renderer-v2>
+      <customproperties/>
+      <blendMode>0</blendMode>
+      <featureBlendMode>0</featureBlendMode>
+      <layerOpacity>1</layerOpacity>
+      <fieldConfiguration>
+        <field name="island_id">
+          <editWidget type="">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="area">
+          <editWidget type="">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="layouted_id">
+          <editWidget type="">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="islet">
+          <editWidget type="">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+      </fieldConfiguration>
+      <aliases>
+        <alias name="" field="island_id" index="0"/>
+        <alias name="" field="area" index="1"/>
+        <alias name="" field="layouted_id" index="2"/>
+        <alias name="" field="islet" index="3"/>
+      </aliases>
+      <excludeAttributesWMS/>
+      <excludeAttributesWFS/>
+      <defaults>
+        <default applyOnUpdate="0" field="island_id" expression=""/>
+        <default applyOnUpdate="0" field="area" expression=""/>
+        <default applyOnUpdate="0" field="layouted_id" expression=""/>
+        <default applyOnUpdate="0" field="islet" expression=""/>
+      </defaults>
+      <constraints>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="island_id"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="area"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="layouted_id"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="islet"/>
+      </constraints>
+      <constraintExpressions>
+        <constraint exp="" field="island_id" desc=""/>
+        <constraint exp="" field="area" desc=""/>
+        <constraint exp="" field="layouted_id" desc=""/>
+        <constraint exp="" field="islet" desc=""/>
+      </constraintExpressions>
+      <attributeactions>
+        <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
+      </attributeactions>
+      <attributetableconfig actionWidgetStyle="dropDown" sortOrder="0" sortExpression="">
+        <columns/>
+      </attributetableconfig>
+      <editform></editform>
+      <editforminit/>
+      <editforminitcodesource>0</editforminitcodesource>
+      <editforminitfilepath></editforminitfilepath>
+      <editforminitcode><![CDATA[]]></editforminitcode>
+      <featformsuppress>0</featformsuppress>
+      <editorlayout>generatedlayout</editorlayout>
+      <editable/>
+      <labelOnTop/>
+      <widgets/>
+      <conditionalstyles>
+        <rowstyles/>
+        <fieldstyles/>
+      </conditionalstyles>
+      <expressionfields/>
+      <previewExpression></previewExpression>
+      <mapTip></mapTip>
+    </maplayer>
+    <maplayer hasScaleBasedVisibilityFlag="0" maxScale="0" refreshOnNotifyMessage="" simplifyMaxScale="1" labelsEnabled="0" type="vector" minScale="1e+8" simplifyLocal="1" simplifyDrawingHints="1" autoRefreshTime="0" readOnly="0" refreshOnNotifyEnabled="0" simplifyDrawingTol="1" simplifyAlgorithm="0" autoRefreshEnabled="0" geometry="Polygon">
+      <extent>
+        <xmin>-10.01797169587962166</xmin>
+        <ymin>-51.01438941930270943</ymin>
+        <xmax>0.07019144616866038</xmax>
+        <ymax>-41.98774870637446099</ymax>
       </extent>
       <id>islands_lowdef_1_geo_dcf7c115_aaac_4aba_8a5e_5bb5f3cbdfa0</id>
       <datasource>../out/layout/islands_lowdef_1.geo.json</datasource>
@@ -628,7 +1073,7 @@ def my_form_open(dialog, layer, feature):
           </spatialrefsys>
         </crs>
         <extent>
-          <spatial maxx="0" dimensions="2" maxz="0" crs="" minx="0" maxy="0" miny="0" minz="0"/>
+          <spatial miny="0" maxx="0" maxy="0" minx="0" crs="" maxz="0" dimensions="2" minz="0"/>
           <temporal>
             <period>
               <start></start>
@@ -647,12 +1092,12 @@ def my_form_open(dialog, layer, feature):
         <map-layer-style name="default"/>
       </map-layer-style-manager>
       <auxiliaryLayer/>
-      <renderer-v2 enableorderby="0" symbollevels="0" forceraster="0" type="singleSymbol">
+      <renderer-v2 enableorderby="0" symbollevels="0" type="singleSymbol" forceraster="0">
         <symbols>
-          <symbol type="fill" alpha="1" clip_to_extent="1" name="0">
-            <layer locked="0" class="SimpleFill" enabled="1" pass="0">
+          <symbol type="fill" name="0" clip_to_extent="1" alpha="1">
+            <layer enabled="1" class="SimpleFill" pass="0" locked="0">
               <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
-              <prop v="237,237,237,255" k="color"/>
+              <prop v="237,237,237,91" k="color"/>
               <prop v="bevel" k="joinstyle"/>
               <prop v="0,0" k="offset"/>
               <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
@@ -664,9 +1109,9 @@ def my_form_open(dialog, layer, feature):
               <prop v="solid" k="style"/>
               <data_defined_properties>
                 <Option type="Map">
-                  <Option type="QString" value="" name="name"/>
+                  <Option value="" type="QString" name="name"/>
                   <Option name="properties"/>
-                  <Option type="QString" value="collection" name="type"/>
+                  <Option value="collection" type="QString" name="type"/>
                 </Option>
               </data_defined_properties>
             </layer>
@@ -676,107 +1121,30 @@ def my_form_open(dialog, layer, feature):
         <sizescale/>
       </renderer-v2>
       <customproperties>
-        <property key="embeddedWidgets/count" value="0"/>
+        <property value="0" key="embeddedWidgets/count"/>
         <property key="variableNames"/>
         <property key="variableValues"/>
       </customproperties>
       <blendMode>0</blendMode>
       <featureBlendMode>0</featureBlendMode>
       <layerOpacity>1</layerOpacity>
-      <SingleCategoryDiagramRenderer attributeLegend="1" diagramType="Histogram">
-        <DiagramCategory sizeScale="3x:0,0,0,0,0,0" labelPlacementMethod="XHeight" maxScaleDenominator="1e+8" minScaleDenominator="0" enabled="0" barWidth="5" height="15" opacity="1" sizeType="MM" rotationOffset="270" lineSizeType="MM" scaleBasedVisibility="0" backgroundAlpha="255" width="15" penWidth="0" backgroundColor="#ffffff" scaleDependency="Area" diagramOrientation="Up" penColor="#000000" penAlpha="255" lineSizeScale="3x:0,0,0,0,0,0" minimumSize="0">
+      <SingleCategoryDiagramRenderer diagramType="Histogram" attributeLegend="1">
+        <DiagramCategory lineSizeScale="3x:0,0,0,0,0,0" scaleDependency="Area" sizeScale="3x:0,0,0,0,0,0" diagramOrientation="Up" labelPlacementMethod="XHeight" backgroundColor="#ffffff" lineSizeType="MM" maxScaleDenominator="1e+8" sizeType="MM" penWidth="0" penAlpha="255" enabled="0" rotationOffset="270" opacity="1" minScaleDenominator="0" barWidth="5" height="15" width="15" scaleBasedVisibility="0" backgroundAlpha="255" penColor="#000000" minimumSize="0">
           <fontProperties description=".AppleSystemUIFont,13,-1,5,50,0,0,0,0,0" style=""/>
-          <attribute field="" label="" color="#000000"/>
+          <attribute label="" field="" color="#000000"/>
         </DiagramCategory>
       </SingleCategoryDiagramRenderer>
-      <DiagramLayerSettings showAll="1" priority="0" placement="1" dist="0" zIndex="0" linePlacementFlags="18" obstacle="0">
+      <DiagramLayerSettings priority="0" obstacle="0" zIndex="0" dist="0" placement="1" showAll="1" linePlacementFlags="18">
         <properties>
           <Option type="Map">
-            <Option type="QString" value="" name="name"/>
+            <Option value="" type="QString" name="name"/>
             <Option name="properties"/>
-            <Option type="QString" value="collection" name="type"/>
+            <Option value="collection" type="QString" name="type"/>
           </Option>
         </properties>
       </DiagramLayerSettings>
       <fieldConfiguration>
-        <field name="is_cluster">
-          <editWidget type="CheckBox">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
         <field name="layouted_id">
-          <editWidget type="TextEdit">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
-        <field name="radius">
-          <editWidget type="">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
-        <field name="cluster_r">
-          <editWidget type="Range">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
-        <field name="cluster_g">
-          <editWidget type="Range">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
-        <field name="cluster_b">
-          <editWidget type="Range">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
-        <field name="cluster_point_count">
-          <editWidget type="Range">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
-        <field name="sum_popularity">
-          <editWidget type="TextEdit">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
-        <field name="avg_popularity">
-          <editWidget type="TextEdit">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
-        <field name="books_count">
-          <editWidget type="Range">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
-        <field name="children">
-          <editWidget type="">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
-        <field name="layoutPriorityScore">
           <editWidget type="TextEdit">
             <config>
               <Option/>
@@ -797,93 +1165,61 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
+        <field name="author_id">
+          <editWidget type="">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="is_fallback">
+          <editWidget type="CheckBox">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
       </fieldConfiguration>
       <aliases>
-        <alias field="is_cluster" index="0" name=""/>
-        <alias field="layouted_id" index="1" name=""/>
-        <alias field="radius" index="2" name=""/>
-        <alias field="cluster_r" index="3" name=""/>
-        <alias field="cluster_g" index="4" name=""/>
-        <alias field="cluster_b" index="5" name=""/>
-        <alias field="cluster_point_count" index="6" name=""/>
-        <alias field="sum_popularity" index="7" name=""/>
-        <alias field="avg_popularity" index="8" name=""/>
-        <alias field="books_count" index="9" name=""/>
-        <alias field="children" index="10" name=""/>
-        <alias field="layoutPriorityScore" index="11" name=""/>
-        <alias field="r" index="12" name=""/>
-        <alias field="island_id" index="13" name=""/>
+        <alias name="" field="layouted_id" index="0"/>
+        <alias name="" field="r" index="1"/>
+        <alias name="" field="island_id" index="2"/>
+        <alias name="" field="author_id" index="3"/>
+        <alias name="" field="is_fallback" index="4"/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <defaults>
-        <default field="is_cluster" applyOnUpdate="0" expression=""/>
-        <default field="layouted_id" applyOnUpdate="0" expression=""/>
-        <default field="radius" applyOnUpdate="0" expression=""/>
-        <default field="cluster_r" applyOnUpdate="0" expression=""/>
-        <default field="cluster_g" applyOnUpdate="0" expression=""/>
-        <default field="cluster_b" applyOnUpdate="0" expression=""/>
-        <default field="cluster_point_count" applyOnUpdate="0" expression=""/>
-        <default field="sum_popularity" applyOnUpdate="0" expression=""/>
-        <default field="avg_popularity" applyOnUpdate="0" expression=""/>
-        <default field="books_count" applyOnUpdate="0" expression=""/>
-        <default field="children" applyOnUpdate="0" expression=""/>
-        <default field="layoutPriorityScore" applyOnUpdate="0" expression=""/>
-        <default field="r" applyOnUpdate="0" expression=""/>
-        <default field="island_id" applyOnUpdate="0" expression=""/>
+        <default applyOnUpdate="0" field="layouted_id" expression=""/>
+        <default applyOnUpdate="0" field="r" expression=""/>
+        <default applyOnUpdate="0" field="island_id" expression=""/>
+        <default applyOnUpdate="0" field="author_id" expression=""/>
+        <default applyOnUpdate="0" field="is_fallback" expression=""/>
       </defaults>
       <constraints>
-        <constraint exp_strength="0" field="is_cluster" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="layouted_id" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="radius" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="cluster_r" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="cluster_g" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="cluster_b" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="cluster_point_count" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="sum_popularity" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="avg_popularity" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="books_count" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="children" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="layoutPriorityScore" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="r" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="island_id" constraints="0" notnull_strength="0" unique_strength="0"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="layouted_id"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="r"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="island_id"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="author_id"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="is_fallback"/>
       </constraints>
       <constraintExpressions>
-        <constraint field="is_cluster" exp="" desc=""/>
-        <constraint field="layouted_id" exp="" desc=""/>
-        <constraint field="radius" exp="" desc=""/>
-        <constraint field="cluster_r" exp="" desc=""/>
-        <constraint field="cluster_g" exp="" desc=""/>
-        <constraint field="cluster_b" exp="" desc=""/>
-        <constraint field="cluster_point_count" exp="" desc=""/>
-        <constraint field="sum_popularity" exp="" desc=""/>
-        <constraint field="avg_popularity" exp="" desc=""/>
-        <constraint field="books_count" exp="" desc=""/>
-        <constraint field="children" exp="" desc=""/>
-        <constraint field="layoutPriorityScore" exp="" desc=""/>
-        <constraint field="r" exp="" desc=""/>
-        <constraint field="island_id" exp="" desc=""/>
+        <constraint exp="" field="layouted_id" desc=""/>
+        <constraint exp="" field="r" desc=""/>
+        <constraint exp="" field="island_id" desc=""/>
+        <constraint exp="" field="author_id" desc=""/>
+        <constraint exp="" field="is_fallback" desc=""/>
       </constraintExpressions>
       <attributeactions>
-        <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
+        <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
       </attributeactions>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+      <attributetableconfig actionWidgetStyle="dropDown" sortOrder="0" sortExpression="">
         <columns>
-          <column type="field" width="-1" name="is_cluster" hidden="0"/>
-          <column type="field" width="-1" name="layouted_id" hidden="0"/>
-          <column type="field" width="-1" name="original_clusters" hidden="0"/>
-          <column type="field" width="-1" name="cluster_r" hidden="0"/>
-          <column type="field" width="-1" name="cluster_g" hidden="0"/>
-          <column type="field" width="-1" name="cluster_b" hidden="0"/>
-          <column type="field" width="-1" name="centers" hidden="0"/>
-          <column type="field" width="-1" name="cluster_point_count" hidden="0"/>
-          <column type="field" width="-1" name="sum_popularity" hidden="0"/>
-          <column type="field" width="-1" name="avg_popularity" hidden="0"/>
-          <column type="field" width="-1" name="books_count" hidden="0"/>
-          <column type="field" width="-1" name="layoutPriorityScore" hidden="0"/>
-          <column type="field" width="-1" name="r" hidden="0"/>
-          <column type="field" width="-1" name="island_id" hidden="0"/>
-          <column type="actions" width="-1" hidden="1"/>
+          <column hidden="0" type="field" name="layouted_id" width="-1"/>
+          <column hidden="0" type="field" name="r" width="-1"/>
+          <column hidden="0" type="field" name="island_id" width="-1"/>
+          <column hidden="1" type="actions" width="-1"/>
+          <column hidden="0" type="field" name="is_fallback" width="-1"/>
         </columns>
       </attributetableconfig>
       <editform>.</editform>
@@ -918,6 +1254,7 @@ def my_form_open(dialog, layer, feature):
         <field editable="1" name="cluster_point_count"/>
         <field editable="1" name="cluster_r"/>
         <field editable="1" name="is_cluster"/>
+        <field editable="1" name="is_fallback"/>
         <field editable="1" name="island_id"/>
         <field editable="1" name="layoutPriorityScore"/>
         <field editable="1" name="layouted_id"/>
@@ -926,20 +1263,21 @@ def my_form_open(dialog, layer, feature):
         <field editable="1" name="sum_popularity"/>
       </editable>
       <labelOnTop>
-        <field labelOnTop="0" name="avg_popularity"/>
-        <field labelOnTop="0" name="books_count"/>
-        <field labelOnTop="0" name="centers"/>
-        <field labelOnTop="0" name="cluster_b"/>
-        <field labelOnTop="0" name="cluster_g"/>
-        <field labelOnTop="0" name="cluster_point_count"/>
-        <field labelOnTop="0" name="cluster_r"/>
-        <field labelOnTop="0" name="is_cluster"/>
-        <field labelOnTop="0" name="island_id"/>
-        <field labelOnTop="0" name="layoutPriorityScore"/>
-        <field labelOnTop="0" name="layouted_id"/>
-        <field labelOnTop="0" name="original_clusters"/>
-        <field labelOnTop="0" name="r"/>
-        <field labelOnTop="0" name="sum_popularity"/>
+        <field name="avg_popularity" labelOnTop="0"/>
+        <field name="books_count" labelOnTop="0"/>
+        <field name="centers" labelOnTop="0"/>
+        <field name="cluster_b" labelOnTop="0"/>
+        <field name="cluster_g" labelOnTop="0"/>
+        <field name="cluster_point_count" labelOnTop="0"/>
+        <field name="cluster_r" labelOnTop="0"/>
+        <field name="is_cluster" labelOnTop="0"/>
+        <field name="is_fallback" labelOnTop="0"/>
+        <field name="island_id" labelOnTop="0"/>
+        <field name="layoutPriorityScore" labelOnTop="0"/>
+        <field name="layouted_id" labelOnTop="0"/>
+        <field name="original_clusters" labelOnTop="0"/>
+        <field name="r" labelOnTop="0"/>
+        <field name="sum_popularity" labelOnTop="0"/>
       </labelOnTop>
       <widgets/>
       <conditionalstyles>
@@ -950,9 +1288,9 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>layouted_id</previewExpression>
       <mapTip></mapTip>
     </maplayer>
-    <maplayer geometry="Point" simplifyAlgorithm="0" refreshOnNotifyMessage="" simplifyDrawingTol="1" maxScale="0" minScale="1e+8" readOnly="0" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" autoRefreshEnabled="0" type="vector" labelsEnabled="0" refreshOnNotifyEnabled="0" simplifyDrawingHints="0" autoRefreshTime="0" simplifyMaxScale="1">
+    <maplayer hasScaleBasedVisibilityFlag="0" maxScale="0" refreshOnNotifyMessage="" simplifyMaxScale="1" labelsEnabled="0" type="vector" minScale="1e+8" simplifyLocal="1" simplifyDrawingHints="0" autoRefreshTime="0" readOnly="0" refreshOnNotifyEnabled="0" simplifyDrawingTol="1" simplifyAlgorithm="0" autoRefreshEnabled="0" geometry="Point">
       <extent>
-        <xmin>-13.70033638115057784</xmin>
+        <xmin>-9.99917597966347671</xmin>
         <ymin>-51.00749000885856788</ymin>
         <xmax>-0.00297509668016005</xmax>
         <ymax>-42.00083332764410216</ymax>
@@ -1007,7 +1345,7 @@ def my_form_open(dialog, layer, feature):
           </spatialrefsys>
         </crs>
         <extent>
-          <spatial maxx="0" dimensions="2" maxz="0" crs="" minx="0" maxy="0" miny="0" minz="0"/>
+          <spatial miny="0" maxx="0" maxy="0" minx="0" crs="" maxz="0" dimensions="2" minz="0"/>
           <temporal>
             <period>
               <start></start>
@@ -1026,10 +1364,10 @@ def my_form_open(dialog, layer, feature):
         <map-layer-style name="default"/>
       </map-layer-style-manager>
       <auxiliaryLayer/>
-      <renderer-v2 enableorderby="0" symbollevels="0" forceraster="0" type="singleSymbol">
+      <renderer-v2 enableorderby="0" symbollevels="0" type="singleSymbol" forceraster="0">
         <symbols>
-          <symbol type="marker" alpha="1" clip_to_extent="1" name="0">
-            <layer locked="0" class="SimpleMarker" enabled="1" pass="0">
+          <symbol type="marker" name="0" clip_to_extent="1" alpha="1">
+            <layer enabled="1" class="SimpleMarker" pass="0" locked="0">
               <prop v="0" k="angle"/>
               <prop v="190,207,80,255" k="color"/>
               <prop v="1" k="horizontal_anchor_point"/>
@@ -1050,20 +1388,20 @@ def my_form_open(dialog, layer, feature):
               <prop v="1" k="vertical_anchor_point"/>
               <data_defined_properties>
                 <Option type="Map">
-                  <Option type="QString" value="" name="name"/>
+                  <Option value="" type="QString" name="name"/>
                   <Option type="Map" name="properties">
                     <Option type="Map" name="fillColor">
-                      <Option type="bool" value="true" name="active"/>
-                      <Option type="QString" value="color_rgb( cluster_r, cluster_g, cluster_b)" name="expression"/>
-                      <Option type="int" value="3" name="type"/>
+                      <Option value="true" type="bool" name="active"/>
+                      <Option value="color_rgb( cluster_r, cluster_g, cluster_b)" type="QString" name="expression"/>
+                      <Option value="3" type="int" name="type"/>
                     </Option>
                     <Option type="Map" name="size">
-                      <Option type="bool" value="true" name="active"/>
-                      <Option type="QString" value="CASE &#xa;  WHEN &quot;is_cluster&quot; = 1 THEN 2&#xa;  ELSE 1&#xa;END" name="expression"/>
-                      <Option type="int" value="3" name="type"/>
+                      <Option value="true" type="bool" name="active"/>
+                      <Option value="CASE &#xa;  WHEN &quot;is_cluster&quot; = 1 THEN 2&#xa;  ELSE 1&#xa;END" type="QString" name="expression"/>
+                      <Option value="3" type="int" name="type"/>
                     </Option>
                   </Option>
-                  <Option type="QString" value="collection" name="type"/>
+                  <Option value="collection" type="QString" name="type"/>
                 </Option>
               </data_defined_properties>
             </layer>
@@ -1073,29 +1411,36 @@ def my_form_open(dialog, layer, feature):
         <sizescale/>
       </renderer-v2>
       <customproperties>
-        <property key="embeddedWidgets/count" value="0"/>
+        <property value="0" key="embeddedWidgets/count"/>
         <property key="variableNames"/>
         <property key="variableValues"/>
       </customproperties>
       <blendMode>0</blendMode>
       <featureBlendMode>0</featureBlendMode>
       <layerOpacity>1</layerOpacity>
-      <SingleCategoryDiagramRenderer attributeLegend="1" diagramType="Histogram">
-        <DiagramCategory sizeScale="3x:0,0,0,0,0,0" labelPlacementMethod="XHeight" maxScaleDenominator="1e+8" minScaleDenominator="0" enabled="0" barWidth="5" height="15" opacity="1" sizeType="MM" rotationOffset="270" lineSizeType="MM" scaleBasedVisibility="0" backgroundAlpha="255" width="15" penWidth="0" backgroundColor="#ffffff" scaleDependency="Area" diagramOrientation="Up" penColor="#000000" penAlpha="255" lineSizeScale="3x:0,0,0,0,0,0" minimumSize="0">
+      <SingleCategoryDiagramRenderer diagramType="Histogram" attributeLegend="1">
+        <DiagramCategory lineSizeScale="3x:0,0,0,0,0,0" scaleDependency="Area" sizeScale="3x:0,0,0,0,0,0" diagramOrientation="Up" labelPlacementMethod="XHeight" backgroundColor="#ffffff" lineSizeType="MM" maxScaleDenominator="1e+8" sizeType="MM" penWidth="0" penAlpha="255" enabled="0" rotationOffset="270" opacity="1" minScaleDenominator="0" barWidth="5" height="15" width="15" scaleBasedVisibility="0" backgroundAlpha="255" penColor="#000000" minimumSize="0">
           <fontProperties description=".AppleSystemUIFont,13,-1,5,50,0,0,0,0,0" style=""/>
-          <attribute field="" label="" color="#000000"/>
+          <attribute label="" field="" color="#000000"/>
         </DiagramCategory>
       </SingleCategoryDiagramRenderer>
-      <DiagramLayerSettings showAll="1" priority="0" placement="0" dist="0" zIndex="0" linePlacementFlags="18" obstacle="0">
+      <DiagramLayerSettings priority="0" obstacle="0" zIndex="0" dist="0" placement="0" showAll="1" linePlacementFlags="18">
         <properties>
           <Option type="Map">
-            <Option type="QString" value="" name="name"/>
+            <Option value="" type="QString" name="name"/>
             <Option name="properties"/>
-            <Option type="QString" value="collection" name="type"/>
+            <Option value="collection" type="QString" name="type"/>
           </Option>
         </properties>
       </DiagramLayerSettings>
       <fieldConfiguration>
+        <field name="author_id">
+          <editWidget type="">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
         <field name="is_cluster">
           <editWidget type="CheckBox">
             <config>
@@ -1131,6 +1476,13 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
+        <field name="cluster_point_count">
+          <editWidget type="Range">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
         <field name="sum_popularity">
           <editWidget type="TextEdit">
             <config>
@@ -1152,27 +1504,6 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
-        <field name="layoutPriorityScore">
-          <editWidget type="TextEdit">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
-        <field name="radius">
-          <editWidget type="">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
-        <field name="cluster_point_count">
-          <editWidget type="Range">
-            <config>
-              <Option/>
-            </config>
-          </editWidget>
-        </field>
         <field name="children">
           <editWidget type="">
             <config>
@@ -1180,15 +1511,15 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
-        <field name="cluster_id">
+        <field name="layoutPriorityScore">
           <editWidget type="TextEdit">
             <config>
               <Option/>
             </config>
           </editWidget>
         </field>
-        <field name="old_cluster">
-          <editWidget type="">
+        <field name="cluster_id">
+          <editWidget type="TextEdit">
             <config>
               <Option/>
             </config>
@@ -1203,94 +1534,90 @@ def my_form_open(dialog, layer, feature):
         </field>
       </fieldConfiguration>
       <aliases>
-        <alias field="is_cluster" index="0" name=""/>
-        <alias field="layouted_id" index="1" name=""/>
-        <alias field="cluster_r" index="2" name=""/>
-        <alias field="cluster_g" index="3" name=""/>
-        <alias field="cluster_b" index="4" name=""/>
-        <alias field="sum_popularity" index="5" name=""/>
-        <alias field="avg_popularity" index="6" name=""/>
-        <alias field="books_count" index="7" name=""/>
-        <alias field="layoutPriorityScore" index="8" name=""/>
-        <alias field="radius" index="9" name=""/>
-        <alias field="cluster_point_count" index="10" name=""/>
-        <alias field="children" index="11" name=""/>
-        <alias field="cluster_id" index="12" name=""/>
-        <alias field="old_cluster" index="13" name=""/>
-        <alias field="cluster_id_old" index="14" name=""/>
+        <alias name="" field="author_id" index="0"/>
+        <alias name="" field="is_cluster" index="1"/>
+        <alias name="" field="layouted_id" index="2"/>
+        <alias name="" field="cluster_r" index="3"/>
+        <alias name="" field="cluster_g" index="4"/>
+        <alias name="" field="cluster_b" index="5"/>
+        <alias name="" field="cluster_point_count" index="6"/>
+        <alias name="" field="sum_popularity" index="7"/>
+        <alias name="" field="avg_popularity" index="8"/>
+        <alias name="" field="books_count" index="9"/>
+        <alias name="" field="children" index="10"/>
+        <alias name="" field="layoutPriorityScore" index="11"/>
+        <alias name="" field="cluster_id" index="12"/>
+        <alias name="" field="cluster_id_old" index="13"/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <defaults>
-        <default field="is_cluster" applyOnUpdate="0" expression=""/>
-        <default field="layouted_id" applyOnUpdate="0" expression=""/>
-        <default field="cluster_r" applyOnUpdate="0" expression=""/>
-        <default field="cluster_g" applyOnUpdate="0" expression=""/>
-        <default field="cluster_b" applyOnUpdate="0" expression=""/>
-        <default field="sum_popularity" applyOnUpdate="0" expression=""/>
-        <default field="avg_popularity" applyOnUpdate="0" expression=""/>
-        <default field="books_count" applyOnUpdate="0" expression=""/>
-        <default field="layoutPriorityScore" applyOnUpdate="0" expression=""/>
-        <default field="radius" applyOnUpdate="0" expression=""/>
-        <default field="cluster_point_count" applyOnUpdate="0" expression=""/>
-        <default field="children" applyOnUpdate="0" expression=""/>
-        <default field="cluster_id" applyOnUpdate="0" expression=""/>
-        <default field="old_cluster" applyOnUpdate="0" expression=""/>
-        <default field="cluster_id_old" applyOnUpdate="0" expression=""/>
+        <default applyOnUpdate="0" field="author_id" expression=""/>
+        <default applyOnUpdate="0" field="is_cluster" expression=""/>
+        <default applyOnUpdate="0" field="layouted_id" expression=""/>
+        <default applyOnUpdate="0" field="cluster_r" expression=""/>
+        <default applyOnUpdate="0" field="cluster_g" expression=""/>
+        <default applyOnUpdate="0" field="cluster_b" expression=""/>
+        <default applyOnUpdate="0" field="cluster_point_count" expression=""/>
+        <default applyOnUpdate="0" field="sum_popularity" expression=""/>
+        <default applyOnUpdate="0" field="avg_popularity" expression=""/>
+        <default applyOnUpdate="0" field="books_count" expression=""/>
+        <default applyOnUpdate="0" field="children" expression=""/>
+        <default applyOnUpdate="0" field="layoutPriorityScore" expression=""/>
+        <default applyOnUpdate="0" field="cluster_id" expression=""/>
+        <default applyOnUpdate="0" field="cluster_id_old" expression=""/>
       </defaults>
       <constraints>
-        <constraint exp_strength="0" field="is_cluster" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="layouted_id" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="cluster_r" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="cluster_g" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="cluster_b" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="sum_popularity" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="avg_popularity" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="books_count" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="layoutPriorityScore" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="radius" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="cluster_point_count" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="children" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="cluster_id" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="old_cluster" constraints="0" notnull_strength="0" unique_strength="0"/>
-        <constraint exp_strength="0" field="cluster_id_old" constraints="0" notnull_strength="0" unique_strength="0"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="author_id"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="is_cluster"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="layouted_id"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="cluster_r"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="cluster_g"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="cluster_b"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="cluster_point_count"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="sum_popularity"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="avg_popularity"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="books_count"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="children"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="layoutPriorityScore"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="cluster_id"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="cluster_id_old"/>
       </constraints>
       <constraintExpressions>
-        <constraint field="is_cluster" exp="" desc=""/>
-        <constraint field="layouted_id" exp="" desc=""/>
-        <constraint field="cluster_r" exp="" desc=""/>
-        <constraint field="cluster_g" exp="" desc=""/>
-        <constraint field="cluster_b" exp="" desc=""/>
-        <constraint field="sum_popularity" exp="" desc=""/>
-        <constraint field="avg_popularity" exp="" desc=""/>
-        <constraint field="books_count" exp="" desc=""/>
-        <constraint field="layoutPriorityScore" exp="" desc=""/>
-        <constraint field="radius" exp="" desc=""/>
-        <constraint field="cluster_point_count" exp="" desc=""/>
-        <constraint field="children" exp="" desc=""/>
-        <constraint field="cluster_id" exp="" desc=""/>
-        <constraint field="old_cluster" exp="" desc=""/>
-        <constraint field="cluster_id_old" exp="" desc=""/>
+        <constraint exp="" field="author_id" desc=""/>
+        <constraint exp="" field="is_cluster" desc=""/>
+        <constraint exp="" field="layouted_id" desc=""/>
+        <constraint exp="" field="cluster_r" desc=""/>
+        <constraint exp="" field="cluster_g" desc=""/>
+        <constraint exp="" field="cluster_b" desc=""/>
+        <constraint exp="" field="cluster_point_count" desc=""/>
+        <constraint exp="" field="sum_popularity" desc=""/>
+        <constraint exp="" field="avg_popularity" desc=""/>
+        <constraint exp="" field="books_count" desc=""/>
+        <constraint exp="" field="children" desc=""/>
+        <constraint exp="" field="layoutPriorityScore" desc=""/>
+        <constraint exp="" field="cluster_id" desc=""/>
+        <constraint exp="" field="cluster_id_old" desc=""/>
       </constraintExpressions>
       <attributeactions>
-        <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
+        <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
       </attributeactions>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+      <attributetableconfig actionWidgetStyle="dropDown" sortOrder="0" sortExpression="">
         <columns>
-          <column type="field" width="-1" name="is_cluster" hidden="0"/>
-          <column type="field" width="-1" name="layouted_id" hidden="0"/>
-          <column type="field" width="-1" name="cluster_r" hidden="0"/>
-          <column type="field" width="-1" name="cluster_g" hidden="0"/>
-          <column type="field" width="-1" name="cluster_b" hidden="0"/>
-          <column type="field" width="-1" name="sum_popularity" hidden="0"/>
-          <column type="field" width="-1" name="avg_popularity" hidden="0"/>
-          <column type="field" width="-1" name="books_count" hidden="0"/>
-          <column type="field" width="-1" name="layoutPriorityScore" hidden="0"/>
-          <column type="field" width="-1" name="original_clusters" hidden="0"/>
-          <column type="field" width="-1" name="centers" hidden="0"/>
-          <column type="field" width="-1" name="cluster_point_count" hidden="0"/>
-          <column type="actions" width="-1" hidden="1"/>
-          <column type="field" width="-1" name="cluster_id" hidden="0"/>
+          <column hidden="0" type="field" name="is_cluster" width="-1"/>
+          <column hidden="0" type="field" name="layouted_id" width="-1"/>
+          <column hidden="0" type="field" name="cluster_r" width="-1"/>
+          <column hidden="0" type="field" name="cluster_g" width="-1"/>
+          <column hidden="0" type="field" name="cluster_b" width="-1"/>
+          <column hidden="0" type="field" name="sum_popularity" width="-1"/>
+          <column hidden="0" type="field" name="avg_popularity" width="-1"/>
+          <column hidden="0" type="field" name="books_count" width="-1"/>
+          <column hidden="0" type="field" name="layoutPriorityScore" width="-1"/>
+          <column hidden="0" type="field" name="original_clusters" width="-1"/>
+          <column hidden="0" type="field" name="centers" width="-1"/>
+          <column hidden="0" type="field" name="cluster_point_count" width="-1"/>
+          <column hidden="1" type="actions" width="-1"/>
+          <column hidden="0" type="field" name="cluster_id" width="-1"/>
         </columns>
       </attributetableconfig>
       <editform>.</editform>
@@ -1332,19 +1659,19 @@ def my_form_open(dialog, layer, feature):
         <field editable="1" name="sum_popularity"/>
       </editable>
       <labelOnTop>
-        <field labelOnTop="0" name="avg_popularity"/>
-        <field labelOnTop="0" name="books_count"/>
-        <field labelOnTop="0" name="centers"/>
-        <field labelOnTop="0" name="cluster_b"/>
-        <field labelOnTop="0" name="cluster_g"/>
-        <field labelOnTop="0" name="cluster_id"/>
-        <field labelOnTop="0" name="cluster_point_count"/>
-        <field labelOnTop="0" name="cluster_r"/>
-        <field labelOnTop="0" name="is_cluster"/>
-        <field labelOnTop="0" name="layoutPriorityScore"/>
-        <field labelOnTop="0" name="layouted_id"/>
-        <field labelOnTop="0" name="original_clusters"/>
-        <field labelOnTop="0" name="sum_popularity"/>
+        <field name="avg_popularity" labelOnTop="0"/>
+        <field name="books_count" labelOnTop="0"/>
+        <field name="centers" labelOnTop="0"/>
+        <field name="cluster_b" labelOnTop="0"/>
+        <field name="cluster_g" labelOnTop="0"/>
+        <field name="cluster_id" labelOnTop="0"/>
+        <field name="cluster_point_count" labelOnTop="0"/>
+        <field name="cluster_r" labelOnTop="0"/>
+        <field name="is_cluster" labelOnTop="0"/>
+        <field name="layoutPriorityScore" labelOnTop="0"/>
+        <field name="layouted_id" labelOnTop="0"/>
+        <field name="original_clusters" labelOnTop="0"/>
+        <field name="sum_popularity" labelOnTop="0"/>
       </labelOnTop>
       <widgets/>
       <conditionalstyles>
@@ -1355,10 +1682,227 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>layouted_id</previewExpression>
       <mapTip></mapTip>
     </maplayer>
-    <maplayer geometry="Polygon" simplifyAlgorithm="0" refreshOnNotifyMessage="" simplifyDrawingTol="1" maxScale="0" minScale="1e+8" readOnly="0" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" autoRefreshEnabled="0" type="vector" labelsEnabled="0" refreshOnNotifyEnabled="0" simplifyDrawingHints="1" autoRefreshTime="0" simplifyMaxScale="1">
+    <maplayer hasScaleBasedVisibilityFlag="0" maxScale="0" refreshOnNotifyMessage="" simplifyMaxScale="1" labelsEnabled="0" type="vector" minScale="1e+8" simplifyLocal="1" simplifyDrawingHints="0" autoRefreshTime="0" readOnly="0" refreshOnNotifyEnabled="0" simplifyDrawingTol="1" simplifyAlgorithm="0" autoRefreshEnabled="0" geometry="Point">
       <extent>
-        <xmin>-9.97470500000000015</xmin>
-        <ymin>-50.58315199999999834</ymin>
+        <xmin>-9.92878669326660379</xmin>
+        <ymin>-50.44014977773683484</ymin>
+        <xmax>-0.02481238049343499</xmax>
+        <ymax>-42.23064047707919144</ymax>
+      </extent>
+      <id>territory_labels_geo_e4ca5899_24ac_4da5_9e00_4f207290618a</id>
+      <datasource>../out/layout/territory_labels.geo.json</datasource>
+      <keywordList>
+        <value></value>
+      </keywordList>
+      <layername>territory_labels.geo</layername>
+      <srs>
+        <spatialrefsys>
+          <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+          <srsid>3452</srsid>
+          <srid>4326</srid>
+          <authid>EPSG:4326</authid>
+          <description>WGS 84</description>
+          <projectionacronym>longlat</projectionacronym>
+          <ellipsoidacronym>WGS84</ellipsoidacronym>
+          <geographicflag>true</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <resourceMetadata>
+        <identifier></identifier>
+        <parentidentifier></parentidentifier>
+        <language></language>
+        <type></type>
+        <title></title>
+        <abstract></abstract>
+        <contact>
+          <name></name>
+          <organization></organization>
+          <position></position>
+          <voice></voice>
+          <fax></fax>
+          <email></email>
+          <role></role>
+        </contact>
+        <links/>
+        <fees></fees>
+        <encoding></encoding>
+        <crs>
+          <spatialrefsys>
+            <proj4></proj4>
+            <srsid>0</srsid>
+            <srid>0</srid>
+            <authid></authid>
+            <description></description>
+            <projectionacronym></projectionacronym>
+            <ellipsoidacronym></ellipsoidacronym>
+            <geographicflag>false</geographicflag>
+          </spatialrefsys>
+        </crs>
+        <extent>
+          <spatial miny="0" maxx="0" maxy="0" minx="0" crs="" maxz="0" dimensions="2" minz="0"/>
+          <temporal>
+            <period>
+              <start></start>
+              <end></end>
+            </period>
+          </temporal>
+        </extent>
+      </resourceMetadata>
+      <provider encoding="UTF-8">ogr</provider>
+      <vectorjoins/>
+      <layerDependencies/>
+      <dataDependencies/>
+      <legend type="default-vector"/>
+      <expressionfields/>
+      <map-layer-style-manager current="default">
+        <map-layer-style name="default"/>
+      </map-layer-style-manager>
+      <auxiliaryLayer/>
+      <renderer-v2 enableorderby="0" symbollevels="0" type="singleSymbol" forceraster="0">
+        <symbols>
+          <symbol type="marker" name="0" clip_to_extent="1" alpha="1">
+            <layer enabled="1" class="SimpleMarker" pass="0" locked="0">
+              <prop v="0" k="angle"/>
+              <prop v="232,113,141,255" k="color"/>
+              <prop v="1" k="horizontal_anchor_point"/>
+              <prop v="bevel" k="joinstyle"/>
+              <prop v="cross" k="name"/>
+              <prop v="0,0" k="offset"/>
+              <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
+              <prop v="MM" k="offset_unit"/>
+              <prop v="35,35,35,255" k="outline_color"/>
+              <prop v="solid" k="outline_style"/>
+              <prop v="0" k="outline_width"/>
+              <prop v="3x:0,0,0,0,0,0" k="outline_width_map_unit_scale"/>
+              <prop v="MM" k="outline_width_unit"/>
+              <prop v="diameter" k="scale_method"/>
+              <prop v="2" k="size"/>
+              <prop v="3x:0,0,0,0,0,0" k="size_map_unit_scale"/>
+              <prop v="MM" k="size_unit"/>
+              <prop v="1" k="vertical_anchor_point"/>
+              <data_defined_properties>
+                <Option type="Map">
+                  <Option value="" type="QString" name="name"/>
+                  <Option name="properties"/>
+                  <Option value="collection" type="QString" name="type"/>
+                </Option>
+              </data_defined_properties>
+            </layer>
+          </symbol>
+        </symbols>
+        <rotation/>
+        <sizescale/>
+      </renderer-v2>
+      <customproperties>
+        <property value="0" key="embeddedWidgets/count"/>
+        <property key="variableNames"/>
+        <property key="variableValues"/>
+      </customproperties>
+      <blendMode>0</blendMode>
+      <featureBlendMode>0</featureBlendMode>
+      <layerOpacity>1</layerOpacity>
+      <SingleCategoryDiagramRenderer diagramType="Histogram" attributeLegend="1">
+        <DiagramCategory lineSizeScale="3x:0,0,0,0,0,0" scaleDependency="Area" sizeScale="3x:0,0,0,0,0,0" diagramOrientation="Up" labelPlacementMethod="XHeight" backgroundColor="#ffffff" lineSizeType="MM" maxScaleDenominator="1e+8" sizeType="MM" penWidth="0" penAlpha="255" enabled="0" rotationOffset="270" opacity="1" minScaleDenominator="0" barWidth="5" height="15" width="15" scaleBasedVisibility="0" backgroundAlpha="255" penColor="#000000" minimumSize="0">
+          <fontProperties description=".AppleSystemUIFont,13,-1,5,50,0,0,0,0,0" style=""/>
+        </DiagramCategory>
+      </SingleCategoryDiagramRenderer>
+      <DiagramLayerSettings priority="0" obstacle="0" zIndex="0" dist="0" placement="0" showAll="1" linePlacementFlags="18">
+        <properties>
+          <Option type="Map">
+            <Option value="" type="QString" name="name"/>
+            <Option name="properties"/>
+            <Option value="collection" type="QString" name="type"/>
+          </Option>
+        </properties>
+      </DiagramLayerSettings>
+      <fieldConfiguration>
+        <field name="id">
+          <editWidget type="TextEdit">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+        <field name="rank">
+          <editWidget type="Range">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
+      </fieldConfiguration>
+      <aliases>
+        <alias name="" field="id" index="0"/>
+        <alias name="" field="rank" index="1"/>
+      </aliases>
+      <excludeAttributesWMS/>
+      <excludeAttributesWFS/>
+      <defaults>
+        <default applyOnUpdate="0" field="id" expression=""/>
+        <default applyOnUpdate="0" field="rank" expression=""/>
+      </defaults>
+      <constraints>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="id"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="rank"/>
+      </constraints>
+      <constraintExpressions>
+        <constraint exp="" field="id" desc=""/>
+        <constraint exp="" field="rank" desc=""/>
+      </constraintExpressions>
+      <attributeactions>
+        <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
+      </attributeactions>
+      <attributetableconfig actionWidgetStyle="dropDown" sortOrder="0" sortExpression="">
+        <columns>
+          <column hidden="0" type="field" name="id" width="-1"/>
+          <column hidden="0" type="field" name="rank" width="-1"/>
+          <column hidden="1" type="actions" width="-1"/>
+        </columns>
+      </attributetableconfig>
+      <editform></editform>
+      <editforminit/>
+      <editforminitcodesource>0</editforminitcodesource>
+      <editforminitfilepath></editforminitfilepath>
+      <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
+"""
+QGIS forms can have a Python function that is called when the form is
+opened.
+
+Use this function to add extra logic to your forms.
+
+Enter the name of the function in the "Python Init function"
+field.
+An example follows:
+"""
+from qgis.PyQt.QtWidgets import QWidget
+
+def my_form_open(dialog, layer, feature):
+	geom = feature.geometry()
+	control = dialog.findChild(QWidget, "MyLineEdit")
+]]></editforminitcode>
+      <featformsuppress>0</featformsuppress>
+      <editorlayout>generatedlayout</editorlayout>
+      <editable>
+        <field editable="1" name="id"/>
+        <field editable="1" name="rank"/>
+      </editable>
+      <labelOnTop>
+        <field name="id" labelOnTop="0"/>
+        <field name="rank" labelOnTop="0"/>
+      </labelOnTop>
+      <widgets/>
+      <conditionalstyles>
+        <rowstyles/>
+        <fieldstyles/>
+      </conditionalstyles>
+      <expressionfields/>
+      <previewExpression>id</previewExpression>
+      <mapTip></mapTip>
+    </maplayer>
+    <maplayer hasScaleBasedVisibilityFlag="0" maxScale="0" refreshOnNotifyMessage="" simplifyMaxScale="1" labelsEnabled="0" type="vector" minScale="1e+8" simplifyLocal="1" simplifyDrawingHints="1" autoRefreshTime="0" readOnly="0" refreshOnNotifyEnabled="0" simplifyDrawingTol="1" simplifyAlgorithm="0" autoRefreshEnabled="0" geometry="Polygon">
+      <extent>
+        <xmin>-9.94656200000000013</xmin>
+        <ymin>-50.46713199999999944</ymin>
         <xmax>0.070191</xmax>
         <ymax>-42.20634499999999889</ymax>
       </extent>
@@ -1412,7 +1956,7 @@ def my_form_open(dialog, layer, feature):
           </spatialrefsys>
         </crs>
         <extent>
-          <spatial maxx="0" dimensions="2" maxz="0" crs="" minx="0" maxy="0" miny="0" minz="0"/>
+          <spatial miny="0" maxx="0" maxy="0" minx="0" crs="" maxz="0" dimensions="2" minz="0"/>
           <temporal>
             <period>
               <start></start>
@@ -1431,10 +1975,10 @@ def my_form_open(dialog, layer, feature):
         <map-layer-style name="default"/>
       </map-layer-style-manager>
       <auxiliaryLayer/>
-      <renderer-v2 enableorderby="0" symbollevels="0" forceraster="0" type="singleSymbol">
+      <renderer-v2 enableorderby="0" symbollevels="0" type="singleSymbol" forceraster="0">
         <symbols>
-          <symbol type="fill" alpha="1" clip_to_extent="1" name="0">
-            <layer locked="0" class="SimpleFill" enabled="1" pass="0">
+          <symbol type="fill" name="0" clip_to_extent="1" alpha="1">
+            <layer enabled="1" class="SimpleFill" pass="0" locked="0">
               <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
               <prop v="190,207,80,0" k="color"/>
               <prop v="bevel" k="joinstyle"/>
@@ -1448,9 +1992,9 @@ def my_form_open(dialog, layer, feature):
               <prop v="solid" k="style"/>
               <data_defined_properties>
                 <Option type="Map">
-                  <Option type="QString" value="" name="name"/>
+                  <Option value="" type="QString" name="name"/>
                   <Option name="properties"/>
-                  <Option type="QString" value="collection" name="type"/>
+                  <Option value="collection" type="QString" name="type"/>
                 </Option>
               </data_defined_properties>
             </layer>
@@ -1460,25 +2004,25 @@ def my_form_open(dialog, layer, feature):
         <sizescale/>
       </renderer-v2>
       <customproperties>
-        <property key="embeddedWidgets/count" value="0"/>
+        <property value="0" key="embeddedWidgets/count"/>
         <property key="variableNames"/>
         <property key="variableValues"/>
       </customproperties>
       <blendMode>0</blendMode>
       <featureBlendMode>0</featureBlendMode>
       <layerOpacity>1</layerOpacity>
-      <SingleCategoryDiagramRenderer attributeLegend="1" diagramType="Histogram">
-        <DiagramCategory sizeScale="3x:0,0,0,0,0,0" labelPlacementMethod="XHeight" maxScaleDenominator="1e+8" minScaleDenominator="0" enabled="0" barWidth="5" height="15" opacity="1" sizeType="MM" rotationOffset="270" lineSizeType="MM" scaleBasedVisibility="0" backgroundAlpha="255" width="15" penWidth="0" backgroundColor="#ffffff" scaleDependency="Area" diagramOrientation="Up" penColor="#000000" penAlpha="255" lineSizeScale="3x:0,0,0,0,0,0" minimumSize="0">
+      <SingleCategoryDiagramRenderer diagramType="Histogram" attributeLegend="1">
+        <DiagramCategory lineSizeScale="3x:0,0,0,0,0,0" scaleDependency="Area" sizeScale="3x:0,0,0,0,0,0" diagramOrientation="Up" labelPlacementMethod="XHeight" backgroundColor="#ffffff" lineSizeType="MM" maxScaleDenominator="1e+8" sizeType="MM" penWidth="0" penAlpha="255" enabled="0" rotationOffset="270" opacity="1" minScaleDenominator="0" barWidth="5" height="15" width="15" scaleBasedVisibility="0" backgroundAlpha="255" penColor="#000000" minimumSize="0">
           <fontProperties description=".AppleSystemUIFont,13,-1,5,50,0,0,0,0,0" style=""/>
-          <attribute field="" label="" color="#000000"/>
+          <attribute label="" field="" color="#000000"/>
         </DiagramCategory>
       </SingleCategoryDiagramRenderer>
-      <DiagramLayerSettings showAll="1" priority="0" placement="1" dist="0" zIndex="0" linePlacementFlags="18" obstacle="0">
+      <DiagramLayerSettings priority="0" obstacle="0" zIndex="0" dist="0" placement="1" showAll="1" linePlacementFlags="18">
         <properties>
           <Option type="Map">
-            <Option type="QString" value="" name="name"/>
+            <Option value="" type="QString" name="name"/>
             <Option name="properties"/>
-            <Option type="QString" value="collection" name="type"/>
+            <Option value="collection" type="QString" name="type"/>
           </Option>
         </properties>
       </DiagramLayerSettings>
@@ -1490,31 +2034,42 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
+        <field name="author_id">
+          <editWidget type="">
+            <config>
+              <Option/>
+            </config>
+          </editWidget>
+        </field>
       </fieldConfiguration>
       <aliases>
-        <alias field="cluster_layouted_id" index="0" name=""/>
+        <alias name="" field="cluster_layouted_id" index="0"/>
+        <alias name="" field="author_id" index="1"/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <defaults>
-        <default field="cluster_layouted_id" applyOnUpdate="0" expression=""/>
+        <default applyOnUpdate="0" field="cluster_layouted_id" expression=""/>
+        <default applyOnUpdate="0" field="author_id" expression=""/>
       </defaults>
       <constraints>
-        <constraint exp_strength="0" field="cluster_layouted_id" constraints="0" notnull_strength="0" unique_strength="0"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="cluster_layouted_id"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="author_id"/>
       </constraints>
       <constraintExpressions>
-        <constraint field="cluster_layouted_id" exp="" desc=""/>
+        <constraint exp="" field="cluster_layouted_id" desc=""/>
+        <constraint exp="" field="author_id" desc=""/>
       </constraintExpressions>
       <attributeactions>
-        <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
+        <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
       </attributeactions>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+      <attributetableconfig actionWidgetStyle="dropDown" sortOrder="0" sortExpression="">
         <columns>
-          <column type="field" width="-1" name="cluster_layouted_id" hidden="0"/>
-          <column type="actions" width="-1" hidden="1"/>
+          <column hidden="0" type="field" name="cluster_layouted_id" width="-1"/>
+          <column hidden="1" type="actions" width="-1"/>
         </columns>
       </attributetableconfig>
-      <editform></editform>
+      <editform>.</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
       <editforminitfilepath></editforminitfilepath>
@@ -1541,7 +2096,7 @@ def my_form_open(dialog, layer, feature):
         <field editable="1" name="cluster_layouted_id"/>
       </editable>
       <labelOnTop>
-        <field labelOnTop="0" name="cluster_layouted_id"/>
+        <field name="cluster_layouted_id" labelOnTop="0"/>
       </labelOnTop>
       <widgets/>
       <conditionalstyles>
@@ -1552,7 +2107,182 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>cluster_layouted_id</previewExpression>
       <mapTip></mapTip>
     </maplayer>
-    <maplayer geometry="Point" simplifyAlgorithm="0" refreshOnNotifyMessage="" simplifyDrawingTol="1" maxScale="0" minScale="1e+8" readOnly="0" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" autoRefreshEnabled="0" type="vector" labelsEnabled="0" refreshOnNotifyEnabled="0" simplifyDrawingHints="0" autoRefreshTime="0" simplifyMaxScale="1">
+    <maplayer hasScaleBasedVisibilityFlag="0" maxScale="0" refreshOnNotifyMessage="" simplifyMaxScale="1" labelsEnabled="0" type="vector" minScale="1e+8" simplifyLocal="1" simplifyDrawingHints="1" autoRefreshTime="0" readOnly="0" refreshOnNotifyEnabled="0" simplifyDrawingTol="1" simplifyAlgorithm="0" autoRefreshEnabled="0" geometry="Polygon">
+      <extent>
+        <xmin>-9.91702523420909188</xmin>
+        <ymin>-50.46713199999999944</ymin>
+        <xmax>0.070012</xmax>
+        <ymax>-42.20634499999999889</ymax>
+      </extent>
+      <id>territory_polygons_hi_1_geo_281a600e_e37a_4d39_b9da_88dbcd20b893</id>
+      <datasource>../out/layout/territory_polygons_hi_1.geo.json</datasource>
+      <keywordList>
+        <value></value>
+      </keywordList>
+      <layername>territory_polygons_hi_1.geo</layername>
+      <srs>
+        <spatialrefsys>
+          <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+          <srsid>3452</srsid>
+          <srid>4326</srid>
+          <authid>EPSG:4326</authid>
+          <description>WGS 84</description>
+          <projectionacronym>longlat</projectionacronym>
+          <ellipsoidacronym>WGS84</ellipsoidacronym>
+          <geographicflag>true</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <resourceMetadata>
+        <identifier></identifier>
+        <parentidentifier></parentidentifier>
+        <language></language>
+        <type></type>
+        <title></title>
+        <abstract></abstract>
+        <contact>
+          <name></name>
+          <organization></organization>
+          <position></position>
+          <voice></voice>
+          <fax></fax>
+          <email></email>
+          <role></role>
+        </contact>
+        <links/>
+        <fees></fees>
+        <encoding></encoding>
+        <crs>
+          <spatialrefsys>
+            <proj4></proj4>
+            <srsid>0</srsid>
+            <srid>0</srid>
+            <authid></authid>
+            <description></description>
+            <projectionacronym></projectionacronym>
+            <ellipsoidacronym></ellipsoidacronym>
+            <geographicflag>false</geographicflag>
+          </spatialrefsys>
+        </crs>
+        <extent>
+          <spatial miny="0" maxx="0" maxy="0" minx="0" crs="" maxz="0" dimensions="2" minz="0"/>
+          <temporal>
+            <period>
+              <start></start>
+              <end></end>
+            </period>
+          </temporal>
+        </extent>
+      </resourceMetadata>
+      <provider encoding="UTF-8">ogr</provider>
+      <vectorjoins/>
+      <layerDependencies/>
+      <dataDependencies/>
+      <legend type="default-vector"/>
+      <expressionfields/>
+      <map-layer-style-manager current="default">
+        <map-layer-style name="default"/>
+      </map-layer-style-manager>
+      <auxiliaryLayer/>
+      <renderer-v2 enableorderby="0" symbollevels="0" type="singleSymbol" forceraster="0">
+        <symbols>
+          <symbol type="fill" name="0" clip_to_extent="1" alpha="1">
+            <layer enabled="1" class="SimpleFill" pass="0" locked="0">
+              <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
+              <prop v="152,125,183,139" k="color"/>
+              <prop v="bevel" k="joinstyle"/>
+              <prop v="0,0" k="offset"/>
+              <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
+              <prop v="MM" k="offset_unit"/>
+              <prop v="35,35,35,255" k="outline_color"/>
+              <prop v="solid" k="outline_style"/>
+              <prop v="0.26" k="outline_width"/>
+              <prop v="MM" k="outline_width_unit"/>
+              <prop v="solid" k="style"/>
+              <data_defined_properties>
+                <Option type="Map">
+                  <Option value="" type="QString" name="name"/>
+                  <Option name="properties"/>
+                  <Option value="collection" type="QString" name="type"/>
+                </Option>
+              </data_defined_properties>
+            </layer>
+          </symbol>
+        </symbols>
+        <rotation/>
+        <sizescale/>
+      </renderer-v2>
+      <customproperties>
+        <property value="0" key="embeddedWidgets/count"/>
+        <property key="variableNames"/>
+        <property key="variableValues"/>
+      </customproperties>
+      <blendMode>0</blendMode>
+      <featureBlendMode>0</featureBlendMode>
+      <layerOpacity>1</layerOpacity>
+      <SingleCategoryDiagramRenderer diagramType="Histogram" attributeLegend="1">
+        <DiagramCategory lineSizeScale="3x:0,0,0,0,0,0" scaleDependency="Area" sizeScale="3x:0,0,0,0,0,0" diagramOrientation="Up" labelPlacementMethod="XHeight" backgroundColor="#ffffff" lineSizeType="MM" maxScaleDenominator="1e+8" sizeType="MM" penWidth="0" penAlpha="255" enabled="0" rotationOffset="270" opacity="1" minScaleDenominator="0" barWidth="5" height="15" width="15" scaleBasedVisibility="0" backgroundAlpha="255" penColor="#000000" minimumSize="0">
+          <fontProperties description=".AppleSystemUIFont,13,-1,5,50,0,0,0,0,0" style=""/>
+        </DiagramCategory>
+      </SingleCategoryDiagramRenderer>
+      <DiagramLayerSettings priority="0" obstacle="0" zIndex="0" dist="0" placement="1" showAll="1" linePlacementFlags="18">
+        <properties>
+          <Option type="Map">
+            <Option value="" type="QString" name="name"/>
+            <Option name="properties"/>
+            <Option value="collection" type="QString" name="type"/>
+          </Option>
+        </properties>
+      </DiagramLayerSettings>
+      <fieldConfiguration/>
+      <aliases/>
+      <excludeAttributesWMS/>
+      <excludeAttributesWFS/>
+      <defaults/>
+      <constraints/>
+      <constraintExpressions/>
+      <attributeactions>
+        <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
+      </attributeactions>
+      <attributetableconfig actionWidgetStyle="dropDown" sortOrder="0" sortExpression="">
+        <columns>
+          <column hidden="1" type="actions" width="-1"/>
+        </columns>
+      </attributetableconfig>
+      <editform></editform>
+      <editforminit/>
+      <editforminitcodesource>0</editforminitcodesource>
+      <editforminitfilepath></editforminitfilepath>
+      <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
+"""
+QGIS forms can have a Python function that is called when the form is
+opened.
+
+Use this function to add extra logic to your forms.
+
+Enter the name of the function in the "Python Init function"
+field.
+An example follows:
+"""
+from qgis.PyQt.QtWidgets import QWidget
+
+def my_form_open(dialog, layer, feature):
+	geom = feature.geometry()
+	control = dialog.findChild(QWidget, "MyLineEdit")
+]]></editforminitcode>
+      <featformsuppress>0</featformsuppress>
+      <editorlayout>generatedlayout</editorlayout>
+      <editable/>
+      <labelOnTop/>
+      <widgets/>
+      <conditionalstyles>
+        <rowstyles/>
+        <fieldstyles/>
+      </conditionalstyles>
+      <expressionfields/>
+      <previewExpression></previewExpression>
+      <mapTip></mapTip>
+    </maplayer>
+    <maplayer hasScaleBasedVisibilityFlag="0" maxScale="0" refreshOnNotifyMessage="" simplifyMaxScale="1" labelsEnabled="0" type="vector" minScale="1e+8" simplifyLocal="1" simplifyDrawingHints="0" autoRefreshTime="0" readOnly="0" refreshOnNotifyEnabled="0" simplifyDrawingTol="1" simplifyAlgorithm="0" autoRefreshEnabled="0" geometry="Point">
       <extent>
         <xmin>-180</xmin>
         <ymin>-80</ymin>
@@ -1609,7 +2339,7 @@ def my_form_open(dialog, layer, feature):
           </spatialrefsys>
         </crs>
         <extent>
-          <spatial maxx="0" dimensions="2" maxz="0" crs="" minx="0" maxy="0" miny="0" minz="0"/>
+          <spatial miny="0" maxx="0" maxy="0" minx="0" crs="" maxz="0" dimensions="2" minz="0"/>
           <temporal>
             <period>
               <start></start>
@@ -1628,10 +2358,10 @@ def my_form_open(dialog, layer, feature):
         <map-layer-style name="default"/>
       </map-layer-style-manager>
       <auxiliaryLayer/>
-      <renderer-v2 enableorderby="0" symbollevels="0" forceraster="0" type="singleSymbol">
+      <renderer-v2 enableorderby="0" symbollevels="0" type="singleSymbol" forceraster="0">
         <symbols>
-          <symbol type="marker" alpha="1" clip_to_extent="1" name="0">
-            <layer locked="0" class="SimpleMarker" enabled="1" pass="0">
+          <symbol type="marker" name="0" clip_to_extent="1" alpha="1">
+            <layer enabled="1" class="SimpleMarker" pass="0" locked="0">
               <prop v="0" k="angle"/>
               <prop v="0,0,0,255" k="color"/>
               <prop v="1" k="horizontal_anchor_point"/>
@@ -1652,9 +2382,9 @@ def my_form_open(dialog, layer, feature):
               <prop v="1" k="vertical_anchor_point"/>
               <data_defined_properties>
                 <Option type="Map">
-                  <Option type="QString" value="" name="name"/>
+                  <Option value="" type="QString" name="name"/>
                   <Option name="properties"/>
-                  <Option type="QString" value="collection" name="type"/>
+                  <Option value="collection" type="QString" name="type"/>
                 </Option>
               </data_defined_properties>
             </layer>
@@ -1664,25 +2394,25 @@ def my_form_open(dialog, layer, feature):
         <sizescale/>
       </renderer-v2>
       <customproperties>
-        <property key="embeddedWidgets/count" value="0"/>
+        <property value="0" key="embeddedWidgets/count"/>
         <property key="variableNames"/>
         <property key="variableValues"/>
       </customproperties>
       <blendMode>0</blendMode>
       <featureBlendMode>0</featureBlendMode>
       <layerOpacity>1</layerOpacity>
-      <SingleCategoryDiagramRenderer attributeLegend="1" diagramType="Histogram">
-        <DiagramCategory sizeScale="3x:0,0,0,0,0,0" labelPlacementMethod="XHeight" maxScaleDenominator="1e+8" minScaleDenominator="0" enabled="0" barWidth="5" height="15" opacity="1" sizeType="MM" rotationOffset="270" lineSizeType="MM" scaleBasedVisibility="0" backgroundAlpha="255" width="15" penWidth="0" backgroundColor="#ffffff" scaleDependency="Area" diagramOrientation="Up" penColor="#000000" penAlpha="255" lineSizeScale="3x:0,0,0,0,0,0" minimumSize="0">
+      <SingleCategoryDiagramRenderer diagramType="Histogram" attributeLegend="1">
+        <DiagramCategory lineSizeScale="3x:0,0,0,0,0,0" scaleDependency="Area" sizeScale="3x:0,0,0,0,0,0" diagramOrientation="Up" labelPlacementMethod="XHeight" backgroundColor="#ffffff" lineSizeType="MM" maxScaleDenominator="1e+8" sizeType="MM" penWidth="0" penAlpha="255" enabled="0" rotationOffset="270" opacity="1" minScaleDenominator="0" barWidth="5" height="15" width="15" scaleBasedVisibility="0" backgroundAlpha="255" penColor="#000000" minimumSize="0">
           <fontProperties description=".AppleSystemUIFont,13,-1,5,50,0,0,0,0,0" style=""/>
-          <attribute field="" label="" color="#000000"/>
+          <attribute label="" field="" color="#000000"/>
         </DiagramCategory>
       </SingleCategoryDiagramRenderer>
-      <DiagramLayerSettings showAll="1" priority="0" placement="0" dist="0" zIndex="0" linePlacementFlags="18" obstacle="0">
+      <DiagramLayerSettings priority="0" obstacle="0" zIndex="0" dist="0" placement="0" showAll="1" linePlacementFlags="18">
         <properties>
           <Option type="Map">
-            <Option type="QString" value="" name="name"/>
+            <Option value="" type="QString" name="name"/>
             <Option name="properties"/>
-            <Option type="QString" value="collection" name="type"/>
+            <Option value="collection" type="QString" name="type"/>
           </Option>
         </properties>
       </DiagramLayerSettings>
@@ -1696,26 +2426,26 @@ def my_form_open(dialog, layer, feature):
         </field>
       </fieldConfiguration>
       <aliases>
-        <alias field="id" index="0" name=""/>
+        <alias name="" field="id" index="0"/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <defaults>
-        <default field="id" applyOnUpdate="0" expression=""/>
+        <default applyOnUpdate="0" field="id" expression=""/>
       </defaults>
       <constraints>
-        <constraint exp_strength="0" field="id" constraints="0" notnull_strength="0" unique_strength="0"/>
+        <constraint unique_strength="0" constraints="0" exp_strength="0" notnull_strength="0" field="id"/>
       </constraints>
       <constraintExpressions>
-        <constraint field="id" exp="" desc=""/>
+        <constraint exp="" field="id" desc=""/>
       </constraintExpressions>
       <attributeactions>
-        <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
+        <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
       </attributeactions>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+      <attributetableconfig actionWidgetStyle="dropDown" sortOrder="0" sortExpression="">
         <columns>
-          <column type="field" width="-1" name="id" hidden="0"/>
-          <column type="actions" width="-1" hidden="1"/>
+          <column hidden="0" type="field" name="id" width="-1"/>
+          <column hidden="1" type="actions" width="-1"/>
         </columns>
       </attributetableconfig>
       <editform>.</editform>
@@ -1745,7 +2475,7 @@ def my_form_open(dialog, layer, feature):
         <field editable="1" name="id"/>
       </editable>
       <labelOnTop>
-        <field labelOnTop="0" name="id"/>
+        <field name="id" labelOnTop="0"/>
       </labelOnTop>
       <widgets/>
       <conditionalstyles>
@@ -1763,48 +2493,52 @@ def my_form_open(dialog, layer, feature):
     <layer id="islands_lowdef_1_geo_dcf7c115_aaac_4aba_8a5e_5bb5f3cbdfa0"/>
     <layer id="layouted_clusters_geo_baeb9556_1974_4e2f_b626_27b4f2d678b1"/>
     <layer id="territory_polygons_1_geo_db4a50d4_8731_45a3_b62c_eff63fe4e9de"/>
+    <layer id="territory_labels_geo_e4ca5899_24ac_4da5_9e00_4f207290618a"/>
+    <layer id="books_points_geo_6240a244_5b21_445a_8438_9c8f3331fac2"/>
+    <layer id="islands_1_geo_8febbd37_8467_4d46_894f_40c46284f110"/>
+    <layer id="territory_polygons_hi_1_geo_281a600e_e37a_4d39_b9da_88dbcd20b893"/>
   </layerorder>
   <properties>
-    <PAL>
-      <ShowingPartialsLabels type="bool">true</ShowingPartialsLabels>
-      <CandidatesLine type="int">50</CandidatesLine>
-      <SearchMethod type="int">0</SearchMethod>
-      <DrawOutlineLabels type="bool">true</DrawOutlineLabels>
-      <ShowingCandidates type="bool">false</ShowingCandidates>
-      <DrawRectOnly type="bool">false</DrawRectOnly>
-      <ShowingAllLabels type="bool">false</ShowingAllLabels>
-      <CandidatesPoint type="int">16</CandidatesPoint>
-      <CandidatesPolygon type="int">30</CandidatesPolygon>
-    </PAL>
-    <Gui>
-      <CanvasColorRedPart type="int">255</CanvasColorRedPart>
-      <SelectionColorAlphaPart type="int">255</SelectionColorAlphaPart>
-      <SelectionColorBluePart type="int">0</SelectionColorBluePart>
-      <SelectionColorRedPart type="int">255</SelectionColorRedPart>
-      <SelectionColorGreenPart type="int">255</SelectionColorGreenPart>
-      <CanvasColorGreenPart type="int">255</CanvasColorGreenPart>
-      <CanvasColorBluePart type="int">255</CanvasColorBluePart>
-    </Gui>
     <Legend>
       <filterByMap type="bool">false</filterByMap>
     </Legend>
+    <Measure>
+      <Ellipsoid type="QString">WGS84</Ellipsoid>
+    </Measure>
+    <Measurement>
+      <AreaUnits type="QString"></AreaUnits>
+      <DistanceUnits type="QString"></DistanceUnits>
+    </Measurement>
+    <PAL>
+      <CandidatesLine type="int">50</CandidatesLine>
+      <ShowingCandidates type="bool">false</ShowingCandidates>
+      <SearchMethod type="int">0</SearchMethod>
+      <DrawOutlineLabels type="bool">true</DrawOutlineLabels>
+      <CandidatesPoint type="int">16</CandidatesPoint>
+      <DrawRectOnly type="bool">false</DrawRectOnly>
+      <ShowingAllLabels type="bool">false</ShowingAllLabels>
+      <CandidatesPolygon type="int">30</CandidatesPolygon>
+      <ShowingPartialsLabels type="bool">true</ShowingPartialsLabels>
+    </PAL>
     <SpatialRefSys>
       <ProjectionsEnabled type="int">1</ProjectionsEnabled>
     </SpatialRefSys>
-    <Measurement>
-      <DistanceUnits type="QString"></DistanceUnits>
-      <AreaUnits type="QString"></AreaUnits>
-    </Measurement>
-    <Paths>
-      <Absolute type="bool">false</Absolute>
-    </Paths>
     <PositionPrecision>
       <DecimalPlaces type="int">2</DecimalPlaces>
       <Automatic type="bool">true</Automatic>
     </PositionPrecision>
-    <Measure>
-      <Ellipsoid type="QString">WGS84</Ellipsoid>
-    </Measure>
+    <Paths>
+      <Absolute type="bool">false</Absolute>
+    </Paths>
+    <Gui>
+      <CanvasColorBluePart type="int">255</CanvasColorBluePart>
+      <SelectionColorAlphaPart type="int">255</SelectionColorAlphaPart>
+      <CanvasColorRedPart type="int">255</CanvasColorRedPart>
+      <SelectionColorGreenPart type="int">255</SelectionColorGreenPart>
+      <CanvasColorGreenPart type="int">255</CanvasColorGreenPart>
+      <SelectionColorBluePart type="int">0</SelectionColorBluePart>
+      <SelectionColorRedPart type="int">255</SelectionColorRedPart>
+    </Gui>
   </properties>
   <visibility-presets/>
   <transformContext/>
