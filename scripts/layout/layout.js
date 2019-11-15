@@ -272,7 +272,9 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       const islandMrct = baseIslandsMrct.features.find(
         (i) => i.properties.island_id === bestIslandCandidate.island_id
       )
-
+      if (!islandMrct) {
+        return { error: 'bestIslandCandidate not found' }
+      }
       const { finalScale, islandAtFinalScale, error } = getIslandAtFinalScale(
         clusterCenterMrct,
         islandMrct,
