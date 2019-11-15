@@ -43,16 +43,16 @@ module.exports = {
   HEIGHT_TILE_SIZE: 256,
   HEIGHT_EMPTY_TILE: 'scripts/tiles/height/blank.png',
   TEST_BBOX: {
-    minX: -10,
-    minY: -52,
-    maxX: 0,
-    maxY: -42,
+    minX: -40,
+    minY: -60,
+    maxX: 20,
+    maxY: -30,
   },
   // TEST_BBOX: {
   //   minX: -180,
   //   minY: -80,
   //   maxX: 180,
-  //   maxY: 80
+  //   maxY: 80,
   // },
   BBOX_CHUNKS: [
     // -240 and 220 it is due the umap offsets

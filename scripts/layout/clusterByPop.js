@@ -3,15 +3,24 @@
 const fs = require('fs')
 const turf = require('@turf/turf')
 const _ = require('lodash')
+const supercluster = require('supercluster')
 const getAuthorLayoutPriority = require('../util/getAuthorLayoutPriority')
 const computeClusterStats = require('./util/computeClusterStats')
 const avg = require('../util/avg')
 
-const { AUTHORS, UMAP_GEO, UMAP_CAT_META, CLUSTERS } = require('../constants')
+const { AUTHORS, UMAP_GEO, UMAP_CAT_META, CLUSTERS, TEST_BBOX } = require('../constants')
 
-const features = JSON.parse(fs.readFileSync(UMAP_GEO, 'utf-8')).features
+const allfeatures = JSON.parse(fs.readFileSync(UMAP_GEO, 'utf-8')).features
 const authors = JSON.parse(fs.readFileSync(AUTHORS, 'utf-8'))
 const umapsMeta = JSON.parse(fs.readFileSync(UMAP_CAT_META, 'utf-8'))
+
+const features = allfeatures.filter(
+  (feature) =>
+    feature.geometry.coordinates[0] > TEST_BBOX.minX &&
+    feature.geometry.coordinates[0] < TEST_BBOX.maxX &&
+    feature.geometry.coordinates[1] > TEST_BBOX.minY &&
+    feature.geometry.coordinates[1] < TEST_BBOX.maxY
+)
 
 const authorDict = {}
 authors.forEach((author) => {
@@ -25,7 +34,7 @@ const orderedFeatures = features
     const author = authorDict[author_slug]
     if (!author) {
       authorsInUmapNotInDB.push(author_slug)
-      // console.log('Author exist in UMAP but not in DB:', authorId)
+      console.log('Author exist in UMAP but not in DB:', author_slug)
       return null
     }
     return {
@@ -102,7 +111,7 @@ let finalClusters = clusters.map((cluster) => {
 })
 
 // Attach standalone leaves to clusters when they are below a certain radius
-const finalStandalonePoints = orderedFeatures.map((point) => {
+const standalonePoints = orderedFeatures.map((point) => {
   const properties = {
     is_cluster: false,
   }
@@ -140,7 +149,60 @@ const finalStandalonePoints = orderedFeatures.map((point) => {
   return finalPoint
 })
 
-const clusteredPoints = finalStandalonePoints.filter(
+const standalonePointsNotClustered = standalonePoints.filter(
+  (point) => point.properties.cluster_id === undefined
+)
+
+// use supercluster in last round to merge very close standalone points in a large zoom level
+const INITIAL_GEO_ZOOM = 9
+const bbox = [TEST_BBOX.minX, TEST_BBOX.minY, TEST_BBOX.maxX, TEST_BBOX.maxY]
+const standalonCluster = new supercluster({
+  radius: 100,
+  maxZoom: 16,
+})
+standalonCluster.load(standalonePointsNotClustered)
+console.log('Standalone total points', standalonePointsNotClustered.length)
+
+const standalonClusters = standalonCluster
+  .getClusters(bbox, INITIAL_GEO_ZOOM)
+  .filter((c) => c.properties.cluster_id)
+
+const geoClusterDict = {}
+standalonClusters.forEach((cluster) => {
+  const clusterId = cluster.properties.cluster_id
+  const leaves = standalonCluster.getLeaves(clusterId, Infinity).map((l) => l.properties.author_id)
+  if (leaves && leaves.length) {
+    leaves.forEach((leave) => {
+      geoClusterDict[leave] = clusterId
+    })
+  }
+})
+console.log('Geo clustered standalone points', Object.keys(geoClusterDict).length)
+
+const finalStandalonePoints = standalonePoints.map((point) => {
+  if (geoClusterDict[point.properties.author_id]) {
+    const clusterId = geoClusterDict[point.properties.author_id]
+    const properties = {
+      is_cluster: true,
+      layouted_id: `clustered_${clusterId}`,
+      cluster_id: clusterId,
+      cluster_r: '255',
+      cluster_g: '0',
+      cluster_b: '0',
+      supercluster: true,
+    }
+    return {
+      ...point,
+      properties: {
+        ...point.properties,
+        ...properties,
+      },
+    }
+  }
+  return point
+})
+
+const clusteredPoints = standalonePoints.filter(
   (point) => point.properties.cluster_id !== undefined
 )
 

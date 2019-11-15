@@ -32,7 +32,7 @@ const style = {
       type: 'vector',
       // tiles: ['https://storage.googleapis.com/books-detail-data/points/tiles/{z}/{x}/{y}.pbf'],
       tiles: ['http://localhost:9090/points/tiles/{z}/{x}/{y}.pbf'],
-      minzoom: 6,
+      minzoom: 3,
       maxzoom: 13,
     },
   },
