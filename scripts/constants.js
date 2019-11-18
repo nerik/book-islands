@@ -42,18 +42,18 @@ module.exports = {
   HEIGHT_TILES: 'tiles/height',
   HEIGHT_TILE_SIZE: 256,
   HEIGHT_EMPTY_TILE: 'scripts/tiles/height/blank.png',
-  TEST_BBOX: {
-    minX: -40,
-    minY: -60,
-    maxX: 20,
-    maxY: -30,
-  },
   // TEST_BBOX: {
-  //   minX: -180,
+  //   minX: 90,
   //   minY: -80,
-  //   maxX: 180,
-  //   maxY: 80,
+  //   maxX: 220,
+  //   maxY: 0,
   // },
+  TEST_BBOX: {
+    minX: -180,
+    minY: -80,
+    maxX: 180,
+    maxY: 80,
+  },
   BBOX_CHUNKS: [
     // -240 and 220 it is due the umap offsets
     [-240, -80, -90, 0],
@@ -65,7 +65,7 @@ module.exports = {
     [0, 0, 90, 80],
     [90, 0, 220, 80],
   ],
-  MAX_BASE_ISLAND_SCALE_UP: 2,
+  MAX_BASE_ISLAND_SCALE_UP: 5,
   CITIES_RANK_SCALE: d3
     .scaleThreshold()
     .domain([0, 1, 200, 6000])

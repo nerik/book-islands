@@ -108,7 +108,7 @@ const overlapsWithIslandsAround = (islandAtScaleMrct, islandsAround) => {
 // Decreases an island scale until it doesn't overlap with surrounding islands
 const getIslandAtFinalScale = (clusterCenterMrct, islandMrct, startScale, islandsAround) => {
   let currentScale = startScale
-  let islandAtScaleMrct
+  let islandAtScaleMrct = transposeAndScale(clusterCenterMrct, islandMrct, currentScale)
 
   // How much should we decrease scale when trying again
   const STEP_DECREMENT = 0.05
@@ -274,7 +274,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       )
 
       if (!islandMrct) {
-        return { error: 'bestIslandCandidate not found' }
+        console.log('bestIslandCandidate not found')
       }
 
       const { finalScale, islandAtFinalScale, error } = getIslandAtFinalScale(
@@ -285,7 +285,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       )
 
       if (!islandAtFinalScale) {
-        return { error: 'islandAtFinalScale not found' }
+        console.log('islandAtFinalScale not found')
       }
 
       const finalIsland = turf.toWgs84(islandAtFinalScale)
