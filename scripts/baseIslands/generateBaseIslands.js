@@ -22,7 +22,7 @@ const numFeatures = islands.features.length
 console.log('Read ', numFeatures, ' polygons')
 
 const MIN_AREA = 150 //sq km
-const MAX_AREA = 2000 //sq km
+const MAX_AREA = 10000 //sq km
 
 const geoJSON = {
   type: 'FeatureCollection',
@@ -36,7 +36,36 @@ const geoJSONLowdefMrct = {
   features: [],
 }
 
-const islandsWithArea = islands.features.map((feature) => {
+const blackListedIslands = [
+  '97-W',
+  '97-E',
+  '743',
+  '542',
+  '650',
+  '527',
+  '290',
+  '861',
+  '853',
+  '262',
+  '114',
+  '909',
+  '774',
+  '102',
+  '440',
+  '782',
+  '742',
+  '507',
+  '259',
+  '729',
+  '1088',
+  '1169',
+  '979',
+  '1026',
+  '970',
+]
+
+const islandsWithArea = islands.features.flatMap((feature) => {
+  if (blackListedIslands.includes(feature.properties.id)) return []
   return {
     ...feature,
     properties: {
@@ -44,6 +73,12 @@ const islandsWithArea = islands.features.map((feature) => {
     },
   }
 })
+console.log(
+  islandsWithArea.length,
+  ' features meet white list requirements out of ',
+  islands.features.length,
+  '\n\n'
+)
 
 // Chop at high latitudes - avoids distorsions in elevation tiles
 const cleanFeatures = islandsWithArea.filter((feature) => {

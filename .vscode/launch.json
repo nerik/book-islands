@@ -17,6 +17,12 @@
             "program": "${workspaceFolder}/scripts/db/generateDb.js"
         },
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Generate base islands",
+            "program": "${workspaceFolder}/scripts/baseIslands/generateBaseIslands.js"
+        },
+        {
           "type": "node",
           "request": "launch",
           "name": "Normalize UMAPs to world",
