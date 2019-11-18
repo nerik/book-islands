@@ -49,7 +49,7 @@ const next = () => {
 
   const territoriesPath = TERRITORY_POLYGONS.replace('.geo.json', `_${chunkIndex}.geo.json`)
   const territories = JSON.parse(fs.readFileSync(territoriesPath, 'utf-8')).features
-  console.log(territories[0])
+  // console.log(territories[0])
 
   const islandsLayoutedIds = allIslandsLayoutedIds.filter((islandLayoutedId) => {
     const meta = islandsMeta[islandLayoutedId]
@@ -109,7 +109,7 @@ const next = () => {
       (t) => t.properties.cluster_id === meta.layouted_id
     )
     if (islandTerritories.length) {
-      console.log(islandTerritories)
+      // console.log(islandTerritories)
       islandTerritories.forEach((territory) => {
         const intersected = turf.intersect(territory, transposedIslandWgs84)
         if (intersected) {
