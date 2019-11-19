@@ -187,11 +187,11 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
   // how to map priority score (composite of num books and popularity) to target max area
   // smaller means more risk of running out of iterations and picking lowest possible scale
   // for small islands
-  const MAP_PRIORITY_SCORE_WITH_AREA = 10000000
+  const MAP_PRIORITY_SCORE_WITH_AREA = 15000000
   const maxArea = layoutPriorityScore * MAP_PRIORITY_SCORE_WITH_AREA
 
   // scale down everything by this factor
-  const OVERALL_SCALE_FACTOR = 0.5
+  const OVERALL_SCALE_FACTOR = 2
 
   const maxNumIterations = Math.ceil(MAX_SCALE / STEP_DECREMENT) - 1
   let currentScale = MAX_SCALE
