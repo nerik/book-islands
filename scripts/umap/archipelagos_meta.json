@@ -4,36 +4,40 @@
     "scale": [0.6, 0.7],
     "translate": [90, 40],
     "bounds": [15, 80, 160, 0],
-    "clusterRadiusMult": 5,
-    "minClusterPriority": 2.5
+    "clusterRadiusMult": 15,
+    "minClusterPriority": 1.8
   },
   "children_literature": {
     "file": "children_literature",
     "scale": [0.6, 0.6],
     "translate": [160, -77],
     "bounds": [100, -46, 179, -78],
-    "clusterRadiusMult": 40,
-    "minClusterPriority": 1
+    "clusterRadiusMult": 100,
+    "minClusterPriority": 0.4
   },
   "classics": {
     "file": "classics",
     "scale": [0.7, 0.4],
     "translate": [10, -60],
-    "bounds": [-110, -45, 67, -80]
+    "bounds": [-110, -45, 67, -80],
+    "clusterRadiusMult": 60,
+    "minClusterPriority": 0.8
   },
   "education": {
     "file": "education",
     "scale": [0.3, 0.5],
     "translate": [-135, 15],
-    "bounds": [-177, 47, -105, -8]
+    "bounds": [-177, 47, -105, -8],
+    "clusterRadiusMult": 50,
+    "minClusterPriority": 1
   },
   "history": {
     "file": "history",
     "scale": [0.7, 0.7],
     "translate": [-80, -26],
     "bounds": [-163, 25, -20, -76],
-    "clusterRadiusMult": 25,
-    "minClusterPriority": 0.7
+    "clusterRadiusMult": 50,
+    "minClusterPriority": 0.4
   },
   "hobbies": {
     "file": "hobbies",
@@ -75,7 +79,9 @@
     "file": "philosophy",
     "scale": [0.5, 0.5],
     "translate": [-50, -20],
-    "bounds": [-128, 6, 20, -44]
+    "bounds": [-128, 6, 20, -44],
+    "clusterRadiusMult": 40,
+    "minClusterPriority": 1.3
   },
   "poetry": {
     "file": "poetry",
