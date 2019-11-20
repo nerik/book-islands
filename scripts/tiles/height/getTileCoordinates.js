@@ -5,9 +5,10 @@ const fs = require('fs')
 const Jimp = require('jimp')
 const { heightToRGB, converSNWE } = require('./utils')
 const { Hgt } = require('node-hgt')
-const { HGT_DATA, BASE_ISLANDS_BBOX, HEIGHT_TILE_SIZE } = require('../../constants')
+const { HGT_DATA, ISLANDS_BBOX, BASE_ISLANDS_BBOX, HEIGHT_TILE_SIZE } = require('../../constants')
 
 const baseIslandsBboxDict = JSON.parse(fs.readFileSync(BASE_ISLANDS_BBOX, 'utf-8'))
+const bookIslandsBBoxDict = JSON.parse(fs.readFileSync(ISLANDS_BBOX, 'utf-8'))
 
 const getTileCoordinates = async (data, tile, writeData, done) => {
   const islands = data.islands.islands.features
@@ -29,36 +30,40 @@ const getTileCoordinates = async (data, tile, writeData, done) => {
     for (let y = 0; y < HEIGHT_TILE_SIZE; y++) {
       const lng = minTileX + lngStep * x
       const lat = minTileY + latStep * y
-      const island = islands.find((island) => {
+      const intersectedGeom = islands.find((island) => {
         return turf.booleanPointInPolygon(turf.point([lng, lat]), island)
       })
 
-      if (island) {
-        const [minX, minY, maxX, maxY] = turf.bbox(island)
-        const lngRatio = (lng - minX) / (maxX - minX)
-        const latRatio = (lat - minY) / (maxY - minY)
+      if (intersectedGeom) {
+        const layoutedId = intersectedGeom.properties.layouted_id
+        const islandBbox = bookIslandsBBoxDict[layoutedId]
+        if (islandBbox) {
+          const [minX, minY, maxX, maxY] = islandBbox
+          const lngRatio = (lng - minX) / (maxX - minX)
+          const latRatio = (lat - minY) / (maxY - minY)
 
-        const islandId = island.properties.island_id
-        const realIslandBbox = baseIslandsBboxDict[islandId]
-        const [realMinX, realMinY, realMaxX, realMaxY] = realIslandBbox
+          const islandId = intersectedGeom.properties.island_id
+          const realIslandBbox = baseIslandsBboxDict[islandId]
+          const [realMinX, realMinY, realMaxX, realMaxY] = realIslandBbox
 
-        const realLngDelta = realMaxX - realMinX
-        const realLatDelta = realMaxY - realMinY
-        const realLng = realMinX + lngRatio * realLngDelta
-        const realLat = realMinY + latRatio * realLatDelta
+          const realLngDelta = realMaxX - realMinX
+          const realLatDelta = realMaxY - realMinY
+          const realLng = realMinX + lngRatio * realLngDelta
+          const realLat = realMinY + latRatio * realLatDelta
 
-        let elevation = 0
-        try {
-          const srtmCoordinatesString = converSNWE({ lat: realLat, lng: realLng })
-          const floorCoordinates = { lat: Math.floor(realLat), lng: Math.floor(realLng) }
-          const hgt = new Hgt(`${HGT_DATA}/${srtmCoordinatesString}.hgt`, floorCoordinates)
-          elevation = hgt.getElevation([realLat, realLng])
-        } catch (e) {
-          // console.log(e)
+          let elevation = 0
+          try {
+            const srtmCoordinatesString = converSNWE({ lat: realLat, lng: realLng })
+            const floorCoordinates = { lat: Math.floor(realLat), lng: Math.floor(realLng) }
+            const hgt = new Hgt(`${HGT_DATA}/${srtmCoordinatesString}.hgt`, floorCoordinates)
+            elevation = hgt.getElevation([realLat, realLng])
+          } catch (e) {
+            // console.log(e)
+          }
+          const { r, g, b } = heightToRGB(elevation)
+          const color = Jimp.rgbaToInt(r, g, b, 255)
+          coordinates.push({ x, y, color })
         }
-        const { r, g, b } = heightToRGB(elevation)
-        const color = Jimp.rgbaToInt(r, g, b, 255)
-        coordinates.push({ x, y, color })
       }
     }
   }
