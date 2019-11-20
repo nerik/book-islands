@@ -585,13 +585,15 @@ const getClusterTerritories = (clusterPoints, clusterWeights, island, layouted_i
   // console.log(JSON.stringify(geoJSON))
 
   if (VERBOSE) console.log('Segmenting done in ', performance.now() - t)
-  drawPreview(
-    cells,
-    territoriesSegments,
-    territoriesBorderSegments,
-    islandPoints,
-    `./${clusterPoints.length}_${layouted_id}.png`
-  )
+  if (VERBOSE) {
+    drawPreview(
+      cells,
+      territoriesSegments,
+      territoriesBorderSegments,
+      islandPoints,
+      `./${clusterPoints.length}_${layouted_id}.png`
+    )
+  }
   return { polygons, lines: [] }
 }
 
