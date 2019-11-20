@@ -2,6 +2,7 @@
 
 const fs = require('fs')
 const turf = require('@turf/turf')
+const _ = require('lodash')
 const JSONStream = require('JSONStream')
 const progressBar = require('../util/progressBar')
 const transposeToWorldCenter = require('../util/transposeToWorldCenter')
@@ -14,6 +15,7 @@ const {
   ISLETS,
   TERRITORY_POLYGONS,
   ISLANDS,
+  ISLANDS_BBOX,
   TERRITORY_POLYGONS_HIDEF,
   BBOX_CHUNKS,
 } = require('../constants')
@@ -29,10 +31,13 @@ baseIslands.features.forEach((baseIsland) => {
 const bboxChunks = BBOX_CHUNKS.map((bboxChunk, chunkIndex) => ({ bboxChunk, chunkIndex }))
 // .filter(chunk => chunk.chunkIndex === 1)
 
+const islandsBbox = {}
 let currentChunkPos = 0
 
 const next = () => {
   if (!bboxChunks[currentChunkPos]) {
+    console.log('Writing islands bbox dictionary in', ISLANDS_BBOX)
+    fs.writeFileSync(ISLANDS_BBOX, JSON.stringify(islandsBbox))
     console.log('All done.')
     return
   }
@@ -120,6 +125,12 @@ const next = () => {
         }
       })
     }
+  })
+
+  const islandsGrouped = _.groupBy(islands, 'properties.layouted_id')
+  Object.entries(islandsGrouped).forEach(([id, islands]) => {
+    const islandsWithIslets = turf.featureCollection(islands)
+    islandsBbox[id] = turf.bbox(islandsWithIslets)
   })
 
   const territoryPath = TERRITORY_POLYGONS_HIDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)

@@ -61,6 +61,12 @@
         {
           "type": "node",
           "request": "launch",
+          "name": "Collect islands",
+          "program": "${workspaceFolder}/scripts/layout/collectHighDefIslands.js"
+        },
+        {
+          "type": "node",
+          "request": "launch",
           "name": "Download needed height data",
           "program": "${workspaceFolder}/scripts/tiles/height/download.js"
         },

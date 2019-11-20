@@ -190,7 +190,7 @@ const getStandalonePointBestIsland = (cluster, islandsAroundIds, clusterCenterMr
   const MAP_PRIORITY_SCORE_WITH_AREA = 15000000
   const maxArea = layoutPriorityScore * MAP_PRIORITY_SCORE_WITH_AREA
 
-  // scale down everything by this factor
+  // scale everything by this factor
   const OVERALL_SCALE_FACTOR = 2
 
   const maxNumIterations = Math.ceil(MAX_SCALE / STEP_DECREMENT) - 1

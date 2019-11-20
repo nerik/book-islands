@@ -24,6 +24,7 @@ module.exports = {
   LAYOUTED_CLUSTERS: 'out/layout/layouted_clusters.geo.json',
   BASE_ISLANDS_META: 'out/layout/baseIslands.meta.json',
   ISLANDS: 'out/layout/islands.geo.json',
+  ISLANDS_BBOX: 'out/layout/islands_bbox.geo.json',
   ISLANDS_LOWDEF: 'out/layout/islands_lowdef.geo.json',
   ISLANDS_CANDIDATES_META: 'out/layout/islands_candidates.meta.json',
   ISLANDS_FINAL_META: 'out/layout/islands_final.meta.json',
@@ -43,10 +44,10 @@ module.exports = {
   HEIGHT_TILE_SIZE: 256,
   HEIGHT_EMPTY_TILE: 'scripts/tiles/height/blank.png',
   // TEST_BBOX: {
-  //   minX: 90,
-  //   minY: -80,
-  //   maxX: 220,
-  //   maxY: 0,
+  //   minX: 136,
+  //   minY: 62,
+  //   maxX: 140,
+  //   maxY: 65,
   // },
   TEST_BBOX: {
     minX: -180,
