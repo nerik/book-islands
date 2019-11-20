@@ -206,7 +206,7 @@ const execBBoxChunk = () => {
                   island_id: clusterChildIslandMeta.island_id,
                   scale: clusterChildIslandMeta.layoutScale,
                   error: clusterChildIslandMeta.error,
-                  center: clusterChild.geometry.coordinates,
+                  center: clusterChildIslandMeta.center,
                 })
               }
             })
@@ -215,7 +215,7 @@ const execBBoxChunk = () => {
           numFeatures++
           console.log(numFeatures, bboxFilteredPoints.length)
           // TODO review if this is needed for all BBOXs
-          if (numFeatures === bboxFilteredPoints.length - 1) {
+          if (numFeatures === bboxFilteredPoints.length) {
             console.log(chunkIndex, BBOX_CHUNKS.length - 1)
             pool.terminate()
             pb.stop()
