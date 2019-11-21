@@ -38,7 +38,7 @@ module.exports = {
   SEARCH_DB_RANKED_LIMIT: 10000,
   ISLANDS_TILES: 'tiles/islands',
   TERRITORIES_TILES: 'tiles/territories',
-  MAX_ZOOM_GENERATED: 16,
+  MAX_ZOOM_GENERATED: 14,
   POINTS_TILES: 'tiles/points',
   HEIGHT_TILES: 'tiles/height',
   HEIGHT_TILE_SIZE: 256,
