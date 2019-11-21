@@ -116,10 +116,15 @@ const next = () => {
     if (islandTerritories.length) {
       // console.log(islandTerritories)
       islandTerritories.forEach((territory) => {
-        const intersected = turf.intersect(territory, transposedIslandWgs84)
-        if (intersected) {
-          intersectedTerritories.push(intersected)
-        } else {
+        try {
+          const intersected = turf.intersect(territory, transposedIslandWgs84)
+          if (intersected) {
+            intersectedTerritories.push(intersected)
+          } else {
+            // WTF
+            intersectedTerritories.push(territory)
+          }
+        } catch (e) {
           // WTF
           intersectedTerritories.push(territory)
         }
