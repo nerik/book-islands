@@ -173,7 +173,10 @@ const execBBoxChunk = () => {
               }
               territoriesPolygons.push(territory)
             })
-            lines.forEach((territoryLines) => {
+            lines.forEach((territoryLines, i) => {
+              territoryLines.properties = {
+                cluster_id: layoutedId,
+              }
               territoriesLines.push(territoryLines)
             })
             finalMeta.push({

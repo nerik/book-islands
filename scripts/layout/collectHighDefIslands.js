@@ -13,10 +13,10 @@ const {
   BASE_ISLANDS,
   ISLANDS_FINAL_META,
   ISLETS,
-  TERRITORY_POLYGONS,
   ISLANDS,
   ISLANDS_BBOX,
-  TERRITORY_POLYGONS_HIDEF,
+  TERRITORY_LINES,
+  TERRITORY_LINES_HIDEF,
   BBOX_CHUNKS,
 } = require('../constants')
 
@@ -52,9 +52,9 @@ const next = () => {
   })
   const allIslandsLayoutedIds = Object.keys(islandsMeta)
 
-  const territoriesPath = TERRITORY_POLYGONS.replace('.geo.json', `_${chunkIndex}.geo.json`)
-  const territories = JSON.parse(fs.readFileSync(territoriesPath, 'utf-8')).features
-  // console.log(territories[0])
+  const territoriesLinesPath = TERRITORY_LINES.replace('.geo.json', `_${chunkIndex}.geo.json`)
+  const territoriesLines = JSON.parse(fs.readFileSync(territoriesLinesPath, 'utf-8')).features
+  // // console.log(territories[0])
 
   const islandsLayoutedIds = allIslandsLayoutedIds.filter((islandLayoutedId) => {
     const meta = islandsMeta[islandLayoutedId]
@@ -110,23 +110,51 @@ const next = () => {
     })
 
     // 3. Collect territories and intersect them with hi def island ------
-    const islandTerritories = territories.filter(
-      (t) => t.properties.cluster_id === meta.layouted_id
-    )
-    if (islandTerritories.length) {
-      // console.log(islandTerritories)
-      islandTerritories.forEach((territory) => {
+    const islandLines = territoriesLines.filter((t) => t.properties.cluster_id === meta.layouted_id)
+    if (islandLines.length) {
+      // console.log(islandLines)
+      const transposedIslandWgs84Line = turf.polygonToLine(transposedIslandWgs84)
+      islandLines.forEach((line) => {
         try {
-          const intersected = turf.intersect(territory, transposedIslandWgs84)
-          if (intersected) {
-            intersectedTerritories.push(intersected)
-          } else {
-            // WTF
-            intersectedTerritories.push(territory)
+          const pointInPolygon = line.geometry.coordinates.filter((point) =>
+            turf.booleanPointInPolygon(point, transposedIslandWgs84)
+          )
+          if (pointInPolygon.length > 0) {
+            // TODO: this doesn't work with a line which has two borders in the coast
+            // check if point exist in the line could work better to do in both cases when needed
+            const firstPoint = turf.point(pointInPolygon[0])
+            const latestPoint = turf.point(pointInPolygon[pointInPolygon.length - 1])
+            const nearestFirstBorder = turf.nearestPointOnLine(
+              transposedIslandWgs84Line,
+              firstPoint
+            )
+            const nearestLatestBorder = turf.nearestPointOnLine(
+              transposedIslandWgs84Line,
+              latestPoint
+            )
+            const nearestFirstBorderDistance = turf.distance(nearestFirstBorder, firstPoint)
+            const nearestLatestBorderDistance = turf.distance(nearestLatestBorder, latestPoint)
+            const isFirstNearest = nearestFirstBorderDistance < nearestLatestBorderDistance
+            const nearestBorder = isFirstNearest ? nearestFirstBorder : nearestLatestBorder
+            const nearestCoordinates = nearestBorder.geometry.coordinates
+            if (isFirstNearest) {
+              pointInPolygon.splice(0, 0, nearestCoordinates)
+            } else {
+              pointInPolygon.push(nearestCoordinates)
+            }
+            const lineInPolygon = {
+              ...line,
+              geometry: {
+                ...line.geometry,
+                coordinates: pointInPolygon,
+              },
+            }
+            intersectedTerritories.push(lineInPolygon)
           }
         } catch (e) {
-          // WTF
-          intersectedTerritories.push(territory)
+          console.log('Turf error intersecting frontiers with territory', e)
+          // use entire line as fallback
+          intersectedTerritories.push(line)
         }
       })
     }
@@ -138,7 +166,7 @@ const next = () => {
     islandsBbox[id] = turf.bbox(islandsWithIslets)
   })
 
-  const territoryPath = TERRITORY_POLYGONS_HIDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
+  const territoryPath = TERRITORY_LINES_HIDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
   fs.writeFileSync(territoryPath, JSON.stringify(turf.featureCollection(intersectedTerritories)))
   console.log('Wrote', territoryPath)
 

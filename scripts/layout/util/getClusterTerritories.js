@@ -183,7 +183,8 @@ const getIntersectionLines = (polygons) => {
       const neighbourFeature = polygons[i]
       const overlap = turf.lineOverlap(polygon, neighbourFeature)
       if (overlap && overlap.features && overlap.features.length > 0) {
-        acc = [...acc, ...overlap.features]
+        const lines = overlap.features.filter((f) => f.geometry.coordinates.length > 4)
+        acc = [...acc, ...lines]
       }
     }
     return acc
@@ -193,7 +194,7 @@ const getIntersectionLines = (polygons) => {
 
 const MAX_CONQUEST_ITERATIONS = 1000000
 const MIN_VORONOI_POINTS = 3000
-const VORONOI_POINTS_MULT = 10000
+const VORONOI_POINTS_MULT = 15000
 const VERBOSE = false
 const MAX_EXECUTION_TIME = 1800000
 
