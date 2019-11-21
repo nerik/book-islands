@@ -21,7 +21,7 @@ module.exports = {
     },
     {
       name: 'upload-heights',
-      script: `gsutil -h "Cache-Control:public,max-age=${cacheAge}" -m cp -r tiles/height/* gs://${STORAGE_BUCKET_TILES}/height${VERSION}`,
+      script: `gsutil -h "Cache-Control:public,max-age=${cacheAge}" -m cp -r tiles/height/* gs://${STORAGE_BUCKET_TILES}/heights${VERSION}`,
       autorestart: false,
     },
   ],
