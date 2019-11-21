@@ -175,12 +175,32 @@ const isPtInBorder = (pt, rangeX, rangeY) => {
   return pt[0] === rangeX[0] || pt[1] === rangeY[0] || pt[0] === rangeX[1] || pt[1] === rangeY[1]
 }
 
+const getIntersectionLines = (polygons) => {
+  if (!polygons || !polygons.length) return []
+
+  const uniqueLines = polygons.reduce((acc, polygon, index, polygons) => {
+    for (let i = index + 1; i < polygons.length; i++) {
+      const neighbourFeature = polygons[i]
+      const overlap = turf.lineOverlap(polygon, neighbourFeature)
+      if (overlap && overlap.features && overlap.features.length > 0) {
+        acc = [...acc, ...overlap.features]
+      }
+    }
+    return acc
+  }, [])
+  return uniqueLines
+}
+
 const MAX_CONQUEST_ITERATIONS = 1000000
 const MIN_VORONOI_POINTS = 3000
-const VORONOI_POINTS_MULT = 20000
+const VORONOI_POINTS_MULT = 10000
 const VERBOSE = false
+const MAX_EXECUTION_TIME = 1800000
 
 const getClusterTerritories = (clusterPoints, clusterWeights, island, layouted_id) => {
+  const maxExecutionTimeout = setTimeout(() => {
+    throw new Error('Time out trying to get cluster territories')
+  }, MAX_EXECUTION_TIME)
   const islandBbox = turf.bbox(island)
   const islandW = islandBbox[2] - islandBbox[0]
   const islandH = islandBbox[3] - islandBbox[1]
@@ -594,7 +614,9 @@ const getClusterTerritories = (clusterPoints, clusterWeights, island, layouted_i
       `./${clusterPoints.length}_${layouted_id}.png`
     )
   }
-  return { polygons, lines: [] }
+  clearTimeout(maxExecutionTimeout)
+  const lines = getIntersectionLines(polygons)
+  return { polygons, lines }
 }
 
 module.exports = getClusterTerritories
