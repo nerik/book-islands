@@ -20,6 +20,7 @@ const {
 
 const POOL_PATH = __dirname + '/util/territoryWorker.js'
 const USE_WORKERS = true
+const WORKER_MAX_EXECUTION_TIME = 1800000 // 30 mins
 
 const points = JSON.parse(fs.readFileSync(LAYOUTED_CLUSTERS, 'utf-8'))
 const baseIslandsMrct = JSON.parse(fs.readFileSync(BASE_ISLANDS_LOWDEF_MRCT, 'utf-8'))
@@ -97,6 +98,24 @@ const execBBoxChunk = () => {
     console.log('Wrote', finalMetaPath)
   }
 
+  const onClusterTerritoryEnd = () => {
+    numFeatures++
+    console.log(numFeatures, bboxFilteredPoints.length)
+    // TODO review if this is needed for all BBOXs
+    if (numFeatures === bboxFilteredPoints.length) {
+      console.log(chunkIndex, BBOX_CHUNKS.length - 1)
+      pool.terminate()
+      pb.stop()
+      writeChunk()
+      if (chunkIndex === BBOX_CHUNKS.length - 1) {
+        done()
+      } else {
+        chunkIndex++
+        execBBoxChunk()
+      }
+    }
+  }
+
   // when bbox is empty (because TEST_BBOX is used), skip
   if (bboxFilteredPoints.length === 0) {
     console.log('chunkIndex', chunkIndex)
@@ -148,6 +167,7 @@ const execBBoxChunk = () => {
           island,
           clusterWeights,
         ])
+        resultPromise.timeout(WORKER_MAX_EXECUTION_TIME)
       }
       ;(
         resultPromise ||
@@ -188,51 +208,37 @@ const execBBoxChunk = () => {
               center: cluster.geometry.coordinates,
             })
             numClustersSucceeded++
-          }
-          // territories failed, do not add to polygon and lines arrays,
-          // and add cluster children in meta instead of cluster
-          else {
-            console.log(
-              'Failed for',
-              cluster.properties.layouted_id,
-              cluster.properties.cluster_point_count,
-              result.error
-            )
-            clusterChildren.forEach((clusterChild) => {
-              const clusterChildLayoutedId = clusterChild.properties.layouted_id
-              const clusterChildIslandMeta = islandsMeta[clusterChildLayoutedId]
-              if (clusterChildIslandMeta) {
-                finalMeta.push({
-                  layouted_id: clusterChildLayoutedId,
-                  is_cluster: false,
-                  cluster_failed: true,
-                  island_id: clusterChildIslandMeta.island_id,
-                  scale: clusterChildIslandMeta.layoutScale,
-                  error: clusterChildIslandMeta.error,
-                  center: clusterChildIslandMeta.center,
-                })
-              }
-            })
+          } else {
+            throw new Error(result.error)
           }
 
-          numFeatures++
-          console.log(numFeatures, bboxFilteredPoints.length)
-          // TODO review if this is needed for all BBOXs
-          if (numFeatures === bboxFilteredPoints.length) {
-            console.log(chunkIndex, BBOX_CHUNKS.length - 1)
-            pool.terminate()
-            pb.stop()
-            writeChunk()
-            if (chunkIndex === BBOX_CHUNKS.length - 1) {
-              done()
-            } else {
-              chunkIndex++
-              execBBoxChunk()
-            }
-          }
+          onClusterTerritoryEnd()
         })
         .catch(function(err) {
-          console.error(err)
+          // territories failed, do not add to polygon and lines arrays,
+          // and add cluster children in meta instead of cluster
+          console.log(
+            'Failed for',
+            cluster.properties.layouted_id,
+            cluster.properties.cluster_point_count,
+            err.message
+          )
+          clusterChildren.forEach((clusterChild) => {
+            const clusterChildLayoutedId = clusterChild.properties.layouted_id
+            const clusterChildIslandMeta = islandsMeta[clusterChildLayoutedId]
+            if (clusterChildIslandMeta) {
+              finalMeta.push({
+                layouted_id: clusterChildLayoutedId,
+                is_cluster: false,
+                cluster_failed: true,
+                island_id: clusterChildIslandMeta.island_id,
+                scale: clusterChildIslandMeta.layoutScale,
+                error: clusterChildIslandMeta.error,
+                center: clusterChildIslandMeta.center,
+              })
+            }
+          })
+          onClusterTerritoryEnd()
         })
     }
     // It's not a cluster - don't do territories and add it "as is" to final meta

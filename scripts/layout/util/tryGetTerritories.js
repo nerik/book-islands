@@ -18,11 +18,10 @@ const tryGetTerritories = (cluster, clusterChildren, island, clusterWeights) => 
       console.log('Success!')
       return { lines, polygons }
     } catch (e) {
-      console.log('failed: ', e.message)
       errorMsgs.push(e.message)
     }
   }
-  return { error: errorMsgs }
+  throw new Error(errorMsgs)
 }
 
 module.exports = tryGetTerritories

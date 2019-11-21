@@ -196,12 +196,8 @@ const MAX_CONQUEST_ITERATIONS = 1000000
 const MIN_VORONOI_POINTS = 3000
 const VORONOI_POINTS_MULT = 15000
 const VERBOSE = false
-const MAX_EXECUTION_TIME = 1800000
 
 const getClusterTerritories = (clusterPoints, clusterWeights, island, layouted_id) => {
-  const maxExecutionTimeout = setTimeout(() => {
-    throw new Error('Time out trying to get cluster territories')
-  }, MAX_EXECUTION_TIME)
   const islandBbox = turf.bbox(island)
   const islandW = islandBbox[2] - islandBbox[0]
   const islandH = islandBbox[3] - islandBbox[1]
@@ -615,7 +611,6 @@ const getClusterTerritories = (clusterPoints, clusterWeights, island, layouted_i
       `./${clusterPoints.length}_${layouted_id}.png`
     )
   }
-  clearTimeout(maxExecutionTimeout)
   const lines = getIntersectionLines(polygons)
   return { polygons, lines }
 }
