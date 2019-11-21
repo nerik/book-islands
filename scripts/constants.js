@@ -29,8 +29,8 @@ module.exports = {
   ISLANDS_CANDIDATES_META: 'out/layout/islands_candidates.meta.json',
   ISLANDS_FINAL_META: 'out/layout/islands_final.meta.json',
   TERRITORY_LINES: 'out/layout/territory_lines.geo.json',
+  TERRITORY_LINES_HIDEF: 'out/layout/territory_lines_hi.geo.json',
   TERRITORY_POLYGONS: 'out/layout/territory_polygons.geo.json',
-  TERRITORY_POLYGONS_HIDEF: 'out/layout/territory_polygons_hi.geo.json',
   TERRITORY_LABELS: 'out/layout/territory_labels.geo.json',
   BOOKS_POINTS: 'out/layout/books_points.geo.json',
   SEARCH_DB: 'out/search-db/search-db-all.csv',
@@ -78,4 +78,5 @@ module.exports = {
   USE_PROGRESS_BAR: true,
   STORAGE_BUCKET_DATA: 'cilex-books-map-data',
   STORAGE_BUCKET_TILES: 'cilex-books-map-tiles',
+  VERSION: '-v3',
 }
