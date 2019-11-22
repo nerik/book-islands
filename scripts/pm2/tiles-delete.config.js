@@ -19,7 +19,7 @@ module.exports = {
     },
     {
       name: 'delete-heights',
-      script: `gsutil -m rm -r gs://${STORAGE_BUCKET_TILES}/height${VERSION}`,
+      script: `gsutil -m rm -r gs://${STORAGE_BUCKET_TILES}/heights${VERSION}`,
       autorestart: false,
     },
   ],
