@@ -114,16 +114,20 @@ const next = () => {
     if (islandLines.length) {
       // console.log(islandLines)
       const transposedIslandWgs84Line = turf.polygonToLine(transposedIslandWgs84)
-      islandLines.forEach((line) => {
+      islandLines.forEach((line, index) => {
         try {
           const pointInPolygon = line.geometry.coordinates.filter((point) =>
             turf.booleanPointInPolygon(point, transposedIslandWgs84)
           )
           if (pointInPolygon.length > 0) {
-            // TODO: this doesn't work with a line which has two borders in the coast
-            // check if point exist in the line could work better to do in both cases when needed
             const firstPoint = turf.point(pointInPolygon[0])
             const latestPoint = turf.point(pointInPolygon[pointInPolygon.length - 1])
+            const isFirstonLine = islandLines.some(
+              (line, i) => i !== index && turf.booleanPointOnLine(firstPoint, line)
+            )
+            const isLatestonLine = islandLines.some(
+              (line, i) => i !== index && turf.booleanPointOnLine(latestPoint, line)
+            )
             const nearestFirstBorder = turf.nearestPointOnLine(
               transposedIslandWgs84Line,
               firstPoint
@@ -132,15 +136,11 @@ const next = () => {
               transposedIslandWgs84Line,
               latestPoint
             )
-            const nearestFirstBorderDistance = turf.distance(nearestFirstBorder, firstPoint)
-            const nearestLatestBorderDistance = turf.distance(nearestLatestBorder, latestPoint)
-            const isFirstNearest = nearestFirstBorderDistance < nearestLatestBorderDistance
-            const nearestBorder = isFirstNearest ? nearestFirstBorder : nearestLatestBorder
-            const nearestCoordinates = nearestBorder.geometry.coordinates
-            if (isFirstNearest) {
-              pointInPolygon.splice(0, 0, nearestCoordinates)
-            } else {
-              pointInPolygon.push(nearestCoordinates)
+            if (!isFirstonLine) {
+              pointInPolygon.splice(0, 0, nearestFirstBorder.geometry.coordinates)
+            }
+            if (!isLatestonLine) {
+              pointInPolygon.push(nearestLatestBorder.geometry.coordinates)
             }
             const lineInPolygon = {
               ...line,
