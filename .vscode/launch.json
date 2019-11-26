@@ -19,6 +19,12 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Generate books json",
+            "program": "${workspaceFolder}/scripts/db/generatebookJSONS.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Generate base islands",
             "program": "${workspaceFolder}/scripts/baseIslands/generateBaseIslands.js"
         },
