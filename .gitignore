@@ -11,5 +11,3 @@ yarn-error.log*
 lerna-debug.log*
 
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-
-*.png
