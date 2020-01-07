@@ -60,9 +60,11 @@ const getTileCoordinates = async (data, tile, writeData, done) => {
           } catch (e) {
             // console.log(e)
           }
-          const { r, g, b } = heightToRGB(elevation)
-          const color = Jimp.rgbaToInt(r, g, b, 255)
-          coordinates.push({ x, y, color })
+          if (elevation >= 0) {
+            const { r, g, b } = heightToRGB(elevation)
+            const color = Jimp.rgbaToInt(r, g, b, 255)
+            coordinates.push({ x, y, color })
+          }
         }
       }
     }
