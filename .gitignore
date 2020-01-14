@@ -1,6 +1,7 @@
 node_modules
 /in
 /tiles
+/out/test-frontiers
 .DS_Store
 
 logs
