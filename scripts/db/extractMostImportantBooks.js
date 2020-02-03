@@ -20,6 +20,8 @@ const booksFile = fs.createReadStream(BOOKS_CSV)
 const mostImportantBooksFile = fs.createReadStream(MOST_IMPORTANT_BOOKS_CSV)
 
 const START_INDEX = 0
+const NOT_FOUND_ID = 'NOT_FOUND'
+const AUTO_MODE = true // set to false to prompt user for books fullfill
 let currentIndex = 0
 const allBooks = []
 
@@ -78,11 +80,9 @@ const extractMostImportantbooksInfo = async () => {
               'Fetching information from entire database (without categories normalization)',
               data.title
             )
-            const query = `SELECT *, id || '' as id FROM ${BOOKS_DB_TABLE} WHERE title LIKE '%${data.title}%' ORDER BY score DESC`
+            const query = `SELECT *, id || '' as id FROM ${BOOKS_DB_TABLE} WHERE title LIKE '%${data.title}%' ORDER BY score ASC`
             const books290kResults = await db.all(query)
-            let bookInfo = {
-              id: 'not-found',
-            }
+            let bookInfo = { id: NOT_FOUND_ID }
             if (books290kResults) {
               const book290kTitleMatch = matchSorter(books290kResults, data.title, {
                 keys: ['title'],
@@ -95,24 +95,29 @@ const extractMostImportantbooksInfo = async () => {
                   bookInfo = books290kAuthorAndTitleMatch[0]
                 } else {
                   console.log(`Book to match: ${data.title} - ${data.author}`)
-                  let initialIndex = 1
-                  books290kAuthorAndTitleMatch.forEach((book, index) => {
+                  let index = 1
+                  books290kAuthorAndTitleMatch.forEach((book, i) => {
                     if (book.description !== '[NULL]') {
-                      initialIndex = index + 1
+                      index = i + 1
                     }
-                    console.log(
-                      `${index + 1}: ${book.title} - ${book.author} \n description: ${
-                        book.description
-                      } \n`
-                    )
+                    if (AUTO_MODE === false) {
+                      console.log(
+                        `${index + 1}: ${book.title} - ${book.author} \n description: ${
+                          book.description
+                        } \n`
+                      )
+                    }
                   })
-                  const { index } = await prompts({
-                    type: 'number',
-                    name: 'index',
-                    message: 'Which book is the right one',
-                    initial: initialIndex,
-                    validate: (number) => number <= matchedImportantBooks.length,
-                  })
+                  if (AUTO_MODE === false) {
+                    const promptResults = await prompts({
+                      type: 'number',
+                      name: 'index',
+                      message: 'Which book is the right one',
+                      initial: index,
+                      validate: (number) => number <= matchedImportantBooks.length,
+                    })
+                    index = promptResults.index
+                  }
                   bookInfo = {
                     ...books290kAuthorAndTitleMatch[index - 1],
                     category: 'TO_NORMALIZE',
@@ -120,7 +125,7 @@ const extractMostImportantbooksInfo = async () => {
                 }
               }
             }
-            if (bookInfo.id === 'not-found') {
+            if (bookInfo.id === NOT_FOUND_ID) {
               console.log('Fetching information from knowledge graph', data.title)
               const uri = `https://kgsearch.googleapis.com/v1/entities:search?query=${data.title}&key=AIzaSyC0bsRnDv-jx6ca4lMwmL2bLyIribLAtds&limit=1&indent=True&types=Book`
               try {
@@ -155,32 +160,41 @@ const extractMostImportantbooksInfo = async () => {
             matchedImportantBooks.push(authorAndTitleMatch[0])
           } else if (authorAndTitleMatch.length > 1) {
             console.log(`Book to match: ${data.title} - ${data.author}`)
-            let initialIndex = 1
-            authorAndTitleMatch.forEach((book, index) => {
+            let index = 1
+            authorAndTitleMatch.forEach((book, i) => {
               if (book.description !== '[NULL]') {
-                initialIndex = index + 1
+                index = i + 1
               }
-              console.log(
-                `${index + 1}: ${book.title} - ${book.author} \n description: ${
-                  book.description
-                } \n`
-              )
+              if (AUTO_MODE === false) {
+                console.log(
+                  `${index + 1}: ${book.title} - ${book.author} \n description: ${
+                    book.description
+                  } \n`
+                )
+              }
             })
-            const { index } = await prompts({
-              type: 'number',
-              name: 'index',
-              message: 'Which book is the right one',
-              initial: initialIndex,
-              validate: (number) => number <= matchedImportantBooks.length,
-            })
+            if (AUTO_MODE === false) {
+              const promptResults = await prompts({
+                type: 'number',
+                name: 'index',
+                message: 'Which book is the right one',
+                initial: index,
+                validate: (number) => number <= matchedImportantBooks.length,
+              })
+              index = promptResults.index
+            }
             const selectedBook = authorAndTitleMatch[index - 1]
             matchedImportantBooks.push(selectedBook)
-            const { remove } = await prompts({
-              type: 'confirm',
-              name: 'remove',
-              message: 'Do you want to remove the rest of the books found?',
-              initial: true,
-            })
+            let remove = true
+            if (AUTO_MODE === false) {
+              const promptResults = await prompts({
+                type: 'confirm',
+                name: 'remove',
+                message: 'Do you want to remove the rest of the books found?',
+                initial: true,
+              })
+              remove = promptResults.remove
+            }
             if (remove) {
               const bookIdsToRemove = authorAndTitleMatch
                 .filter((book) => book.id !== selectedBook.id)
@@ -199,12 +213,14 @@ const extractMostImportantbooksInfo = async () => {
         },
         complete: function() {
           const uniqMatchedImportantBooksData = uniqBy(matchedImportantBooks, 'id')
-          console.log('Total:', uniqMatchedImportantBooksData.length)
           const matchedImportantBooksCsv = Papa.unparse(uniqMatchedImportantBooksData)
           fs.writeFileSync(MOST_IMPORTANT_BOOKS_INFO_CSV, matchedImportantBooksCsv)
           const allBooksWithoutDuplicatesCsv = Papa.unparse(uniqBy(allBooksWithoutDuplicates, 'id'))
           fs.writeFileSync(BOOKS_WITHOUT_DUPLICATES_CSV, allBooksWithoutDuplicatesCsv)
-          console.log('Read all files finished')
+          console.log(
+            'Read all files finished with a total of:',
+            uniqMatchedImportantBooksData.length
+          )
         },
       })
     },
