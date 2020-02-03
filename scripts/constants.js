@@ -1,6 +1,12 @@
 const d3 = require('d3')
 module.exports = {
   BOOKS_CSV: 'in/google-books/books.csv',
+  BOOKS_290K_CSV: 'in/google-books/books_290k.csv',
+  BOOKS_WITHOUT_DUPLICATES_CSV: 'in/google-books/books-without-duplicates.csv',
+  BOOKS_CLEANED_CSV: 'in/google-books/books-cleaned.csv', // USE THIS FOR EVERYTHING
+  MOST_IMPORTANT_BOOKS_CSV: 'in/google-books/most-important-books.csv',
+  MOST_IMPORTANT_BOOKS_INFO_CSV: 'in/google-books/most-important-books-with-info.csv',
+  BOOKS_DB_290K: 'in/google-books/books_290K.db',
   BOOKS_DB: 'in/google-books/books.db',
   BOOKS_DB_TABLE: 'books',
   AUTHORS: 'out/db/authors.json',

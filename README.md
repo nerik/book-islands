@@ -3,6 +3,12 @@ tippecanoe
 https://github.com/mapbox/mbutil
 QGIS
 
+GENERATE DB
+./scripts/db/extractMostImportantBooks.js
+Review `MOST_IMPORTANT_BOOKS_INFO_CSV` and perform by hand review
+./scripts/db/mergeCleanedBooks.js
+./scripts/db/generateDb.js
+
 
 SCRIPTS
 ./scripts/db/generateAuthors.js
