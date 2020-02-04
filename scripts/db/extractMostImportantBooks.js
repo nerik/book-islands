@@ -133,7 +133,8 @@ const extractMostImportantbooksInfo = async () => {
             }
             if (bookInfo.id === NOT_FOUND_ID) {
               console.log('Fetching information from knowledge graph', data.title)
-              const uri = `https://kgsearch.googleapis.com/v1/entities:search?query=${data.title}&key=AIzaSyC0bsRnDv-jx6ca4lMwmL2bLyIribLAtds&limit=1&indent=True&types=Book`
+              const title = encodeURIComponent(data.title)
+              const uri = `https://kgsearch.googleapis.com/v1/entities:search?query=${title}&key=AIzaSyC0bsRnDv-jx6ca4lMwmL2bLyIribLAtds&limit=1&indent=True&types=Book`
               try {
                 const { itemListElement } = await requestPromise({ uri, json: true })
                 if (itemListElement[0] && itemListElement[0].result) {
