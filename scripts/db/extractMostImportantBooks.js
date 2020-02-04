@@ -48,16 +48,16 @@ const extractMostImportantbooksInfo = async () => {
   } catch (e) {
     console.log('Error opening database', e)
   }
-  // try {
-  //   allBooksWithoutDuplicates = await papaPromise(BOOKS_WITHOUT_DUPLICATES_CSV)
-  // } catch (e) {
-  //   console.log('Error reading no duplicates books', e.message)
-  // }
-  // try {
-  //   matchedImportantBooks = await papaPromise(MOST_IMPORTANT_BOOKS_INFO_CSV)
-  // } catch (e) {
-  //   console.log('Error reading important books books', e.message)
-  // }
+  try {
+    allBooksWithoutDuplicates = await papaPromise(BOOKS_WITHOUT_DUPLICATES_CSV)
+  } catch (e) {
+    console.log('Error reading no duplicates books', e.message)
+  }
+  try {
+    matchedImportantBooks = await papaPromise(MOST_IMPORTANT_BOOKS_INFO_CSV)
+  } catch (e) {
+    console.log('Error reading important books books', e.message)
+  }
   Papa.parse(booksFile, {
     header: true,
     step: function({ data }) {
@@ -80,9 +80,15 @@ const extractMostImportantbooksInfo = async () => {
               'Fetching information from entire database (without categories normalization)',
               data.title
             )
-            const query = `SELECT *, id || '' as id FROM ${BOOKS_DB_TABLE} WHERE title LIKE '%${data.title}%' ORDER BY score ASC`
-            const books290kResults = await db.all(query)
+            const title = data.title.replace(/"/g, "'")
+            const query = `SELECT *, id || '' as id FROM ${BOOKS_DB_TABLE} WHERE title LIKE "%${title}%" ORDER BY score ASC`
+            let books290kResults
             let bookInfo = { id: NOT_FOUND_ID }
+            try {
+              books290kResults = await db.all(query)
+            } catch (e) {
+              console.log('Error fecthing database', e)
+            }
             if (books290kResults) {
               const book290kTitleMatch = matchSorter(books290kResults, data.title, {
                 keys: ['title'],
@@ -207,8 +213,10 @@ const extractMostImportantbooksInfo = async () => {
               )
             }
           }
-          fs.writeFileSync(MOST_IMPORTANT_BOOKS_INFO_CSV, Papa.unparse(matchedImportantBooks))
-          fs.writeFileSync(BOOKS_WITHOUT_DUPLICATES_CSV, Papa.unparse(allBooksWithoutDuplicates))
+          const matchedImportantBooksCsv = Papa.unparse(uniqBy(matchedImportantBooks, 'id'))
+          fs.writeFileSync(MOST_IMPORTANT_BOOKS_INFO_CSV, matchedImportantBooksCsv)
+          const allBooksWithoutDuplicatesCsv = Papa.unparse(uniqBy(allBooksWithoutDuplicates, 'id'))
+          fs.writeFileSync(BOOKS_WITHOUT_DUPLICATES_CSV, allBooksWithoutDuplicatesCsv)
           parser.resume()
         },
         complete: function() {
