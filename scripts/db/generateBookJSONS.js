@@ -5,6 +5,10 @@ const progressBar = require('../util/progressBar')
 
 const { BOOKS_DB, BOOKS_DB_TABLE, BOOKS_JSON } = require('../constants')
 
+if (!fs.existsSync(BOOKS_JSON)) {
+  fs.mkdirSync(BOOKS_JSON)
+}
+
 const sqlite3 = require('sqlite3').verbose()
 const db = new sqlite3.Database(BOOKS_DB, sqlite3.OPEN_READONLY, (err) => {
   if (err) console.log(err)

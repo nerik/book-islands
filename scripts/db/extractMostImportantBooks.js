@@ -13,6 +13,7 @@ const {
   MOST_IMPORTANT_BOOKS_CSV,
   MOST_IMPORTANT_BOOKS_INFO_CSV,
 } = require('../constants')
+const papaPromise = require('./utils/papaParser')
 const uniqBy = require('lodash/uniqBy')
 const Database = require('sqlite-async')
 
@@ -24,20 +25,6 @@ const NOT_FOUND_ID = 'NOT_FOUND'
 const AUTO_MODE = true // set to false to prompt user for books fullfill
 let currentIndex = 0
 const allBooks = []
-
-const papaPromise = (importFile) =>
-  new Promise((resolve, reject) => {
-    const file = fs.createReadStream(importFile)
-    Papa.parse(file, {
-      header: true,
-      complete: function({ data }) {
-        resolve(data)
-      },
-      error: function(error) {
-        reject(error)
-      },
-    })
-  })
 
 const extractMostImportantbooksInfo = async () => {
   let allBooksWithoutDuplicates = []
