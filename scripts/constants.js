@@ -3,6 +3,7 @@ module.exports = {
   BOOKS_CSV: 'in/google-books/books.csv',
   BOOKS_290K_CSV: 'in/google-books/books_290k.csv',
   BOOKS_WITHOUT_DUPLICATES_CSV: 'in/google-books/books-without-duplicates.csv',
+  BOOKS_MI_MERGED_CSV: 'in/google-books/most-important-books-merged.csv', // MI = Most Important
   BOOKS_CLEANED_CSV: 'in/google-books/books-cleaned.csv', // USE THIS FOR EVERYTHING
   MOST_IMPORTANT_BOOKS_CSV: 'in/google-books/most-important-books.csv',
   MOST_IMPORTANT_BOOKS_INFO_CSV: 'in/google-books/most-important-books-with-info.csv',
@@ -11,6 +12,7 @@ module.exports = {
   BOOKS_DB_TABLE: 'books',
   AUTHORS: 'out/db/authors.json',
   BOOKS_JSON: 'out/books',
+  AUTHORS_JSON: 'out/authors',
   GEONAMES_DB: './out/baseIslands/geonames.db',
   SHORELINES: 'out/baseIslands/gshhs/shorelines.geo.json',
   BASE_ISLANDS: 'out/baseIslands/baseIslands.geo.json',

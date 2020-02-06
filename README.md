@@ -3,14 +3,21 @@ tippecanoe
 https://github.com/mapbox/mbutil
 QGIS
 
-GENERATE DB
+1. Books dataset cleanup steps
+./scripts/db/generate290Db.js
 ./scripts/db/extractMostImportantBooks.js
 Review `MOST_IMPORTANT_BOOKS_INFO_CSV` and perform by hand review
 ./scripts/db/mergeCleanedBooks.js
+./scripts/db/removeDuplicatedAuthors.js
+
+2. Generate the clean and definitive books database
 ./scripts/db/generateDb.js
 
+3. Generate static books and author jsons
+./scripts/db/generateBookJSONS.js
+./scripts/db/generateAuthorJSONS.js
 
-SCRIPTS
+4. Prepare layout
 ./scripts/db/generateAuthors.js
 ./scripts/umap/normalizeToWorld.js
 ./scripts/layout/clusterByPop.js
