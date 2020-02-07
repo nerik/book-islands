@@ -4,13 +4,18 @@ const _ = require('lodash')
 const csvStringify = require('csv-stringify/lib/sync')
 
 const {
+  BOOKS_POINTS,
   TERRITORY_LABELS,
+  SEARCH_BOOKS_DB,
+  SEARCH_BOOKS_DB_RANKED,
   SEARCH_DB,
   SEARCH_DB_RANKED,
-  SEARCH_DB_RANKED_LIMIT,
+  SEARCH_DB_BOOKS_RANKED_LIMIT,
+  SEARCH_DB_AUTHORS_RANKED_LIMIT,
 } = require('../constants')
 
 const authors = JSON.parse(fs.readFileSync(TERRITORY_LABELS, 'utf-8')).features
+const books = JSON.parse(fs.readFileSync(BOOKS_POINTS, 'utf-8')).features
 
 const trunc = (n) => {
   const numDecimals = 4
@@ -27,25 +32,52 @@ const parseAuthor = (author) => {
   ]
 }
 
-const csvFields = ['author', 'rank', 'lng', 'lat']
+const parseBook = (book) => {
+  return [
+    book.properties.title,
+    book.properties.book_id,
+    trunc(book.geometry.coordinates[0]),
+    trunc(book.geometry.coordinates[1]),
+  ]
+}
 
-const authorsRecords = [csvFields].concat(
+const authorCsvFields = ['author', 'rank', 'lng', 'lat']
+const bookCsvFields = ['book', 'id', 'lng', 'lat']
+
+const authorsRecords = [authorCsvFields].concat(
   authors.filter((author) => author.properties.rank < 4).map(parseAuthor)
 )
 
-const rankedAuthorRecords = [csvFields].concat(
+const rankedAuthorRecords = [authorCsvFields].concat(
   _.uniqBy(_.orderBy(authors, 'properties.popularity', 'desc'), 'properties.id')
-    .slice(0, SEARCH_DB_RANKED_LIMIT)
+    .slice(0, SEARCH_DB_AUTHORS_RANKED_LIMIT)
     .map(parseAuthor)
 )
 
-console.log(authorsRecords.length, 'records')
-console.log(rankedAuthorRecords.length, 'records')
+const booksRecords = [bookCsvFields].concat(
+  books.filter((book) => book.properties.rank < 4).map(parseBook)
+)
+const rankedBooksRecords = [bookCsvFields].concat(
+  _.uniqBy(_.orderBy(books, 'properties.rank', 'desc'), 'properties.book_id')
+    .slice(0, SEARCH_DB_BOOKS_RANKED_LIMIT / 2)
+    .map(parseBook)
+)
 
-const csv = csvStringify(authorsRecords)
-const csvRanked = csvStringify(rankedAuthorRecords)
-fs.writeFileSync(SEARCH_DB, csv)
-fs.writeFileSync(SEARCH_DB_RANKED, csvRanked)
+console.log('Author records')
+console.log(authorsRecords.length, ' authors records')
+console.log(rankedAuthorRecords.length, 'ranked authors records')
 
-console.log('Wrote', SEARCH_DB)
-console.log('Wrote', SEARCH_DB_RANKED)
+console.log('Books records')
+console.log(booksRecords.length, 'books records')
+console.log(rankedBooksRecords.length, 'ranked books records')
+
+const authorCsv = csvStringify(authorsRecords)
+const authorCsvRanked = csvStringify(rankedAuthorRecords)
+const booksCsv = csvStringify(booksRecords)
+const booksCsvRanked = csvStringify(rankedBooksRecords)
+fs.writeFileSync(SEARCH_DB, authorCsv)
+fs.writeFileSync(SEARCH_DB_RANKED, authorCsvRanked)
+fs.writeFileSync(SEARCH_BOOKS_DB, booksCsv)
+fs.writeFileSync(SEARCH_BOOKS_DB_RANKED, booksCsvRanked)
+
+console.log('Wrote authors and books search db')
