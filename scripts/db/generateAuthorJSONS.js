@@ -7,7 +7,19 @@ const rp = require('request-promise')
 const $ = require('cheerio')
 const { BOOKS_DB, BOOKS_DB_TABLE, AUTHORS_JSON } = require('../constants')
 
-const FETCH_WIKIPEDIA_DATA = false
+const FETCH_WIKIPEDIA_DATA = true
+
+function cleanText(text) {
+  if (!text) return ''
+  const removeCharactersRegex = /\[.*?\]|\(.*?\)/g
+  const insertSpaceBetweenMayRegex = /[^- a-z][A-Z]/g
+  return text
+    .replace(/\n/g, ' ')
+    .replace(removeCharactersRegex, ' ')
+    .replace(insertSpaceBetweenMayRegex, (text) => `${text[0]} ${text[1]}`)
+    .replace(/ {2}/g, ' ')
+    .trim()
+}
 
 const generateAuthorJsons = async () => {
   if (!fs.existsSync(AUTHORS_JSON)) {
@@ -40,34 +52,36 @@ const generateAuthorJsons = async () => {
             .find('tbody > tr')
             .toArray()
             .filter((tr) => tr.firstChild.attribs.scope === 'row')
-          const bornRow = tableRows.length ? $(tableRows[0], html) : null
+          const bornRow = tableRows.length
+            ? tableRows.find((row) =>
+                $(row, html)
+                  .children()
+                  .first()
+                  .text()
+                  .toUpperCase()
+                  .includes('BORN')
+              )
+            : null
           if (bornRow) {
-            const isBornRow = bornRow
-              .children()
-              .first()
-              .text()
-              .toUpperCase()
-              .includes('BORN')
-            if (isBornRow) {
-              authorInfo.born = bornRow
-                .children()
-                .last()
-                .text()
+            const bornText = cleanText($(bornRow.lastChild, html).text())
+            if (bornText) {
+              authorInfo.born = bornText
             }
           }
-          const deathRow = tableRows.length ? $(tableRows[1], html) : null
+          const deathRow = tableRows.length
+            ? tableRows.find((row) =>
+                $(row, html)
+                  .children()
+                  .first()
+                  .text()
+                  .toUpperCase()
+                  .includes('DIED')
+              )
+            : null
           if (deathRow) {
-            const isDeathRow = deathRow
-              .children()
-              .first()
-              .text()
-              .toUpperCase()
-              .includes('DIED')
-            if (isDeathRow) {
-              authorInfo.death = deathRow
-                .children()
-                .last()
-                .text()
+            const deathText = cleanText($(deathRow.lastChild, html).text())
+            if (deathText) {
+              authorInfo.death = deathText
             }
           }
         } catch {
