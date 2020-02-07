@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+require('dotenv').config()
 const fs = require('fs')
 const matchSorter = require('match-sorter').default
 const requestPromise = require('request-promise')
@@ -20,7 +21,8 @@ const Database = require('sqlite-async')
 const booksFile = fs.createReadStream(BOOKS_CSV)
 const mostImportantBooksFile = fs.createReadStream(MOST_IMPORTANT_BOOKS_CSV)
 
-const START_INDEX = 0
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY
+const START_INDEX = 8
 const NOT_FOUND_ID = 'NOT_FOUND'
 const AUTO_MODE = true // set to false to prompt user for books fullfill
 let currentIndex = 0
@@ -121,7 +123,7 @@ const extractMostImportantbooksInfo = async () => {
             if (bookInfo.id === NOT_FOUND_ID) {
               console.log('Fetching information from knowledge graph', data.title)
               const title = encodeURIComponent(data.title)
-              const uri = `https://kgsearch.googleapis.com/v1/entities:search?query=${title}&key=AIzaSyC0bsRnDv-jx6ca4lMwmL2bLyIribLAtds&limit=1&indent=True&types=Book`
+              const uri = `https://kgsearch.googleapis.com/v1/entities:search?query=${title}&key=${GOOGLE_API_KEY}&limit=1&indent=True&types=Book`
               try {
                 const { itemListElement } = await requestPromise({ uri, json: true })
                 if (itemListElement[0] && itemListElement[0].result) {
