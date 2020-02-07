@@ -56,14 +56,14 @@ const insertData = () => {
   console.log('Starting csv parsing and columns insert')
   Papa.parse(file, {
     header: true,
-    step: function(result) {
+    step: function({ data }) {
       var regex = /.*id=(?<id>[a-zA-Z0-9_-]*).*/gi
-      var regexResults = regex.exec(result.data.cover_url)
-      let publicId = (regexResults && regexResults[1]) || ''
+      var regexResults = regex.exec(data.cover_url)
+      let publicId = data.publicId || (regexResults && regexResults[1]) || ''
       const resultValues = TABLE_FIELDS.map(({ name }) => {
-        if (name === 'author_slug') return authorSlug(result.data)
+        if (name === 'author_slug') return authorSlug(data)
         if (name === 'public_id') return publicId
-        return result.data[name] || ''
+        return data[name] || ''
       })
       db.run(`INSERT INTO ${BOOKS_DB_TABLE} (${fields}) VALUES (${values})`, resultValues)
     },

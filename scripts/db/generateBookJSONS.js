@@ -19,5 +19,6 @@ const db = new sqlite3.Database(BOOKS_DB, sqlite3.OPEN_READONLY, (err) => {
       fs.writeFileSync(`${BOOKS_JSON}/${row.id}.json`, JSON.stringify(row))
       pb.increment()
     })
+    pb.stop()
   })
 })

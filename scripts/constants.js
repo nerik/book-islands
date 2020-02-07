@@ -7,6 +7,8 @@ module.exports = {
   BOOKS_CLEANED_CSV: 'in/google-books/books-cleaned.csv', // USE THIS FOR EVERYTHING
   MOST_IMPORTANT_BOOKS_CSV: 'in/google-books/most-important-books.csv',
   MOST_IMPORTANT_BOOKS_INFO_CSV: 'in/google-books/most-important-books-with-info.csv',
+  MOST_IMPORTANT_BOOKS_INFO_CLEANED_CSV:
+    'in/google-books/most-important-books-with-info-cleaned.csv',
   BOOKS_DB_290K: 'in/google-books/books_290K.db',
   BOOKS_DB: 'in/google-books/books.db',
   BOOKS_DB_TABLE: 'books',

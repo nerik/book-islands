@@ -7,6 +7,7 @@ QGIS
 ./scripts/db/generate290Db.js
 ./scripts/db/extractMostImportantBooks.js
 Review `MOST_IMPORTANT_BOOKS_INFO_CSV` and perform by hand review
+./scripts/db/fillMostImportanBooksInfo.js
 ./scripts/db/mergeCleanedBooks.js
 ./scripts/db/removeDuplicatedAuthors.js
 

@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Index",
-            "program": "${workspaceFolder}/scripts/db/generateAuthorJSONS.js"
+            "program": "${workspaceFolder}/scripts/db/fillMostImportanBooksInfo.js"
         },
         {
             "type": "node",
