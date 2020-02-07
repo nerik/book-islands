@@ -3,16 +3,18 @@
 const fs = require('fs')
 const Papa = require('papaparse')
 const {
-  BOOKS_WITHOUT_DUPLICATES_CSV,
   BOOKS_MI_MERGED_CSV,
-  MOST_IMPORTANT_BOOKS_INFO_CLEANED_CSV,
+  BOOKS_CSV,
+  MOST_IMPORTANT_BOOKS_INFO_REVIEWED_FILLED_NO_DUPLICATES_CSV,
 } = require('../constants')
 const papaPromise = require('./utils/papaParser')
 
-const allBooks = []
+let allBooks = []
 const mergeCleanedBooks = async () => {
-  const mostImportantBooks = await papaPromise(MOST_IMPORTANT_BOOKS_INFO_CLEANED_CSV)
-  Papa.parse(fs.createReadStream(BOOKS_WITHOUT_DUPLICATES_CSV), {
+  const mostImportantBooks = await papaPromise(
+    MOST_IMPORTANT_BOOKS_INFO_REVIEWED_FILLED_NO_DUPLICATES_CSV
+  )
+  Papa.parse(fs.createReadStream(BOOKS_CSV), {
     header: true,
     step: async function({ data }) {
       const importantBook = mostImportantBooks.find((book) => book.id === data.id)
@@ -23,6 +25,8 @@ const mergeCleanedBooks = async () => {
       }
     },
     complete: function() {
+      const generetedMIB = mostImportantBooks.filter((book) => book.id.includes('BA_'))
+      allBooks = allBooks.concat(generetedMIB)
       const csv = Papa.unparse(allBooks)
       fs.writeFileSync(BOOKS_MI_MERGED_CSV, csv)
       console.log('All books cleaned')

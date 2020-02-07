@@ -5,11 +5,16 @@ module.exports = {
   BOOKS_WITHOUT_DUPLICATES_CSV: 'in/google-books/books-without-duplicates.csv',
   BOOKS_MI_SCORE: 100000,
   BOOKS_MI_MERGED_CSV: 'in/google-books/most-important-books-merged.csv', // MI = Most Important
+  BOOKS_MI_MERGED_NO_DUPLICATES_CSV:
+    'in/google-books/most-important-books-merged-no-duplicates.csv', // MI = Most Important
   BOOKS_CLEANED_CSV: 'in/google-books/books-cleaned.csv', // USE THIS FOR EVERYTHING
   MOST_IMPORTANT_BOOKS_CSV: 'in/google-books/most-important-books.csv',
   MOST_IMPORTANT_BOOKS_INFO_CSV: 'in/google-books/most-important-books-info.csv',
   MOST_IMPORTANT_BOOKS_INFO_REVIEWED_CSV: 'in/google-books/most-important-books-info-reviewed.csv',
-  MOST_IMPORTANT_BOOKS_INFO_CLEANED_CSV: 'in/google-books/most-important-books-info-cleaned.csv',
+  MOST_IMPORTANT_BOOKS_INFO_REVIEWED_FILLED_CSV:
+    'in/google-books/most-important-books-info-reviewed-filled.csv',
+  MOST_IMPORTANT_BOOKS_INFO_REVIEWED_FILLED_NO_DUPLICATES_CSV:
+    'in/google-books/most-important-books-info-reviewed-filled-no-duplicates.csv',
   BOOKS_DB_290K: 'in/google-books/books_290K.db',
   BOOKS_DB: 'in/google-books/books.db',
   BOOKS_DB_TABLE: 'books',

@@ -7,7 +7,7 @@ const requestPromise = require('request-promise')
 const Papa = require('papaparse')
 const {
   MOST_IMPORTANT_BOOKS_INFO_REVIEWED_CSV,
-  MOST_IMPORTANT_BOOKS_INFO_CLEANED_CSV,
+  MOST_IMPORTANT_BOOKS_INFO_REVIEWED_FILLED_CSV,
 } = require('../constants')
 const papaPromise = require('./utils/papaParser')
 const progressBar = require('../util/progressBar')
@@ -48,7 +48,7 @@ const fillMostImportantbooksInfo = async () => {
     }
     allBooks.push(book)
     const matchedImportantBooksCsv = Papa.unparse(allBooks)
-    fs.writeFileSync(MOST_IMPORTANT_BOOKS_INFO_CLEANED_CSV, matchedImportantBooksCsv)
+    fs.writeFileSync(MOST_IMPORTANT_BOOKS_INFO_REVIEWED_FILLED_CSV, matchedImportantBooksCsv)
     pb.increment()
   }
   pb.stop()
