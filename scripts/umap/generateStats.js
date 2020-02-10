@@ -13,13 +13,14 @@ const Supercluster = require('supercluster')
 
 const { UMAP_CAT, UMAP_CAT_STATS } = require('../constants')
 
-const umapCatsPaths = fs.readdirSync(UMAP_CAT)
+const umapCatsPaths = fs.readdirSync(UMAP_CAT).filter((p) => p !== '.DS_Store')
 
 const rdChan = () => Math.floor(Math.random() * 255)
 const rdCol = () => `rgb(${rdChan()},${rdChan()},${rdChan()})`
 
 const umapCats = umapCatsPaths.map((p) => {
-  const nodes = parse(fs.readFileSync(path.join(UMAP_CAT, p), 'utf-8'), {
+  const csv = fs.readFileSync(path.join(UMAP_CAT, p), 'utf-8')
+  const nodes = parse(csv, {
     columns: ['id', 'x', 'y'],
   })
   nodes.forEach((r) => {

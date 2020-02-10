@@ -3,8 +3,18 @@ tippecanoe
 https://github.com/mapbox/mbutil
 QGIS
 
+1. Books dataset cleanup steps
+Fill .env with api keys
+Follow: https://docs.google.com/drawings/d/1WDeQxxFDiNA2Y5J7IK4ZqCoCdBpEwG2N2rY1Je_4Yuw/edit
 
-SCRIPTS
+2. Generate the clean and definitive books database
+./scripts/db/generateDb.js
+
+3. Generate static books and author jsons
+./scripts/db/generateBookJSONS.js
+./scripts/db/generateAuthorJSONS.js
+
+4. Prepare layout
 ./scripts/db/generateAuthors.js
 ./scripts/umap/normalizeToWorld.js
 ./scripts/layout/clusterByPop.js
