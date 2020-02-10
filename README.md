@@ -5,14 +5,7 @@ QGIS
 
 1. Books dataset cleanup steps
 Fill .env with api keys
-./scripts/db/generate290Db.js
-./scripts/db/extractMostImportantBooks.js
-Review `MOST_IMPORTANT_BOOKS_INFO_REVIEWED_CSV` and perform by hand review
-./scripts/db/fillMostImportanBooksInfo.js
-./scripts/db/removeDuplicateAuthorsMIB.js with MIB
-./scripts/db/mergeCleanedBooks.js
-./scripts/db/removeDuplicateAuthors.js with All books
-./scripts/db/normalizeAuthorCategory.js Unifies author categories if existing in MIB
+Follow: https://docs.google.com/drawings/d/1WDeQxxFDiNA2Y5J7IK4ZqCoCdBpEwG2N2rY1Je_4Yuw/edit
 
 2. Generate the clean and definitive books database
 ./scripts/db/generateDb.js

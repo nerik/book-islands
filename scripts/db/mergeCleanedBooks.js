@@ -25,8 +25,13 @@ const mergeCleanedBooks = async () => {
       }
     },
     complete: function() {
-      const generetedMIB = mostImportantBooks.filter((book) => book.id.includes('BA_'))
-      allBooks = allBooks.concat(generetedMIB)
+      const allBooksIds = allBooks.map((book) => book.id)
+      const generetedMIBooks = mostImportantBooks.filter((book) => book.id.includes('BA_'))
+      const from290kBooks = mostImportantBooks.filter(
+        (book) => !book.id.includes('BA_') && !allBooksIds.includes(book.id)
+      )
+      allBooks = allBooks.concat(generetedMIBooks)
+      allBooks = allBooks.concat(from290kBooks)
       const csv = Papa.unparse(allBooks)
       fs.writeFileSync(BOOKS_MI_MERGED_CSV, csv)
       console.log('All books cleaned')

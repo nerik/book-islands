@@ -24,14 +24,15 @@ const papaPromise = require('./papaParser')
 
 // readMIBDuplidateAuthors(MOST_IMPORTANT_BOOKS_INFO_REVIEWED_CSV)
 
-const removeDuplidateAuthors = async (booksPath, destinationPath) => {
-  const books = await papaPromise(booksPath)
-  const mostImportantAuthors = uniq(books.map((book) => book.author))
-  let allBooksUpdate = books
+const removeDuplidateAuthors = async (booksPath, MIBPath, destinationPath) => {
+  const allBooks = await papaPromise(booksPath)
+  const miBooks = await papaPromise(MIBPath)
+  const mostImportantAuthors = uniq(miBooks.map((book) => book.author))
+  let allBooksUpdate = allBooks
   for (let i = 0; i < mostImportantAuthors.length; i++) {
     const author = mostImportantAuthors[i]
     const matchSorterOptions = { keys: ['author'], threshold: matchSorter.rankings.MATCHES }
-    const booksAuthorsMatch = matchSorter(books, author, matchSorterOptions)
+    const booksAuthorsMatch = matchSorter(allBooks, author, matchSorterOptions)
     const needsReview = uniq(booksAuthorsMatch.map((book) => book.author)).length > 1
     if (needsReview) {
       console.log('Author to review:', author)
