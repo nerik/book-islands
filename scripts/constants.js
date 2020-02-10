@@ -8,6 +8,7 @@ module.exports = {
   BOOKS_MI_MERGED_NO_DUPLICATES_CSV:
     'in/google-books/most-important-books-merged-no-duplicates.csv', // MI = Most Important
   BOOKS_CLEANED_CSV: 'in/google-books/books-cleaned.csv', // USE THIS FOR EVERYTHING
+  BOOKS_CLEANED_BY_CATEGORY_FOLDER: 'in/google-books/books-by-category',
   MOST_IMPORTANT_BOOKS_CSV: 'in/google-books/most-important-books.csv',
   MOST_IMPORTANT_BOOKS_INFO_CSV: 'in/google-books/most-important-books-info.csv',
   MOST_IMPORTANT_BOOKS_INFO_REVIEWED_CSV: 'in/google-books/most-important-books-info-reviewed.csv',
