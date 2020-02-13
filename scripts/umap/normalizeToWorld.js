@@ -16,7 +16,7 @@ const umapFeatures = Object.values(umapsMeta).flatMap(({ file, bounds }) => {
   const umapAuthors = parse(fs.readFileSync(path.join(UMAP_CAT, `${file}_authors.csv`), 'utf-8'))
 
   const umapNormalized = umap.map((umapCoordinate, index) => {
-    const [author_id, author] = umapAuthors[index]
+    const [, author_id, author] = umapAuthors[index]
     const [, x, y] = umapCoordinate
 
     return {
