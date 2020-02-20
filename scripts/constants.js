@@ -63,10 +63,10 @@ module.exports = {
   TERRITORIES_TILES: 'tiles/territories',
   HEIGHT_TILE_SIZE: 256,
   // TEST_BBOX: {
-  //   minX: 136,
-  //   minY: 62,
-  //   maxX: 140,
-  //   maxY: 65,
+  //   minX: -10,
+  //   minY: 10,
+  //   maxX: 50,
+  //   maxY: 50,
   // },
   TEST_BBOX: {
     minX: -180,
