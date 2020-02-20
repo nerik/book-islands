@@ -41,10 +41,17 @@ const isCityIsolatedEnough = (city, cities) => {
 }
 
 const checkCityInTerritory = (pt, territory = null) => {
-  if (territory === null) {
-    return true
+  try {
+    if (territory === null) {
+      return true
+    }
+    return turf.booleanPointInPolygon(pt, territory)
+  } catch (e) {
+    console.error(e)
+    console.log('pt', pt)
+    console.log('territory', territory)
+    return false
   }
-  return turf.booleanPointInPolygon(pt, territory)
 }
 
 const getBooks = (author) => {
@@ -140,11 +147,18 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
           } else {
             // console.log('no more coastal pts')
             const randomPt = turf.randomPoint(1, { bbox: territoryBbox }).features[0]
-            if (
-              turf.booleanPointInPolygon(randomPt, territory) &&
-              isCityIsolatedEnough(randomPt, islandCities)
-            ) {
-              // console.log('adding rd pt')
+            try {
+              if (
+                turf.booleanPointInPolygon(randomPt, territory) &&
+                isCityIsolatedEnough(randomPt, islandCities)
+              ) {
+                // console.log('adding rd pt')
+                city = randomPt
+              }
+            } catch (e) {
+              console.warn(e)
+              console.log('randomPt', randomPt)
+              console.log('territory', territory)
               city = randomPt
             }
           }
