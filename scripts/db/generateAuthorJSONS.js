@@ -27,7 +27,7 @@ const generateAuthorJsons = async () => {
   }
 
   const db = await Database.open(BOOKS_DB, Database.OPEN_READONLY)
-  const dbQuery = `SELECT author FROM ${BOOKS_DB_TABLE} GROUP BY author ORDER BY score DESC LIMIT 50`
+  const dbQuery = `SELECT author FROM ${BOOKS_DB_TABLE} GROUP BY author ORDER BY score DESC LIMIT`
   const rows = await db.all(dbQuery)
 
   const pb = progressBar(rows.length)
