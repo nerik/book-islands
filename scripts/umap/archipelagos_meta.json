@@ -1,107 +1,111 @@
 {
   "arts_and_entertainment": {
     "file": "arts_and_entertainment",
-    "scale": [0.6, 0.4],
-    "translate": [70, 59],
-    "bounds": [20, 80, 140, 35],
-    "clusterRadiusMult": 10,
-    "minClusterPriority": 2
+    "scale": [0.45, 0.38],
+    "translate": [90, 59],
+    "bounds": [20, 80, 135, 33],
+    "clusterRadiusMult": 20,
+    "minClusterPriority": 1
   },
   "children_literature": {
     "file": "children_literature",
-    "scale": [0.2, 0.2],
-    "translate": [145, -60],
-    "bounds": [120, -45, 170, -70],
-    "clusterRadiusMult": 120,
-    "minClusterPriority": 0.4
+    "scale": [0.35, 0.5],
+    "translate": [115, -45],
+    "bounds": [95, -25, 175, -65],
+    "clusterRadiusMult": 15,
+    "minClusterPriority": 1
   },
   "classics": {
     "file": "classics",
     "scale": [0.3, 0.3],
     "translate": [40, -60],
-    "bounds": [0, -35, 95, -80],
+    "bounds": [3, -47, 90, -75],
     "clusterRadiusMult": 60,
     "minClusterPriority": 0.8
   },
   "education": {
     "file": "education",
-    "scale": [0.2, 0.3],
+    "scale": [0.18, 0.3],
     "translate": [-150, 15],
-    "bounds": [-175, 35, -125, -5],
-    "clusterRadiusMult": 50,
-    "minClusterPriority": 1
+    "bounds": [-180, 40, -125, -10],
+    "clusterRadiusMult": 15,
+    "minClusterPriority": 0.8
   },
   "history": {
     "file": "history",
     "scale": [0.25, 0.3],
-    "translate": [-120, -30],
-    "bounds": [-165, -10, -80, -50],
+    "translate": [-130, -20],
+    "bounds": [-160, -5, -85, -35],
     "clusterRadiusMult": 50,
-    "minClusterPriority": 0.4
+    "minClusterPriority": 2
   },
   "hobbies": {
     "file": "hobbies",
-    "scale": [0.25, 0.25],
+    "scale": [0.2, 0.2],
     "translate": [-55, 60],
-    "bounds": [-80, 80, -20, 45],
-    "clusterRadiusMult": 15,
-    "minClusterPriority": 1.8
+    "bounds": [-90, 75, -25, 45],
+    "clusterRadiusMult": 10,
+    "minClusterPriority": 1
   },
   "law_and_government": {
     "file": "law_and_government",
     "scale": [0.2, 0.3],
     "translate": [-115, 48],
-    "bounds": [-140, 70, -85, 30]
+    "bounds": [-150, 70, -90, 25],
+    "clusterRadiusMult": 10,
+    "minClusterPriority": 1
   },
   "news": {
     "file": "news",
-    "scale": [0.2, 0.2],
-    "translate": [-20, 35],
-    "bounds": [-50, 50, 10, 25]
+    "scale": [0.25, 0.1],
+    "translate": [-45, 40],
+    "bounds": [-75, 45, -5, 33],
+    "clusterRadiusMult": 10,
+    "minClusterPriority": 0.6
   },
   "novels": {
     "file": "novels",
-    "scale": [0.9, 0.75],
-    "translate": [45, -10],
-    "bounds": [-35, 45, 155, -45],
-    "clusterRadiusMult": 70,
-    "minClusterPriority": 0.8
+    "scale": [0.7, 0.65],
+    "translate": [65, -10],
+    "bounds": [-25, 40, 135, -40],
+    "clusterRadiusMult": 40,
+    "minClusterPriority": 1.2
   },
   "people_and_society": {
     "file": "people_and_society",
     "scale": [0.25, 0.25],
     "translate": [2, 55],
-    "bounds": [-20, 70, 30, 45],
-    "clusterRadiusMult": 10,
-    "minClusterPriority": 2.3
+    "bounds": [-35, 70, 25, 40],
+    "clusterRadiusMult": 5,
+    "minClusterPriority": 2
   },
   "philosophy": {
     "file": "philosophy",
-    "scale": [0.15, 0.2],
-    "translate": [-55, -28],
-    "bounds": [-75, -10, -30, -40],
-    "clusterRadiusMult": 40,
-    "minClusterPriority": 1.3
+    "scale": [0.25, 0.25],
+    "translate": [-65, -28],
+    "bounds": [-95, -15, -25, -40],
+    "clusterRadiusMult": 10,
+    "minClusterPriority": 0.9
   },
   "poetry": {
     "file": "poetry",
-    "scale": [0.15, 0.5],
-    "translate": [160, 43],
-    "bounds": [140, 70, 180, 3],
+    "scale": [0.2, 0.6],
+    "translate": [150, 40],
+    "bounds": [130, 75, 180, 10],
     "clusterRadiusMult": 40,
     "minClusterPriority": 1
   },
   "religion_and_belief": {
     "file": "religion_and_belief",
-    "scale": [0.7, 0.25],
-    "translate": [-100, -62],
-    "bounds": [-180, -45, -5, -80]
+    "scale": [0.6, 0.2],
+    "translate": [-80, -62],
+    "bounds": [-180, -45, 0, -75]
   },
   "science": {
     "file": "science",
     "scale": [0.3, 0.30],
-    "translate": [-75, 15],
-    "bounds": [-110, 35, -40, -10],
+    "translate": [-75, 10],
+    "bounds": [-125, 30, -30, -10],
     "clusterRadiusMult": 70,
     "minClusterPriority": 1
   }

@@ -51,9 +51,9 @@ const orderedFeatures = features
     const categoryMeta = umapsMeta[feature.properties.category] || {}
 
     // overall cluster size (ie radius of the circle which will contain cluster children)
-    const CLUSTER_RADIUS_MULT = categoryMeta.clusterRadiusMult || 20
+    const CLUSTER_RADIUS_MULT = categoryMeta.clusterRadiusMult || 10
     // minimum priority value to form a cluster (priority is computed from author score, see getAuthorLayoutPriority)
-    const MIN_CLUSTER_PRIORITY = categoryMeta.minClusterPriority || 1.5
+    const MIN_CLUSTER_PRIORITY = categoryMeta.minClusterPriority || 1
 
     // if feature priority is higher than the threshold, mark it as cluster
     if (feature.properties.priority > MIN_CLUSTER_PRIORITY) {
