@@ -59,7 +59,7 @@ const booksRecords = [bookCsvFields].concat(
 )
 const rankedBooksRecords = [bookCsvFields].concat(
   _.uniqBy(_.orderBy(books, 'properties.rank', 'desc'), 'properties.book_id')
-    .slice(0, SEARCH_DB_BOOKS_RANKED_LIMIT / 2)
+    .slice(0, SEARCH_DB_BOOKS_RANKED_LIMIT)
     .map(parseBook)
 )
 
