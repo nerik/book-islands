@@ -36,7 +36,7 @@
     "scale": [0.25, 0.3],
     "translate": [-130, -20],
     "bounds": [-160, -5, -85, -35],
-    "clusterRadiusMult": 50,
+    "clusterRadiusMult": 20,
     "minClusterPriority": 2
   },
   "hobbies": {

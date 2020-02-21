@@ -69,10 +69,10 @@ module.exports = {
   //   maxY: 50,
   // },
   TEST_BBOX: {
-    minX: -180,
-    minY: -80,
-    maxX: 180,
-    maxY: 80,
+    minX: -115,
+    minY: -19,
+    maxX: -110,
+    maxY: -15,
   },
   BBOX_CHUNKS: [
     // -240 and 220 it is due the umap offsets

@@ -101,6 +101,7 @@ let finalClusters = clusters.map((cluster) => {
       author_name: cluster.properties.author_name,
       is_cluster: true,
       layouted_id: `cluster_${cluster.properties.author_slug}`,
+      priority: cluster.properties.priority,
       cluster_r,
       cluster_g,
       cluster_b,
@@ -113,6 +114,7 @@ let finalClusters = clusters.map((cluster) => {
 // Attach standalone leaves to clusters when they are below a certain radius
 const standalonePoints = orderedFeatures.map((point) => {
   const properties = {
+    priority: point.properties.priority,
     is_cluster: false,
   }
   const closestCluster = _.minBy(finalClusters, (cluster) => {
@@ -143,7 +145,7 @@ const standalonePoints = orderedFeatures.map((point) => {
       avg_popularity: point.properties.avg_popularity,
       books_count: point.properties.books_count,
       author_id: point.properties.author_slug,
-      author_name: point.properties.author_name,
+      author_name: point.properties.id,
     },
   }
   return finalPoint
@@ -153,35 +155,39 @@ const standalonePointsNotClustered = standalonePoints.filter(
   (point) => point.properties.cluster_id === undefined
 )
 
-// use supercluster in last round to merge very close standalone points in a large zoom level
+// use supercluster in last round to merge very close standalone points in a high zoom level
 const INITIAL_GEO_ZOOM = 9
 const bbox = [TEST_BBOX.minX, TEST_BBOX.minY, TEST_BBOX.maxX, TEST_BBOX.maxY]
 const standalonCluster = new supercluster({
-  radius: 100,
+  radius: 40,
   maxZoom: 16,
 })
 standalonCluster.load(standalonePointsNotClustered)
 console.log('Standalone total points', standalonePointsNotClustered.length)
 
+// Get cluster and leave out supercluster-generated standalone points
 const standalonClusters = standalonCluster
   .getClusters(bbox, INITIAL_GEO_ZOOM)
   .filter((c) => c.properties.cluster_id)
 
-const geoClusterDict = {}
+console.log('Num supercluster clusters:', standalonClusters.length)
+
+// matches leaves ids wwith supercluster ids
+const superclusterDict = {}
 standalonClusters.forEach((cluster) => {
   const clusterId = cluster.properties.cluster_id
   const leaves = standalonCluster.getLeaves(clusterId, Infinity).map((l) => l.properties.author_id)
   if (leaves && leaves.length) {
-    leaves.forEach((leave) => {
-      geoClusterDict[leave] = clusterId
+    leaves.forEach((leaf) => {
+      superclusterDict[leaf] = clusterId
     })
   }
 })
-console.log('Geo clustered standalone points', Object.keys(geoClusterDict).length)
+console.log('Supercluster clustered leaves points', Object.keys(superclusterDict).length)
 
 const finalStandalonePoints = standalonePoints.map((point) => {
-  if (geoClusterDict[point.properties.author_id]) {
-    const clusterId = geoClusterDict[point.properties.author_id]
+  if (superclusterDict[point.properties.author_id]) {
+    const clusterId = superclusterDict[point.properties.author_id]
     const properties = {
       is_cluster: true,
       layouted_id: `clustered_${clusterId}`,
@@ -216,6 +222,9 @@ finalClusters = finalClusters.map((cluster) => {
     children,
   }
 })
+
+console.log('Num final clusters before removing non-viable clusters:', finalClusters.length)
+
 
 // Remove non viable (0/1-point) clusters
 finalClusters = finalClusters.filter((cluster) => {
