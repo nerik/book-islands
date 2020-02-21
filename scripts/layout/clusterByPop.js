@@ -98,7 +98,7 @@ let finalClusters = clusters.map((cluster) => {
     ...cluster,
     properties: {
       author_id: cluster.properties.author_slug,
-      author_name: cluster.properties.author_name,
+      author_name: cluster.properties.id,
       is_cluster: true,
       layouted_id: `cluster_${cluster.properties.author_slug}`,
       priority: cluster.properties.priority,
@@ -115,6 +115,7 @@ let finalClusters = clusters.map((cluster) => {
 const standalonePoints = orderedFeatures.map((point) => {
   const properties = {
     priority: point.properties.priority,
+    author_slug: point.properties.author_slug,
     is_cluster: false,
   }
   const closestCluster = _.minBy(finalClusters, (cluster) => {
@@ -172,26 +173,54 @@ const standalonClusters = standalonCluster
 
 console.log('Num supercluster clusters:', standalonClusters.length)
 
-// matches leaves ids wwith supercluster ids
+// matches leaves ids with supercluster ids
 const superclusterDict = {}
 standalonClusters.forEach((cluster) => {
-  const clusterId = cluster.properties.cluster_id
-  const leaves = standalonCluster.getLeaves(clusterId, Infinity).map((l) => l.properties.author_id)
+  const superclusterId = cluster.properties.cluster_id
+  const leaves = standalonCluster.getLeaves(superclusterId, Infinity).map((l) => l.properties.author_id)
+  // Create supercluster cluster point
+  const superclusterChildren = standalonePointsNotClustered.filter(pt => leaves.includes(pt.properties.author_id))
+  let superclusterImportantChild
+  let superclusterImportantChildMaxPriority = -Infinity
+  superclusterChildren.forEach(superclusterChild => {
+    if (superclusterChild.properties.priority > superclusterImportantChildMaxPriority) {
+      superclusterImportantChildMaxPriority = superclusterChild.properties.priority
+      superclusterImportantChild = superclusterChild
+    }
+  })
+  // console.log(superclusterImportantChild.properties)
+  const superclusterLayoutedId = `cluster_${superclusterImportantChild.properties.author_slug}`
+  const feature = {
+    ...cluster,
+    properties: {
+      is_cluster: true,
+      author_id: superclusterImportantChild.properties.author_slug,
+      author_name: superclusterImportantChild.properties.author_name,
+      layouted_id: superclusterLayoutedId,
+      cluster_r: '255',
+      cluster_g: '0',
+      cluster_b: '0',
+    },
+    children: superclusterChildren,
+  }
+  finalClusters.push(feature)
+
+  // Create dict of leaves
   if (leaves && leaves.length) {
     leaves.forEach((leaf) => {
-      superclusterDict[leaf] = clusterId
+      superclusterDict[leaf] = superclusterLayoutedId
     })
   }
 })
 console.log('Supercluster clustered leaves points', Object.keys(superclusterDict).length)
 
+// attach standalone points marked as supercluster leaves to their cluster
 const finalStandalonePoints = standalonePoints.map((point) => {
   if (superclusterDict[point.properties.author_id]) {
-    const clusterId = superclusterDict[point.properties.author_id]
+    const cluster_id = superclusterDict[point.properties.author_id]
     const properties = {
-      is_cluster: true,
-      layouted_id: `clustered_${clusterId}`,
-      cluster_id: clusterId,
+      layouted_id: `clustered_${cluster_id}`,
+      cluster_id,
       cluster_r: '255',
       cluster_g: '0',
       cluster_b: '0',
@@ -208,12 +237,15 @@ const finalStandalonePoints = standalonePoints.map((point) => {
   return point
 })
 
-const clusteredPoints = standalonePoints.filter(
+const clusteredPoints = finalStandalonePoints.filter(
   (point) => point.properties.cluster_id !== undefined
 )
 
 finalClusters = finalClusters.map((cluster) => {
   const children = clusteredPoints.filter((clusteredPoint) => {
+    if (cluster.properties.layouted_id === 'cluster_Ronald S. Coddington|history') {
+      // console.log(clusteredPoint.properties.cluster_id)
+    }
     return clusteredPoint.properties.cluster_id === cluster.properties.layouted_id
   })
 
@@ -231,6 +263,7 @@ finalClusters = finalClusters.filter((cluster) => {
   const clusterChildren = cluster.children
   if (clusterChildren.length === 1) {
     delete clusterChildren[0].properties.cluster_id
+    clusterChildren[0].properties.is_cluster = false
     clusterChildren[0].properties.layouted_id = clusterChildren[0].properties.layouted_id.replace(
       'clustered_',
       'standalone_'
@@ -285,6 +318,9 @@ finalClusters.forEach((cluster) => {
   mergedClusters.push(clusterWithEnvelope)
 })
 
+
+
+
 // Compute cluster stats
 const cluster_point_counts = []
 mergedClusters = mergedClusters.map((cluster) => {
@@ -312,9 +348,11 @@ mergedClusters.forEach((cluster) => {
 // console.log(finalStandalonePoints.find(p => p.properties.cluster_id === mergedClusters[0].properties.layouted_id))
 
 console.log('Average cluster # children: ', avg(cluster_point_counts))
+console.log('Num final clusters after merging overlapping clusters:', mergedClusters.length)
+console.log('Num final auhtor points:', finalStandalonePoints.length)
 
 const all = finalStandalonePoints.concat(mergedClusters)
-console.log(all.filter((p) => !p.properties.author_id))
+console.log('Total of all island/territories candidates:', all.length)
 
 fs.writeFileSync(CLUSTERS, JSON.stringify(turf.featureCollection(all)))
 console.log('Wrote ', CLUSTERS)

@@ -110,9 +110,13 @@ const getFitScoreFast = (islandAtScale, clusterEnveloppeArea) => {
 
 const points = clusters.features.filter((cluster) => cluster.properties.is_cluster !== true)
 
-const filteredClusters = clusters.features
+let filteredClusters = clusters.features
   // the clusters geoJSON contains clusters + standalone, remove standalone
   .filter((cluster) => cluster.properties.is_cluster === true)
+
+console.log(filteredClusters.length)
+
+filteredClusters = filteredClusters
   .filter(
     (cluster) =>
       cluster.geometry.coordinates[0] > TEST_BBOX.minX &&

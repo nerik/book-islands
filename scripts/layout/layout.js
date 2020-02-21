@@ -59,6 +59,7 @@ const filteredPoints = points.features
 const islandPoints = filteredPoints.filter(
   (cluster) => cluster.properties.is_cluster === true || cluster.properties.cluster_id === undefined
 )
+console.log(islandPoints.length)
 
 // give them a layout priority (popularity + numbooks)
 filteredPoints.forEach((cluster) => {
