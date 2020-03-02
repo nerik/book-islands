@@ -10,6 +10,8 @@ const avg = require('../util/avg')
 
 const { AUTHORS, UMAP_GEO, UMAP_CAT_META, CLUSTERS, TEST_BBOX } = require('../constants')
 
+const DISABLE = true
+
 const allfeatures = JSON.parse(fs.readFileSync(UMAP_GEO, 'utf-8')).features
 const authors = JSON.parse(fs.readFileSync(AUTHORS, 'utf-8'))
 const umapsMeta = JSON.parse(fs.readFileSync(UMAP_CAT_META, 'utf-8'))
@@ -56,7 +58,7 @@ const orderedFeatures = features
     const MIN_CLUSTER_PRIORITY = categoryMeta.minClusterPriority || 1
 
     // if feature priority is higher than the threshold, mark it as cluster
-    if (feature.properties.priority > MIN_CLUSTER_PRIORITY) {
+    if (!DISABLE && feature.properties.priority > MIN_CLUSTER_PRIORITY) {
       // generate a cluster radius:
       // squareroot this fucker to avoid a very big Shakespeare cluster and account
       // for radius/circle area relation)
@@ -160,7 +162,7 @@ const standalonePointsNotClustered = standalonePoints.filter(
 const INITIAL_GEO_ZOOM = 9
 const bbox = [TEST_BBOX.minX, TEST_BBOX.minY, TEST_BBOX.maxX, TEST_BBOX.maxY]
 const standalonCluster = new supercluster({
-  radius: 40,
+  radius: (DISABLE) ? 0 : 40,
   maxZoom: 16,
 })
 standalonCluster.load(standalonePointsNotClustered)

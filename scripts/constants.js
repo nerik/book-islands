@@ -38,6 +38,7 @@ module.exports = {
   UMAP_CAT_STATS: 'out/umap/umap_cat_stats.json',
   UMAP_GEO: 'out/umap/umap.geo.json',
   CLUSTERS: 'out/layout/clusters.geo.json',
+  POINTS: 'out/layout/authors_points.geo.json',
   LAYOUTED_CLUSTERS: 'out/layout/layouted_clusters.geo.json',
   BASE_ISLANDS_META: 'out/layout/baseIslands.meta.json',
   ISLANDS: 'out/layout/islands.geo.json',
@@ -69,13 +70,13 @@ module.exports = {
   //   maxY: 50,
   // },
   TEST_BBOX: {
-    minX: -115,
-    minY: -19,
-    maxX: -110,
-    maxY: -15,
+    minX: 14,
+    minY: 17,
+    maxX: 21,
+    maxY: 21,
   },
   BBOX_CHUNKS: [
-    [-180,-90,180,90]
+    [-180, -90, 180, 90]
     // -240 and 220 it is due the umap offsets
     // [-240, -80, -90, 0],
     // [-90, -80, 0, 0],
