@@ -39,11 +39,13 @@ module.exports = {
   UMAP_GEO: 'out/umap/umap.geo.json',
   CLUSTERS: 'out/layout/clusters.geo.json',
   POINTS: 'out/layout/authors_points.geo.json',
+  POINTS_WITH_SCORE: 'out/layout/authors_points_with_score.geo.json',
   LAYOUTED_CLUSTERS: 'out/layout/layouted_clusters.geo.json',
   BASE_ISLANDS_META: 'out/layout/baseIslands.meta.json',
   ISLANDS: 'out/layout/islands.geo.json',
   ISLANDS_BBOX: 'out/layout/islands_bbox.geo.json',
   ISLANDS_LOWDEF: 'out/layout/islands_lowdef.geo.json',
+  ISLANDS_LOWDEF_BUFF: 'out/layout/islands_lowdef_buff.geo.json',
   ISLANDS_CANDIDATES_META: 'out/layout/islands_candidates.meta.json',
   ISLANDS_FINAL_META: 'out/layout/islands_final.meta.json',
   TERRITORY_LINES: 'out/layout/territory_lines.geo.json',
@@ -70,10 +72,10 @@ module.exports = {
   //   maxY: 50,
   // },
   TEST_BBOX: {
-    minX: 14,
-    minY: 17,
-    maxX: 21,
-    maxY: 21,
+    minX: 3,
+    minY: 11,
+    maxX: 26,
+    maxY: 23,
   },
   BBOX_CHUNKS: [
     [-180, -90, 180, 90]
@@ -87,14 +89,14 @@ module.exports = {
     // [0, 0, 90, 80],
     // [90, 0, 220, 80],
   ],
-  MAX_BASE_ISLAND_SCALE_UP: 5,
-  CITIES_RANK_SCALE: d3
-    .scaleThreshold()
-    .domain([0, 1, 200, 6000])
-    .range([1, 1, 2, 3, 4]),
+  MAX_BASE_ISLAND_SCALE_UP: 1,
   TERRITORIES_RANK_SCALE: d3
     .scaleThreshold()
-    .domain([0, 1, 200, 6000])
+    .domain([0, 1, 350, 20000])
+    .range([1, 1, 2, 3, 4]),
+  CITIES_RANK_SCALE: d3
+    .scaleThreshold()
+    .domain([0, 1, 350, 7000])
     .range([1, 1, 2, 3, 4]),
   USE_PROGRESS_BAR: true,
   STORAGE_BUCKET_DATA: 'cilex-books-map-data',

@@ -11,12 +11,10 @@ const pointWithinBBox = require('../util/pointWithinBBox')
 
 const {
   BASE_ISLANDS,
-  ISLANDS_FINAL_META,
   ISLETS,
   ISLANDS,
   ISLANDS_BBOX,
-  TERRITORY_LINES,
-  TERRITORY_LINES_HIDEF,
+  ISLANDS_LOWDEF,
   BBOX_CHUNKS,
 } = require('../constants')
 
@@ -44,49 +42,47 @@ const next = () => {
   const { bboxChunk, chunkIndex } = bboxChunks[currentChunkPos]
   console.log('Current chunk:', bboxChunk, chunkIndex)
 
-  const islandsMetaPath = ISLANDS_FINAL_META.replace('.json', `_${chunkIndex}.json`)
-  const islandsMetaArray = JSON.parse(fs.readFileSync(islandsMetaPath, 'utf-8'))
-  const islandsMeta = {}
-  islandsMetaArray.forEach((m) => {
-    islandsMeta[m.layouted_id] = m
-  })
-  const allIslandsLayoutedIds = Object.keys(islandsMeta)
+  const islandsLowdefPath = ISLANDS_LOWDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
+  const islandsLowdef = JSON.parse(fs.readFileSync(islandsLowdefPath, 'utf-8')).features
+  // const islandsMeta = {}
+  // islandsMetaArray.forEach((m) => {
+  //   islandsMeta[m.layouted_id] = m
+  // })
+  // const allIslandsLayoutedIds = Object.keys(islandsMeta)
 
-  const territoriesLinesPath = TERRITORY_LINES.replace('.geo.json', `_${chunkIndex}.geo.json`)
-  const territoriesLines = JSON.parse(fs.readFileSync(territoriesLinesPath, 'utf-8')).features
-  // // console.log(territories[0])
+  // const territoriesLinesPath = TERRITORY_LINES.replace('.geo.json', `_${chunkIndex}.geo.json`)
+  // const territoriesLines = JSON.parse(fs.readFileSync(territoriesLinesPath, 'utf-8')).features
+  // // // console.log(territories[0])
 
-  const islandsLayoutedIds = allIslandsLayoutedIds.filter((islandLayoutedId) => {
-    const meta = islandsMeta[islandLayoutedId]
-    // if (!meta || meta.error) return false
-    const center = meta.center
-    return pointWithinBBox(center, bboxChunk)
-  })
+  // const islandsLayoutedIds = allIslandsLayoutedIds.filter((islandLayoutedId) => {
+  //   const meta = islandsMeta[islandLayoutedId]
+  //   // if (!meta || meta.error) return false
+  //   const center = meta.center
+  //   return pointWithinBBox(center, bboxChunk)
+  // })
 
-  console.log('Will collect', allIslandsLayoutedIds.length)
+  console.log('Will collect', islandsLowdef.length)
 
   const islands = []
   const intersectedTerritories = []
   let numFaulty = 0
-  const pb = progressBar(islandsLayoutedIds.length)
+  const pb = progressBar(islandsLowdef.length)
 
-  islandsLayoutedIds.forEach((islandLayoutedId) => {
+  islandsLowdef.forEach((islandLowdef) => {
     pb.increment()
-    const meta = islandsMeta[islandLayoutedId]
-    if (meta.island_id === undefined) {
-      numFaulty++
-      return
-    }
+    const meta = islandLowdef.properties
+
     // 1. Collect and transform hi def base island ------------
     const island = baseIslandsDict[meta.island_id]
-    const centerMrct = turf.toMercator(turf.point(meta.center))
+    const centerMrct = turf.toMercator(meta.center)
 
     const islandMrct = turf.toMercator(island)
     const transposedToCenterMrct = transposeToWorldCenter(islandMrct)
     const transposedIsland = transposeAndScale(centerMrct, transposedToCenterMrct, meta.scale)
     const transposedIslandWgs84 = turf.toWgs84(transposedIsland)
 
-    transposedIslandWgs84.properties.layouted_id = islandLayoutedId
+    // TODO whitelist props to move to final islands
+    transposedIslandWgs84.properties = { ...meta }
 
     islands.push(transposedIslandWgs84)
 
@@ -105,59 +101,9 @@ const next = () => {
     const isletsTransposedWgs84 = isletsTransposed.map((f) => turf.toWgs84(f))
     isletsTransposedWgs84.forEach((f) => {
       f.properties.islet = true
-      f.properties.layouted_id = islandLayoutedId
+      f.properties.author_id = meta.author_id
       islands.push(f)
     })
-
-    // 3. Collect territories and intersect them with hi def island ------
-    const islandLines = territoriesLines.filter((t) => t.properties.cluster_id === meta.layouted_id)
-    if (islandLines.length) {
-      // console.log(islandLines)
-      const transposedIslandWgs84Line = turf.polygonToLine(transposedIslandWgs84)
-      islandLines.forEach((line, index) => {
-        try {
-          const pointInPolygon = line.geometry.coordinates.filter((point) =>
-            turf.booleanPointInPolygon(point, transposedIslandWgs84)
-          )
-          if (pointInPolygon.length > 0) {
-            const firstPoint = turf.point(pointInPolygon[0])
-            const latestPoint = turf.point(pointInPolygon[pointInPolygon.length - 1])
-            const isFirstonLine = islandLines.some(
-              (line, i) => i !== index && turf.booleanPointOnLine(firstPoint, line)
-            )
-            const isLatestonLine = islandLines.some(
-              (line, i) => i !== index && turf.booleanPointOnLine(latestPoint, line)
-            )
-            const nearestFirstBorder = turf.nearestPointOnLine(
-              transposedIslandWgs84Line,
-              firstPoint
-            )
-            const nearestLatestBorder = turf.nearestPointOnLine(
-              transposedIslandWgs84Line,
-              latestPoint
-            )
-            if (!isFirstonLine) {
-              pointInPolygon.splice(0, 0, nearestFirstBorder.geometry.coordinates)
-            }
-            if (!isLatestonLine) {
-              pointInPolygon.push(nearestLatestBorder.geometry.coordinates)
-            }
-            const lineInPolygon = {
-              ...line,
-              geometry: {
-                ...line.geometry,
-                coordinates: pointInPolygon,
-              },
-            }
-            intersectedTerritories.push(lineInPolygon)
-          }
-        } catch (e) {
-          console.log('Turf error intersecting frontiers with territory', e)
-          // use entire line as fallback
-          intersectedTerritories.push(line)
-        }
-      })
-    }
   })
 
   const islandsGrouped = _.groupBy(islands, 'properties.layouted_id')
@@ -166,11 +112,7 @@ const next = () => {
     islandsBbox[id] = turf.bbox(islandsWithIslets)
   })
 
-  const territoryPath = TERRITORY_LINES_HIDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
-  fs.writeFileSync(territoryPath, JSON.stringify(turf.featureCollection(intersectedTerritories)))
-  console.log('Wrote', territoryPath)
-
-  console.log(islandsLayoutedIds.length, 'islands with', numFaulty, 'faulty')
+  // console.log(islandsLayoutedIds.length, 'islands with', numFaulty, 'faulty')
 
   const path = ISLANDS.replace('.geo.json', `_${chunkIndex}.geo.json`)
 

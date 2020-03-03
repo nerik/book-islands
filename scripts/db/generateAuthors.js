@@ -13,7 +13,8 @@ const db = new sqlite3.Database(BOOKS_DB_PATH, sqlite3.OPEN_READONLY, (err) => {
   db.all(
     `
     SELECT
-      author as id,
+      id,
+      author,
       author_slug,
       sum(score) AS sum_popularity,
       avg(score) AS avg_popularity,

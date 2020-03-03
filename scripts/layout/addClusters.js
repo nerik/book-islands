@@ -2,9 +2,9 @@
 
 const fs = require('fs')
 const turf = require('@turf/turf')
-const _ = require('lodash')
 const supercluster = require('supercluster')
 const getAuthorLayoutPriority = require('../util/getAuthorLayoutPriority')
+const randomColor = require('../util/randomColor')
 
 const { AUTHORS, UMAP_GEO, UMAP_CAT_META, POINTS, TEST_BBOX } = require('../constants')
 
@@ -56,7 +56,7 @@ console.log(authorsInUmapNotInDB.length, 'authors are in umap output but not in 
 const INITIAL_GEO_ZOOM = 9
 const bbox = [TEST_BBOX.minX, TEST_BBOX.minY, TEST_BBOX.maxX, TEST_BBOX.maxY]
 const supercl = new supercluster({
-  radius: 40,
+  radius: 150,
   maxZoom: 16,
 })
 supercl.load(orderedFeatures)
@@ -85,6 +85,10 @@ clusters.forEach((cluster) => {
     (f) => f.properties.author_id
   )
   superclusterImportantChild.properties.children_count = superclusterChildren.length
+  const col = randomColor()
+  superclusterChildren.forEach((c) => {
+    c.properties = { ...c.properties, ...col }
+  })
 })
 
 fs.writeFileSync(POINTS, JSON.stringify(turf.featureCollection(orderedFeatures)))

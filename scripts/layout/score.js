@@ -12,6 +12,7 @@ const transposeAndScale = require('../util/transposeAndScale')
 const {
   BASE_ISLANDS_LOWDEF_MRCT,
   POINTS,
+  POINTS_WITH_SCORE,
   TEST_BBOX,
   MAX_BASE_ISLAND_SCALE_UP,
   BBOX_CHUNKS,
@@ -121,7 +122,7 @@ const allPoints = inputPoints.features.filter(
 
 console.log(
   'Fitting/scoring',
-  inputPoints.length,
+  inputPoints.features.length,
   ' pts',
   allPoints.filter((f) => f.properties.children).length,
   'clusters'
@@ -216,7 +217,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
     // console.log(ordered.map(s => s.fitScore))
     // console.log(ordered.filter(f => f.fitScore > 0).map(f => f.fitScore))
     cluster.properties.islands_by_score = ordered.map((fs) => {
-      return fs.island_id
+      return { id: fs.island_id, scale: fs.newScale }
       // const props = { ...fs }
       // delete props.islandAtScale
       // return props
@@ -226,7 +227,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   })
   pb.stop()
 
-  const path = POINTS.replace('.geo.json', `_${chunkIndex}.json`)
+  const path = POINTS_WITH_SCORE.replace('.geo.json', `_${chunkIndex}.geo.json`)
   fs.writeFileSync(path, JSON.stringify(turf.featureCollection(bboxFilteredPoints)))
 
   console.log('Wrote', path)

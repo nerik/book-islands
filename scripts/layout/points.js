@@ -6,9 +6,7 @@ const polylabel = require('../util/polylabel')
 
 const {
   AUTHORS,
-  ISLANDS_FINAL_META,
   ISLANDS_LOWDEF,
-  TERRITORY_POLYGONS,
   TERRITORY_LABELS,
   BOOKS_POINTS,
   TERRITORIES_RANK_SCALE,
@@ -70,34 +68,17 @@ const territoryLabels = []
 const bookPoints = []
 BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   console.log('Current chunk:', bboxChunk, chunkIndex)
-  // Load meta to get base islands ids and transformations that need to be applied (scale+center)
-  const finalMetasPath = ISLANDS_FINAL_META.replace('.json', `_${chunkIndex}.json`)
-  const finalMetas = JSON.parse(fs.readFileSync(finalMetasPath, 'utf-8'))
   // Load layouted islands in low def to compute island centers and get coastal points
-  const islandsPath = ISLANDS_LOWDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
-  const islands = JSON.parse(fs.readFileSync(islandsPath, 'utf-8')).features
-  // Load territories to compute territory centers
-  const territoriesPath = TERRITORY_POLYGONS.replace('.geo.json', `_${chunkIndex}.geo.json`)
-  const territories = JSON.parse(fs.readFileSync(territoriesPath, 'utf-8')).features
+  const lowdefIslandsPath = ISLANDS_LOWDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
+  const lowdefIslands = JSON.parse(fs.readFileSync(lowdefIslandsPath, 'utf-8')).features
 
-  console.log('Has', finalMetas.length, 'islands')
+  console.log('Has', lowdefIslands.length, 'islands')
 
-  finalMetas.forEach((finalMeta) => {
-    const layoutedId = finalMeta.layouted_id
-    let polygons = []
-    let authorsIds = []
-    const island = islands.find((i) => i.properties.layouted_id === layoutedId)
-    if (!island) {
-      console.log('Island not found', layoutedId)
-      return
-    }
-    if (finalMeta.is_cluster === true) {
-      polygons = territories.filter((t) => t.properties.cluster_id === layoutedId)
-      authorsIds = polygons.map((p) => p.properties.author_id)
-    } else {
-      polygons = [island]
-      authorsIds = [island.properties.author_id]
-    }
+  lowdefIslands.forEach((lowdefIsland) => {
+    const meta = lowdefIsland.properties
+    const id = meta.author_slug
+    let polygons = [lowdefIsland]
+    let authorsIds = [id]
 
     // console.log(polygons, authorsIds)
     // console.log('---')
@@ -108,8 +89,8 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       books: getBooks(author),
     }))
 
+
     authorsBooks.forEach((authorBooks, i) => {
-      // generate polygon center
       const authorPop = authorBooks.author.sum_popularity
       const territory = polygons[i]
 
@@ -127,7 +108,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       // generate available points for terr
       // TODO sort "real" points (cities, peaks etc) by territory
       // TODO take "real" points (cities, peaks etc) points randomly until exhausted
-      const territoryCoastalPoints = island.geometry.coordinates[0].filter((coords) => {
+      const territoryCoastalPoints = lowdefIsland.geometry.coordinates[0].filter((coords) => {
         return checkCityInTerritory(coords, territory)
       })
       const territoryBbox = turf.bbox(territory)
