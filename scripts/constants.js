@@ -58,6 +58,8 @@ module.exports = {
   SEARCH_DB_AUTHORS_RANKED_LIMIT: 1000,
   MAX_ZOOM_GENERATED: 14,
   HEIGHT_TILES: 'tiles/height',
+  POINTS_TILES: 'tiles/points',
+  ISLANDS_TILES: 'tiles/islands',
   ALL_VECTOR_TILES: 'tiles/allvector',
   HEIGHT_TILE_SIZE: 256,
   // TEST_BBOX: {
@@ -96,5 +98,5 @@ module.exports = {
   USE_PROGRESS_BAR: true,
   STORAGE_BUCKET_DATA: 'cilex-books-map-data',
   STORAGE_BUCKET_TILES: 'cilex-books-map-tiles',
-  VERSION: '-v5',
+  VERSION: '-v1',
 }
