@@ -18,6 +18,7 @@ const mbtilesLowdef = `${ISLANDS_TILES}/main_lowdef.mbtiles`
 const tilesLowdef = `${ISLANDS_TILES}/tiles_lowdef`
 
 rimraf.sync(ISLANDS_TILES)
+console.log(ISLANDS_TILES)
 fs.mkdirSync(ISLANDS_TILES)
 // try { fs.unlinkSync(mbtiles); fs.unlinkSync(mbtiles) } catch(e) {}
 
