@@ -21,13 +21,12 @@ Follow: https://docs.google.com/drawings/d/1WDeQxxFDiNA2Y5J7IK4ZqCoCdBpEwG2N2rY1
 ./scripts/baseIslands/physicalToGeoJSON.js
 ./scripts/baseIslands/generateBaseIslands.js
 ./scripts/layout/score.js
-./scripts/layout/layout.js
+./scripts/layout/areaLayout.js
 ./scripts/layout/points.js
 ./scripts/layout/collectHighDefIslands.js
 ./scripts/layout/createSearchDatabase.js
 
-./scripts/tiles/islandsTiles.js
-./scripts/tiles/pointsTiles.js
+./scripts/tiles/allVectorTiles.js
 
 ./scripts/tiles/height/download.js
 ./scripts/tiles/height/heightTiles.js

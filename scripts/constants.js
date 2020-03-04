@@ -58,8 +58,6 @@ module.exports = {
   SEARCH_DB_AUTHORS_RANKED_LIMIT: 1000,
   MAX_ZOOM_GENERATED: 14,
   HEIGHT_TILES: 'tiles/height',
-  POINTS_TILES: 'tiles/points',
-  ISLANDS_TILES: 'tiles/islands',
   ALL_VECTOR_TILES: 'tiles/allvector',
   HEIGHT_TILE_SIZE: 256,
   // TEST_BBOX: {
