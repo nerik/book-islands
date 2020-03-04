@@ -89,6 +89,10 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       books: getBooks(author),
     }))
 
+    const chanceToBeInland = Math.min(
+      0.5,
+      Math.round(Math.sqrt(Math.sqrt(turf.area(lowdefIsland)))) / 500
+    )
 
     authorsBooks.forEach((authorBooks, i) => {
       const authorPop = authorBooks.author.sum_popularity
@@ -117,8 +121,10 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       authorBooks.books.forEach((book) => {
         // generate available points for territory
         let city
+        const useCoastalPt = Math.random() > chanceToBeInland
+
         while (!city) {
-          if (territoryCoastalPoints.length) {
+          if (useCoastalPt && territoryCoastalPoints.length) {
             const rd = Math.floor(Math.random() * territoryCoastalPoints.length)
             const randomPt = turf.point(territoryCoastalPoints.splice(rd, 1)[0])
             if (isCityIsolatedEnough(randomPt, islandCities)) {
@@ -128,18 +134,11 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
           } else {
             // console.log('no more coastal pts')
             const randomPt = turf.randomPoint(1, { bbox: territoryBbox }).features[0]
-            try {
-              if (
-                turf.booleanPointInPolygon(randomPt, territory) &&
-                isCityIsolatedEnough(randomPt, islandCities)
-              ) {
-                // console.log('adding rd pt')
-                city = randomPt
-              }
-            } catch (e) {
-              console.warn(e)
-              console.log('randomPt', randomPt)
-              console.log('territory', territory)
+            if (
+              turf.booleanPointInPolygon(randomPt, territory) &&
+              isCityIsolatedEnough(randomPt, islandCities)
+            ) {
+              // console.log('adding rd pt')
               city = randomPt
             }
           }

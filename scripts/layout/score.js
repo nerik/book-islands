@@ -26,7 +26,7 @@ console.log('Read inputs.')
 // Tries to scale up or down an island so that it fits best cluster points
 const findScaleFit = (clusterPointsMrct, clusterCenterMrct, islandMrct) => {
   const transposedNoScale = transposeAndScale(clusterCenterMrct, islandMrct, 1)
-  // if points already fit, try scaling down, else try scale up
+  // if points already fit, try scaling down, else try to scale up
   const dir = pointsWithinFeature(clusterPointsMrct, transposedNoScale) ? -1 : 1
 
   let currentScale = 1
@@ -102,9 +102,35 @@ const getFitScore = (islandAtScale, clusterBuffers) => {
   // return r > 1 ? 0 : r
 }
 
-const getFitScoreFast = (islandAtScale, clusterEnveloppeArea) => {
+const getFitScoreAreaFast = (islandAtScale, clusterEnveloppeArea) => {
   const islandArea = turf.area(islandAtScale)
   const r = clusterEnveloppeArea / islandArea
+  return r
+}
+
+const getFitScoreAngle = (islandAtScale, pointA, pointB) => {
+  let furthestPointsDist = 0
+  let furthestPoints
+
+  const allCoords = islandAtScale.geometry.coordinates[0]
+  allCoords.forEach((coordsA) => {
+    allCoords.forEach((coordsB) => {
+      const d = turf.distance(coordsA, coordsB)
+      if (d > furthestPointsDist) {
+        furthestPointsDist = d
+        furthestPoints = [coordsA, coordsB]
+      }
+    })
+  })
+
+  let islandBearing = turf.bearing(furthestPoints[0], furthestPoints[1])
+  if (islandBearing < 0) islandBearing += 180
+  let ptsBearing = turf.bearing(pointA, pointB)
+  if (ptsBearing < 0) ptsBearing += 180
+
+  // 0: worst score, 1: best score
+  const r = 1 / (Math.max(islandBearing, ptsBearing) / Math.min(islandBearing, ptsBearing))
+
   return r
 }
 
@@ -151,9 +177,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
     }
 
     const childrenIds = cluster.properties.children
-    const allClusterPoints = allPoints
-      .filter((p) => childrenIds.includes(p.properties.author_id))
-      .concat([cluster])
+    const allClusterPoints = allPoints.filter((p) => childrenIds.includes(p.properties.author_id))
 
     const allClusterPointsMrct = allClusterPoints.map((p) => turf.toMercator(p))
 
@@ -167,8 +191,6 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
         clusterEnveloppeArea = turf.area(clusterEnveloppe)
       } catch (e) {}
     }
-
-    const clusterCanHaveScore = clusterEnveloppeArea !== undefined
 
     const fitScores = baseIslandsMrct.features.map((baseIslandMrct) => {
       const island_id = baseIslandMrct.properties.island_id
@@ -189,9 +211,10 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
 
       const islandAtScale = turf.toWgs84(islandAtScaleMrct)
 
-      const fitScore = clusterCanHaveScore
-        ? getFitScoreFast(islandAtScale, clusterEnveloppeArea)
-        : null
+      const fitScore =
+        allClusterPoints.length > 2
+          ? getFitScoreAreaFast(islandAtScale, clusterEnveloppeArea)
+          : getFitScoreAngle(islandAtScale, allClusterPoints[0], allClusterPoints[1])
 
       return {
         islandArea: turf.area(islandAtScale),
@@ -199,28 +222,20 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
         newScale,
         islandAtScale,
         fitScore,
-        // clusterCanHaveScore,
       }
     })
 
-    if (clusterCanHaveScore !== true) {
-      const fsWithScale = fitScores.filter((fs) => fs.error === undefined)
-      const maxArea = d3Arr.max(fsWithScale, (d) => d.islandArea)
-      fitScores
-        .filter((fs) => fs.error === undefined)
-        .forEach((fs) => {
-          fs.fitScore = (maxArea - fs.islandArea) / maxArea
-        })
-    }
+    const ordered = _.orderBy(fitScores, ['fitScore'], ['desc']).slice(0, 100)
 
-    const ordered = _.orderBy(fitScores, ['fitScore'], ['desc']).slice(0, 10)
-    // console.log(ordered.map(s => s.fitScore))
-    // console.log(ordered.filter(f => f.fitScore > 0).map(f => f.fitScore))
-    cluster.properties.islands_by_score = ordered.map((fs) => {
-      return { id: fs.island_id, scale: fs.newScale }
-      // const props = { ...fs }
-      // delete props.islandAtScale
-      // return props
+    // randomly apply score to either cluster center or cluster center + children
+    // This is done to avoid the "fish swarm" effect when always applying same "direction" 
+    // to cluster children
+    const applyToPoints = Math.random() > 0.5 ? allClusterPoints : [cluster]
+
+    applyToPoints.forEach((p) => {
+      p.properties.islands_by_score = ordered.map((fs) => {
+        return { id: fs.island_id, scale: fs.newScale }
+      })
     })
 
     pb.increment()

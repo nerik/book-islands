@@ -45,7 +45,8 @@ const tryToPlaceIsland = (point, baseIslandMrct) => {
   let center
   let overlaps = true
   let currentAroundDist = 0
-  const AROUND_INCREMENT = 0.1
+  const AROUND_INCREMENT = 0.02
+
   while (overlaps === true) {
     center = getRandomPosAround(point, currentAroundDist)
     const centerMrct = turf.toMercator(center)
@@ -55,6 +56,7 @@ const tryToPlaceIsland = (point, baseIslandMrct) => {
       centerMrct,
       baseIslandMrct
     )
+
     finalScale = scale
     island = turf.toWgs84(islandAtScaleMrct)
 
@@ -71,7 +73,6 @@ const tryToPlaceIsland = (point, baseIslandMrct) => {
     currentAroundDist: currentAroundDist - AROUND_INCREMENT,
   }
 }
-
 
 const allIslandsBuffers = []
 
@@ -92,15 +93,41 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   const bboxIslands = []
 
   bboxFilteredFeatures.forEach((point) => {
-    const isCluster = point.properties.children
+    const isCluster = point.properties.children !== undefined
 
     let baseIslandMrct
 
-    if (isCluster) {
-      const islandMeta = point.properties.islands_by_score[0]
-      baseIslandMrct = baseIslandsMrct.features.find(
-        (i) => i.properties.island_id === islandMeta.id
-      )
+    const defaultCenterMrct = turf.toMercator(point)
+
+    if (point.properties.islands_by_score) {
+      const scoredIslands = point.properties.islands_by_score
+      // console.log('Trying to find island...', isCluster)
+      let scoredIslandIndex = 0
+      for (scoredIslandIndex = 0; scoredIslandIndex < scoredIslands.length; scoredIslandIndex++) {
+        const islandMeta = scoredIslands[scoredIslandIndex]
+
+        const islandsAround = cheapIslandsAround(allIslandsBuffers, point, 1)
+        const islandsAroundIds = islandsAround.map((i) => i.properties.island_id)
+        // console.log(islandMeta.id, islandsAroundIds)
+
+        // There's already the same island close, use next
+        if (islandsAroundIds.includes(islandMeta.id)) {
+          continue
+        }
+
+        baseIslandMrct = baseIslandsMrct.features.find(
+          (i) => i.properties.island_id === islandMeta.id
+        )
+        const { scale } = getIslandScaleForPriority(
+          point.properties.priority,
+          defaultCenterMrct,
+          baseIslandMrct
+        )
+
+        // basically never pick an island that upscales to avoid ugly heights and island borders
+        if (scale < 1) break
+      }
+      // console.log('found for:', point.properties.author_slug, scoredIslandIndex)
     } else {
       const rdIndex = Math.floor(Math.random() * baseIslandsMrct.features.length)
       baseIslandMrct = baseIslandsMrct.features[rdIndex]
