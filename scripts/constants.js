@@ -38,17 +38,17 @@ module.exports = {
   UMAP_CAT_STATS: 'out/umap/umap_cat_stats.json',
   UMAP_GEO: 'out/umap/umap.geo.json',
   CLUSTERS: 'out/layout/clusters.geo.json',
+  POINTS: 'out/layout/authors_points.geo.json',
+  POINTS_WITH_SCORE: 'out/layout/authors_points_with_score.geo.json',
   LAYOUTED_CLUSTERS: 'out/layout/layouted_clusters.geo.json',
   BASE_ISLANDS_META: 'out/layout/baseIslands.meta.json',
   ISLANDS: 'out/layout/islands.geo.json',
   ISLANDS_BBOX: 'out/layout/islands_bbox.geo.json',
   ISLANDS_LOWDEF: 'out/layout/islands_lowdef.geo.json',
+  ISLANDS_LOWDEF_BUFF: 'out/layout/islands_lowdef_buff.geo.json',
   ISLANDS_CANDIDATES_META: 'out/layout/islands_candidates.meta.json',
   ISLANDS_FINAL_META: 'out/layout/islands_final.meta.json',
-  TERRITORY_LINES: 'out/layout/territory_lines.geo.json',
-  TERRITORY_LINES_HIDEF: 'out/layout/territory_lines_hi.geo.json',
-  TERRITORY_POLYGONS: 'out/layout/territory_polygons.geo.json',
-  TERRITORY_LABELS: 'out/layout/territory_labels.geo.json',
+  ISLAND_LABELS: 'out/layout/island_labels.geo.json',
   BOOKS_POINTS: 'out/layout/books_points.geo.json',
   SEARCH_DB: 'out/search-db/search-authors-all.csv',
   SEARCH_DB_RANKED: 'out/search-db/search-authors.csv',
@@ -58,42 +58,40 @@ module.exports = {
   SEARCH_DB_AUTHORS_RANKED_LIMIT: 1000,
   MAX_ZOOM_GENERATED: 14,
   HEIGHT_TILES: 'tiles/height',
-  POINTS_TILES: 'tiles/points',
-  ISLANDS_TILES: 'tiles/islands',
-  TERRITORIES_TILES: 'tiles/territories',
+  ALL_VECTOR_TILES: 'tiles/allvector',
   HEIGHT_TILE_SIZE: 256,
   // TEST_BBOX: {
-  //   minX: -10,
-  //   minY: 10,
-  //   maxX: 50,
-  //   maxY: 50,
+  //   minX: 3,
+  //   minY: 11,
+  //   maxX: 26,
+  //   maxY: 23,
   // },
   TEST_BBOX: {
-    minX: -115,
-    minY: -19,
-    maxX: -110,
-    maxY: -15,
+    minX: -180,
+    minY: -90,
+    maxX: 180,
+    maxY: 90,
   },
   BBOX_CHUNKS: [
-    [-180,-90,180,90]
+    // [-180, -90, 180, 90]
     // -240 and 220 it is due the umap offsets
-    // [-240, -80, -90, 0],
-    // [-90, -80, 0, 0],
-    // [0, -80, 90, 0],
-    // [90, -80, 220, 0],
-    // [-240, 0, -90, 80],
-    // [-90, 0, 0, 80],
-    // [0, 0, 90, 80],
-    // [90, 0, 220, 80],
+    [-240, -80, -90, 0],
+    [-90, -80, 0, 0],
+    [0, -80, 90, 0],
+    [90, -80, 220, 0],
+    [-240, 0, -90, 80],
+    [-90, 0, 0, 80],
+    [0, 0, 90, 80],
+    [90, 0, 220, 80],
   ],
-  MAX_BASE_ISLAND_SCALE_UP: 5,
+  MAX_BASE_ISLAND_SCALE_UP: 1,
+  ISLAND_RANK_SCALE: d3
+    .scaleThreshold()
+    .domain([0, 1, 350, 20000])
+    .range([1, 1, 2, 3, 4]),
   CITIES_RANK_SCALE: d3
     .scaleThreshold()
-    .domain([0, 1, 200, 6000])
-    .range([1, 1, 2, 3, 4]),
-  TERRITORIES_RANK_SCALE: d3
-    .scaleThreshold()
-    .domain([0, 1, 200, 6000])
+    .domain([0, 1, 350, 7000])
     .range([1, 1, 2, 3, 4]),
   USE_PROGRESS_BAR: true,
   STORAGE_BUCKET_DATA: 'cilex-books-map-data',

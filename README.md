@@ -17,19 +17,16 @@ Follow: https://docs.google.com/drawings/d/1WDeQxxFDiNA2Y5J7IK4ZqCoCdBpEwG2N2rY1
 4. Prepare layout
 ./scripts/db/generateAuthors.js
 ./scripts/umap/normalizeToWorld.js
-./scripts/layout/clusterByPop.js
+./scripts/layout/addClusters.js
 ./scripts/baseIslands/physicalToGeoJSON.js
 ./scripts/baseIslands/generateBaseIslands.js
 ./scripts/layout/score.js
-./scripts/layout/layout.js
-./scripts/layout/territories.js
+./scripts/layout/areaLayout.js
 ./scripts/layout/points.js
 ./scripts/layout/collectHighDefIslands.js
 ./scripts/layout/createSearchDatabase.js
 
-./scripts/tiles/islandsTiles.js
-./scripts/tiles/pointsTiles.js
-./scripts/tiles/territoriesTiles.js
+./scripts/tiles/allVectorTiles.js
 
 ./scripts/tiles/height/download.js
 ./scripts/tiles/height/heightTiles.js

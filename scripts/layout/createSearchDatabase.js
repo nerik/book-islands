@@ -5,7 +5,7 @@ const csvStringify = require('csv-stringify/lib/sync')
 
 const {
   BOOKS_POINTS,
-  TERRITORY_LABELS,
+  ISLAND_LABELS,
   SEARCH_BOOKS_DB,
   SEARCH_BOOKS_DB_RANKED,
   SEARCH_DB,
@@ -14,7 +14,7 @@ const {
   SEARCH_DB_AUTHORS_RANKED_LIMIT,
 } = require('../constants')
 
-const authors = JSON.parse(fs.readFileSync(TERRITORY_LABELS, 'utf-8')).features
+const authors = JSON.parse(fs.readFileSync(ISLAND_LABELS, 'utf-8')).features
 const books = JSON.parse(fs.readFileSync(BOOKS_POINTS, 'utf-8')).features
 
 const trunc = (n) => {
