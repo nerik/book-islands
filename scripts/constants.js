@@ -60,6 +60,7 @@ module.exports = {
   HEIGHT_TILES: 'tiles/height',
   POINTS_TILES: 'tiles/points',
   ISLANDS_TILES: 'tiles/islands',
+  ALL_VECTOR_TILES: 'tiles/allvector',
   HEIGHT_TILE_SIZE: 256,
   // TEST_BBOX: {
   //   minX: 3,
@@ -76,14 +77,15 @@ module.exports = {
   BBOX_CHUNKS: [
     // [-180, -90, 180, 90]
     // -240 and 220 it is due the umap offsets
-    [-240, -80, -90, 0],
-    [-90, -80, 0, 0],
-    [0, -80, 90, 0],
+
+    // [-240, -80, -90, 0],
+    // [-90, -80, 0, 0],
+    // [0, -80, 90, 0],
     [90, -80, 220, 0],
-    [-240, 0, -90, 80],
-    [-90, 0, 0, 80],
-    [0, 0, 90, 80],
-    [90, 0, 220, 80],
+    // [-240, 0, -90, 80],
+    // [-90, 0, 0, 80],
+    // [0, 0, 90, 80],
+    // [90, 0, 220, 80],
   ],
   MAX_BASE_ISLAND_SCALE_UP: 1,
   ISLAND_RANK_SCALE: d3
