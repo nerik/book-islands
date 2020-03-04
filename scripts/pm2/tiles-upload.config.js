@@ -15,11 +15,6 @@ module.exports = {
       autorestart: false,
     },
     {
-      name: 'upload-territories',
-      script: `gsutil -h "Cache-Control:public,max-age=${cacheAge}" -h "Content-Encoding:gzip" -m cp -r tiles/territories/* gs://${STORAGE_BUCKET_TILES}/territories${VERSION}`,
-      autorestart: false,
-    },
-    {
       name: 'upload-heights',
       script: `gsutil -h "Cache-Control:public,max-age=${cacheAge}" -m cp -r tiles/height gs://${STORAGE_BUCKET_TILES}/heights${VERSION}`,
       autorestart: false,

@@ -7,9 +7,9 @@ const polylabel = require('../util/polylabel')
 const {
   AUTHORS,
   ISLANDS_LOWDEF,
-  TERRITORY_LABELS,
+  ISLAND_LABELS,
   BOOKS_POINTS,
-  TERRITORIES_RANK_SCALE,
+  ISLAND_RANK_SCALE,
   BBOX_CHUNKS,
   CITIES_RANK_SCALE,
 } = require('../constants')
@@ -102,7 +102,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       labelCenterPt.properties.id = authorBooks.author.id
       labelCenterPt.properties.slug = authorBooks.author.author_slug
       labelCenterPt.properties.popularity = Math.round(authorBooks.author.sum_popularity)
-      labelCenterPt.properties.rank = TERRITORIES_RANK_SCALE(authorPop)
+      labelCenterPt.properties.rank = ISLAND_RANK_SCALE(authorPop)
       territoryLabels.push(labelCenterPt)
 
       // generate available points for terr
@@ -174,7 +174,7 @@ console.log('2:', bookPoints.filter((f) => f.properties.rank === 2).length)
 console.log('3:', bookPoints.filter((f) => f.properties.rank === 3).length)
 console.log('4:', bookPoints.filter((f) => f.properties.rank === 4).length)
 
-fs.writeFileSync(TERRITORY_LABELS, JSON.stringify(turf.featureCollection(territoryLabels)))
+fs.writeFileSync(ISLAND_LABELS, JSON.stringify(turf.featureCollection(territoryLabels)))
 fs.writeFileSync(BOOKS_POINTS, JSON.stringify(turf.featureCollection(bookPoints)))
-console.log('Wrote', TERRITORY_LABELS)
+console.log('Wrote', ISLAND_LABELS)
 console.log('Wrote', BOOKS_POINTS)

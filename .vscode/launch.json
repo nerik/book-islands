@@ -52,12 +52,7 @@
           "name": "Layout",
           "program": "${workspaceFolder}/scripts/layout/layout.js"
         },
-        {
-          "type": "node",
-          "request": "launch",
-          "name": "Territories",
-          "program": "${workspaceFolder}/scripts/layout/territories.js"
-        },
+
         {
           "type": "node",
           "request": "launch",

@@ -15,6 +15,8 @@ app.use(function(req, res, next) {
   }
   next()
 })
-app.use(express.static(path.join(__dirname, '../tiles')))
+const tilePath = path.join(__dirname, '../tiles')
+console.log(tilePath)
+app.use(express.static(tilePath))
 
 app.listen(PORT)

@@ -2,7 +2,7 @@
   "apps": [
     {
       "name": "generate-tiles",
-      "script": "./scripts/db/generateAuthors.js && ./scripts/umap/normalizeToWorld.js && ./scripts/layout/clusterByPop.js && ./scripts/baseIslands/physicalToGeoJSON.js && ./scripts/baseIslands/generateBaseIslands.js && ./scripts/layout/score.js && ./scripts/layout/layout.js && ./scripts/layout/territories.js && ./scripts/layout/points.js && ./scripts/layout/collectHighDefIslands.js && ./scripts/layout/createSearchDatabase.js && ./scripts/tiles/islandsTiles.js && ./scripts/tiles/pointsTiles.js && ./scripts/tiles/territoriesTiles.js",
+      "script": "./scripts/db/generateAuthors.js && ./scripts/umap/normalizeToWorld.js && ./scripts/layout/addClusters.js && ./scripts/baseIslands/physicalToGeoJSON.js && ./scripts/baseIslands/generateBaseIslands.js && ./scripts/layout/score.js && ./scripts/layout/areaLayout.js && ./scripts/layout/points.js && ./scripts/layout/collectHighDefIslands.js && ./scripts/layout/createSearchDatabase.js && ./scripts/tiles/islandsTiles.js && ./scripts/tiles/pointsTiles.js",
       "autorestart": false,
       "args": "--max_old_space_size=68192",
       "node_args": "--max_old_space_size=68192"

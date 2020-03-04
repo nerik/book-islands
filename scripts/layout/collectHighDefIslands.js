@@ -44,27 +44,10 @@ const next = () => {
 
   const islandsLowdefPath = ISLANDS_LOWDEF.replace('.geo.json', `_${chunkIndex}.geo.json`)
   const islandsLowdef = JSON.parse(fs.readFileSync(islandsLowdefPath, 'utf-8')).features
-  // const islandsMeta = {}
-  // islandsMetaArray.forEach((m) => {
-  //   islandsMeta[m.layouted_id] = m
-  // })
-  // const allIslandsLayoutedIds = Object.keys(islandsMeta)
-
-  // const territoriesLinesPath = TERRITORY_LINES.replace('.geo.json', `_${chunkIndex}.geo.json`)
-  // const territoriesLines = JSON.parse(fs.readFileSync(territoriesLinesPath, 'utf-8')).features
-  // // // console.log(territories[0])
-
-  // const islandsLayoutedIds = allIslandsLayoutedIds.filter((islandLayoutedId) => {
-  //   const meta = islandsMeta[islandLayoutedId]
-  //   // if (!meta || meta.error) return false
-  //   const center = meta.center
-  //   return pointWithinBBox(center, bboxChunk)
-  // })
 
   console.log('Will collect', islandsLowdef.length)
 
   const islands = []
-  const intersectedTerritories = []
   let numFaulty = 0
   const pb = progressBar(islandsLowdef.length)
 
