@@ -68,12 +68,6 @@ module.exports = {
   //   maxX: 26,
   //   maxY: 23,
   // },
-  // TEST_BBOX: {
-  //   minX: -180,
-  //   minY: -90,
-  //   maxX: 180,
-  //   maxY: 90,
-  // },
   TEST_BBOX: {
     minX: -180,
     minY: -90,
@@ -104,5 +98,5 @@ module.exports = {
   USE_PROGRESS_BAR: true,
   STORAGE_BUCKET_DATA: 'cilex-books-map-data',
   STORAGE_BUCKET_TILES: 'cilex-books-map-tiles',
-  VERSION: '-v1',
+  VERSION: '-v2',
 }
