@@ -2,17 +2,20 @@ const turf = require('@turf/turf')
 const transposeAndScale = require('../util/transposeAndScale')
 
 const getIslandScaleForPriority = (score, clusterCenterMrct, islandMrct) => {
+  // TODO randomize score a little bit if it is low??
+  // TODO how to have median values a bit exaggerated??
+  // console.log(score)
   // how much scale must be decreased at each iteration to try to fit with target area
-  const STEP_DECREMENT = 0.01
+  const STEP_DECREMENT = 0.001
 
   // at which scale should we start with (tends to decrease size of big islands)
-  const MAX_SCALE = 10
+  const MAX_SCALE = 1
 
   // how to map priority score (composite of num books and popularity) to target max area
   // smaller means more risk of running out of iterations and picking lowest possible scale
   // for small islands
-  const MAP_PRIORITY_SCORE_WITH_AREA = 1000000
-  const maxArea = Math.pow(score, 1.5) * MAP_PRIORITY_SCORE_WITH_AREA
+  const MAP_PRIORITY_SCORE_WITH_AREA = 500000
+  const maxArea = Math.pow(score, 1.8) * MAP_PRIORITY_SCORE_WITH_AREA
 
   // scale everything by this factor
   const OVERALL_SCALE_FACTOR = 1

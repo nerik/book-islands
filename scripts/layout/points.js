@@ -89,6 +89,10 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       books: getBooks(author),
     }))
 
+    const chanceToBeInland = Math.min(
+      0.5,
+      Math.round(Math.sqrt(Math.sqrt(turf.area(lowdefIsland)))) / 500
+    )
 
     authorsBooks.forEach((authorBooks, i) => {
       const authorPop = authorBooks.author.sum_popularity
@@ -102,6 +106,8 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       labelCenterPt.properties.id = authorBooks.author.id
       labelCenterPt.properties.slug = authorBooks.author.author_slug
       labelCenterPt.properties.popularity = Math.round(authorBooks.author.sum_popularity)
+      // sort is just the opposite of pop, use it for z-ordering in mgl
+      labelCenterPt.properties.sort = -labelCenterPt.properties.popularity
       labelCenterPt.properties.rank = ISLAND_RANK_SCALE(authorPop)
       territoryLabels.push(labelCenterPt)
 
@@ -117,8 +123,10 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       authorBooks.books.forEach((book) => {
         // generate available points for territory
         let city
+        const useCoastalPt = Math.random() > chanceToBeInland
+
         while (!city) {
-          if (territoryCoastalPoints.length) {
+          if (useCoastalPt && territoryCoastalPoints.length) {
             const rd = Math.floor(Math.random() * territoryCoastalPoints.length)
             const randomPt = turf.point(territoryCoastalPoints.splice(rd, 1)[0])
             if (isCityIsolatedEnough(randomPt, islandCities)) {
@@ -128,28 +136,23 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
           } else {
             // console.log('no more coastal pts')
             const randomPt = turf.randomPoint(1, { bbox: territoryBbox }).features[0]
-            try {
-              if (
-                turf.booleanPointInPolygon(randomPt, territory) &&
-                isCityIsolatedEnough(randomPt, islandCities)
-              ) {
-                // console.log('adding rd pt')
-                city = randomPt
-              }
-            } catch (e) {
-              console.warn(e)
-              console.log('randomPt', randomPt)
-              console.log('territory', territory)
+            if (
+              turf.booleanPointInPolygon(randomPt, territory) &&
+              isCityIsolatedEnough(randomPt, islandCities)
+            ) {
+              // console.log('adding rd pt')
               city = randomPt
             }
           }
         }
         islandCities.push(city)
         const rank = CITIES_RANK_SCALE(book.popularity)
+        const sort = -Math.round(book.popularity)
         city.properties = {
           title: book.title,
           book_id: book.book_id,
           rank,
+          sort,
           // remove below for final dataset
           author_id: authorBooks.author.id,
           // cluster_r: cluster.properties.cluster_r,
