@@ -9,7 +9,6 @@ const {
   BASE_ISLANDS_LOWDEF_MRCT,
   POINTS_WITH_SCORE,
   ISLANDS_LOWDEF,
-  ISLANDS_LOWDEF_BUFF,
 } = require('../constants')
 const {
   getIslandScaleForPriority,
@@ -158,7 +157,3 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   fs.writeFileSync(islandsLowdefPath, JSON.stringify(turf.featureCollection(bboxIslands)))
   console.log('Wrote', islandsLowdefPath)
 })
-
-const islandsLowdefBuffPath = ISLANDS_LOWDEF_BUFF
-fs.writeFileSync(ISLANDS_LOWDEF_BUFF, JSON.stringify(turf.featureCollection(allIslandsBuffers)))
-console.log('Wrote', islandsLowdefBuffPath)

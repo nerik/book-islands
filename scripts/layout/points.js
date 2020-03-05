@@ -106,6 +106,8 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       labelCenterPt.properties.id = authorBooks.author.id
       labelCenterPt.properties.slug = authorBooks.author.author_slug
       labelCenterPt.properties.popularity = Math.round(authorBooks.author.sum_popularity)
+      // sort is just the opposite of pop, use it for z-ordering in mgl
+      labelCenterPt.properties.sort = -labelCenterPt.properties.popularity
       labelCenterPt.properties.rank = ISLAND_RANK_SCALE(authorPop)
       territoryLabels.push(labelCenterPt)
 
@@ -145,10 +147,12 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
         }
         islandCities.push(city)
         const rank = CITIES_RANK_SCALE(book.popularity)
+        const sort = -Math.round(book.popularity)
         city.properties = {
           title: book.title,
           book_id: book.book_id,
           rank,
+          sort,
           // remove below for final dataset
           author_id: authorBooks.author.id,
           // cluster_r: cluster.properties.cluster_r,

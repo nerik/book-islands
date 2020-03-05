@@ -56,7 +56,7 @@ module.exports = {
   SEARCH_BOOKS_DB_RANKED: 'out/search-db/search-books.csv',
   SEARCH_DB_BOOKS_RANKED_LIMIT: 4000,
   SEARCH_DB_AUTHORS_RANKED_LIMIT: 1000,
-  MAX_ZOOM_GENERATED: 14,
+  MAX_ZOOM_GENERATED: 12,
   HEIGHT_TILES: 'tiles/height',
   ALL_VECTOR_TILES: 'tiles/allvector',
   HEIGHT_TILE_SIZE: 256,
@@ -65,6 +65,12 @@ module.exports = {
   //   minY: 11,
   //   maxX: 26,
   //   maxY: 23,
+  // },
+  // TEST_BBOX: {
+  //   minX: -180,
+  //   minY: -90,
+  //   maxX: 180,
+  //   maxY: 90,
   // },
   TEST_BBOX: {
     minX: -180,
