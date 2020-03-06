@@ -4,7 +4,9 @@ const $ = require('cheerio')
 
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY
 
+const FETCH_KNOWLEGDE_GRAPH = false
 const FETCH_WIKIPEDIA_DATA = true
+const FETCH_BOOKS_API = true
 const DEBUG = true
 
 function cleanText(text) {
@@ -19,13 +21,41 @@ function cleanText(text) {
     .trim()
 }
 
+async function getAuthorInfoFromBooksAPI(author) {
+  const apiUrl = 'https://www.googleapis.com/books/v1/volumes'
+  const encodedAuthor = encodeURIComponent(author)
+  const uri = `${apiUrl}?q=+inauthor:${encodedAuthor}&key=${GOOGLE_API_KEY}`
+  const { items } = await rp({ uri, json: true })
+  if (items && items.length) {
+    const { volumeInfo } = items[0]
+    const url = volumeInfo.canonicalVolumeLink
+    const html = await rp(url, { followAllRedirects: true })
+    const aboutTheAuthor = $('#about_author_v', html)
+    if (aboutTheAuthor) {
+      const authorInfo = {
+        id: author,
+        name: author,
+        bio: aboutTheAuthor.text(),
+      }
+      return authorInfo
+    } else {
+      throw new Error(`No author data in books api result`)
+    }
+  } else {
+    throw new Error(`No data in books api`)
+  }
+}
+
 async function getAuthorInfo(author) {
   const apiUrl = 'https://kgsearch.googleapis.com/v1/entities:search'
   const encodedAuthor = encodeURIComponent(author)
   const uri = `${apiUrl}?query=${encodedAuthor}&key=${GOOGLE_API_KEY}&limit=1&indent=True&types=Person`
   try {
-    const { itemListElement } = await rp({ uri, json: true })
-    if (itemListElement.length) {
+    if (FETCH_KNOWLEGDE_GRAPH && DEBUG) {
+      console.log(`Fecthing knowledge graph data for ${author}`)
+    }
+    const { itemListElement } = FETCH_KNOWLEGDE_GRAPH ? await rp({ uri, json: true }) : {}
+    if (itemListElement && itemListElement.length) {
       const { name, image, url, detailedDescription } = itemListElement[0].result
       const authorInfo = {
         id: author,
@@ -82,7 +112,18 @@ async function getAuthorInfo(author) {
       }
       return authorInfo
     } else {
-      throw new Error(`No knowlegde graph data`)
+      if (FETCH_BOOKS_API) {
+        if (DEBUG) {
+          console.warn(`No knowlegde graph data for ${author}, trying with google books api`)
+        }
+        try {
+          return await getAuthorInfoFromBooksAPI(author)
+        } catch (e) {
+          throw new Error(e.message)
+        }
+      } else {
+        throw new Error(`No knowlegde graph data`)
+      }
     }
   } catch (e) {
     if (DEBUG) {

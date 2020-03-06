@@ -77,5 +77,16 @@ const generateAuthorErrorJsons = async () => {
   generateAuthorJsons(authors)
 }
 
+const getSingleAuthor = async (author) => {
+  try {
+    const authorInfo = await getAuthorInfo(author)
+    console.log('Author info', authorInfo)
+  } catch (e) {
+    console.error(e)
+  }
+}
+
 // generateAuthorDBJsons()
 generateAuthorErrorJsons()
+// getSingleAuthor('paquito palotes')
+// getSingleAuthor('Catherine Jurca')
