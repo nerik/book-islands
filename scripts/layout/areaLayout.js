@@ -16,6 +16,7 @@ const {
   overlapsWithIslandsAround,
   getRandomPosAround,
 } = require('./areaLayoutUtils')
+const minBy = require('lodash/minBy')
 
 const baseIslandsMrct = JSON.parse(fs.readFileSync(BASE_ISLANDS_LOWDEF_MRCT, 'utf-8'))
 
@@ -38,13 +39,15 @@ console.log('Layouting', allFeatures.length, 'features')
 
 
 
-const tryToPlaceIsland = (point, baseIslandMrct) => {
+const tryToPlaceIsland = (point, baseIslandMrct, foundScale) => {
   let island
   let finalScale
   let center
   let overlaps = true
   let currentAroundDist = 0
   const AROUND_INCREMENT = 0.02
+
+  let tries = 0
 
   while (overlaps === true) {
     center = getRandomPosAround(point, currentAroundDist)
@@ -53,7 +56,8 @@ const tryToPlaceIsland = (point, baseIslandMrct) => {
     const { scale, islandAtScaleMrct } = getIslandScaleForPriority(
       point.properties.priority,
       centerMrct,
-      baseIslandMrct
+      baseIslandMrct,
+      foundScale
     )
 
     finalScale = scale
@@ -64,7 +68,10 @@ const tryToPlaceIsland = (point, baseIslandMrct) => {
     overlaps = overlapsWithIslandsAround(island, islandsAround)
 
     currentAroundDist += AROUND_INCREMENT
+    tries++
   }
+
+  // console.log('placed with ', tries, 'tries')
   return {
     island,
     scale: finalScale,
@@ -95,6 +102,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
     const isCluster = point.properties.children !== undefined
 
     let baseIslandMrct
+    let foundScale
 
     const defaultCenterMrct = turf.toMercator(point)
 
@@ -102,7 +110,14 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       const scoredIslands = point.properties.islands_by_score
       // console.log('Trying to find island...', isCluster)
       let scoredIslandIndex = 0
-      for (scoredIslandIndex = 0; scoredIslandIndex < scoredIslands.length; scoredIslandIndex++) {
+      const MAX_SCORED_ISLAND_TRIES = 100
+      const allScales = []
+
+      for (
+        scoredIslandIndex = 0;
+        scoredIslandIndex < MAX_SCORED_ISLAND_TRIES - 1;
+        scoredIslandIndex++
+      ) {
         const islandMeta = scoredIslands[scoredIslandIndex]
 
         const islandsAround = cheapIslandsAround(allIslandsBuffers, point, 1)
@@ -117,22 +132,51 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
         baseIslandMrct = baseIslandsMrct.features.find(
           (i) => i.properties.island_id === islandMeta.id
         )
-        const { scale } = getIslandScaleForPriority(
+        let scaleObj = getIslandScaleForPriority(
           point.properties.priority,
           defaultCenterMrct,
-          baseIslandMrct
+          baseIslandMrct,
+          1
         )
 
+        // if scale maxed out, try to start with a much higher value
+        if (scaleObj.scale === 1) {
+          scaleObj = getIslandScaleForPriority(
+            point.properties.priority,
+            defaultCenterMrct,
+            baseIslandMrct,
+            10
+          )
+        }
+
+        allScales.push({ scale: scaleObj.scale, score: islandMeta.score, island_id: islandMeta.id })
+
+        foundScale = scaleObj.scale
+
         // basically never pick an island that upscales to avoid ugly heights and island borders
-        if (scale < 1) break
+        if (scaleObj.scale < 1) break
       }
-      // console.log('found for:', point.properties.author_slug, scoredIslandIndex)
+      if (scoredIslandIndex === MAX_SCORED_ISLAND_TRIES - 1) {
+        const lowestScale = minBy(allScales, 'scale')
+        console.log(
+          'Couldnt find island with no upscaling, will fallback to island with least upscaling\n',
+          lowestScale,
+          point.properties.author_slug
+        )
+        baseIslandMrct = baseIslandsMrct.features.find(
+          (i) => i.properties.island_id === lowestScale.island_id
+        )
+      }
     } else {
       const rdIndex = Math.floor(Math.random() * baseIslandsMrct.features.length)
       baseIslandMrct = baseIslandsMrct.features[rdIndex]
     }
 
-    const { island, scale, center, currentAroundDist } = tryToPlaceIsland(point, baseIslandMrct)
+    const { island, scale, center, currentAroundDist } = tryToPlaceIsland(
+      point,
+      baseIslandMrct,
+      foundScale ? foundScale : 1 // force using previously found value to avoid having to recalculate
+    )
 
     const col = randomColor()
 

@@ -74,38 +74,16 @@ const findScaleFit = (clusterPointsMrct, clusterCenterMrct, islandMrct) => {
   }
 }
 
-const getFitScore = (islandAtScale, clusterBuffers) => {
-  // intersect buffers with island
-  const intersected = clusterBuffers.map((b) => {
-    return turf.intersect(b, islandAtScale)
-  })
-  // merge buffers - not needed if only one
-  const merged = turf.union.apply(null, intersected)
-
-  // compared intersected area vs island total area
-  const mergedArea = turf.area(merged)
-  const islandArea = turf.area(islandAtScale)
-
-  const r = islandArea / mergedArea
-
-  if (r > 1) {
-    // wtf
-    return -1
-  }
-
-  return r
-
-  // TODO 2 points clusters env is null
-  // const clusterArea = turf.area(clusterEnveloppe)
-  // const islandArea = turf.area(islandAtScaleMrct)
-  // const r = clusterArea/islandArea
-  // return r > 1 ? 0 : r
-}
-
 const getFitScoreAreaFast = (islandAtScale, clusterEnveloppeArea) => {
   const islandArea = turf.area(islandAtScale)
   const r = clusterEnveloppeArea / islandArea
   return r
+}
+
+const cheapDistance = (coordA, coordB) => {
+  const longitudeΔ = coordA[0] - coordB[0]
+  const latitudeΔ = coordA[1] - coordB[1]
+  return Math.sqrt(longitudeΔ * longitudeΔ + latitudeΔ * latitudeΔ)
 }
 
 const getFitScoreAngle = (islandAtScale, pointA, pointB) => {
@@ -115,7 +93,8 @@ const getFitScoreAngle = (islandAtScale, pointA, pointB) => {
   const allCoords = islandAtScale.geometry.coordinates[0]
   allCoords.forEach((coordsA) => {
     allCoords.forEach((coordsB) => {
-      const d = turf.distance(coordsA, coordsB)
+      // const d = turf.distance(coordsA, coordsB)
+      const d = cheapDistance(coordsA, coordsB)
       if (d > furthestPointsDist) {
         furthestPointsDist = d
         furthestPoints = [coordsA, coordsB]
@@ -227,14 +206,14 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
 
     const ordered = _.orderBy(fitScores, ['fitScore'], ['desc']).slice(0, 100)
 
-    // randomly apply score to either cluster center or cluster center + children
-    // This is done to avoid the "fish swarm" effect when always applying same "direction" 
+    // randomly apply score to either cluster center or cluster center AND children
+    // This is done to avoid the "fish swarm" effect when always applying same "direction"
     // to cluster children
     const applyToPoints = Math.random() > 0.5 ? allClusterPoints : [cluster]
 
     applyToPoints.forEach((p) => {
       p.properties.islands_by_score = ordered.map((fs) => {
-        return { id: fs.island_id, scale: fs.newScale }
+        return { id: fs.island_id, scale: fs.newScale, score: fs.fitScore }
       })
     })
 
