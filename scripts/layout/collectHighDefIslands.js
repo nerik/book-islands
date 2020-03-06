@@ -65,7 +65,7 @@ const next = () => {
     const transposedIslandWgs84 = turf.toWgs84(transposedIsland)
 
     // TODO whitelist props to move to final islands
-    transposedIslandWgs84.properties = { ...meta }
+    // transposedIslandWgs84.properties = { ...meta }
 
     islands.push(transposedIslandWgs84)
 
