@@ -5,7 +5,7 @@ const $ = require('cheerio')
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY
 
 const FETCH_WIKIPEDIA_DATA = true
-const DEBUG = false
+const DEBUG = true
 
 function cleanText(text) {
   if (!text) return ''

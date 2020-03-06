@@ -8,7 +8,7 @@ const getAuthorInfo = require('./utils/fetchAuthorInfo')
 const kebabCase = require('lodash/kebabCase')
 const { BOOKS_DB, BOOKS_DB_TABLE, AUTHORS_JSON, AUTHORS_ERROR_JSON } = require('../constants')
 
-const MAX_WORKERS = 4
+const MAX_WORKERS = 3
 const INDEX_START = 0
 const USE_WORKER = true
 
