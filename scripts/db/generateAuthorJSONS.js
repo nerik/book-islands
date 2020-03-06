@@ -89,4 +89,5 @@ const getSingleAuthor = async (author) => {
 // generateAuthorDBJsons()
 generateAuthorErrorJsons()
 // getSingleAuthor('paquito palotes')
-// getSingleAuthor('Catherine Jurca')
+// getSingleAuthor('Linda Camp Keith')
+// getSingleAuthor('Juan Carlos Alonso Lena')

@@ -27,17 +27,22 @@ async function getAuthorInfoFromBooksAPI(author) {
   const uri = `${apiUrl}?q=+inauthor:${encodedAuthor}&key=${GOOGLE_API_KEY}`
   const { items } = await rp({ uri, json: true })
   if (items && items.length) {
-    const { volumeInfo } = items[0]
-    const url = volumeInfo.canonicalVolumeLink
-    const html = await rp(url, { followAllRedirects: true })
-    const aboutTheAuthor = $('#about_author_v', html)
-    if (aboutTheAuthor) {
-      const authorInfo = {
-        id: author,
-        name: author,
-        bio: aboutTheAuthor.text(),
+    const book = items.find((item) => item.volumeInfo.authors.includes(author))
+    if (book) {
+      const { volumeInfo } = book
+      const url = volumeInfo.canonicalVolumeLink
+      const html = await rp(url, { followAllRedirects: true })
+      const aboutTheAuthor = $('#about_author_v', html)
+      if (aboutTheAuthor) {
+        const authorInfo = {
+          id: author,
+          name: author,
+          bio: aboutTheAuthor.text(),
+        }
+        return authorInfo
+      } else {
+        throw new Error(`No book author match with book api results`)
       }
-      return authorInfo
     } else {
       throw new Error(`No author data in books api result`)
     }
