@@ -33,11 +33,12 @@ async function getAuthorInfoFromBooksAPI(author) {
       const url = volumeInfo.canonicalVolumeLink
       const html = await rp(url, { followAllRedirects: true })
       const aboutTheAuthor = $('#about_author_v', html)
-      if (aboutTheAuthor) {
+      const bio = aboutTheAuthor && aboutTheAuthor.text()
+      if (bio) {
         const authorInfo = {
           id: author,
           name: author,
-          bio: aboutTheAuthor.text(),
+          bio,
         }
         return authorInfo
       } else {
