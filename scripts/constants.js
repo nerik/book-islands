@@ -22,6 +22,7 @@ module.exports = {
   AUTHORS: 'out/db/authors.json',
   BOOKS_JSON: 'out/books',
   AUTHORS_JSON: 'out/authors',
+  AUTHORS_ERROR_JSON: 'out/author-errors.json',
   GEONAMES_DB: './out/baseIslands/geonames.db',
   SHORELINES: 'out/baseIslands/gshhs/shorelines.geo.json',
   BASE_ISLANDS: 'out/baseIslands/baseIslands.geo.json',

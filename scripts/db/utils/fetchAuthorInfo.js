@@ -76,22 +76,17 @@ async function getAuthorInfo(author) {
           }
         } catch (e) {
           if (DEBUG) {
-            console.error(e)
-            console.warn(`Error fetching in wikipedia for ${author}`)
+            console.warn(`No wikipedia data for ${author}`)
           }
         }
       }
       return authorInfo
     } else {
-      const error = `No knolegde graph data for author ${author}`
-      if (DEBUG) {
-        console.warn(error)
-      }
-      throw new Error(error)
+      throw new Error(`No knowlegde graph data`)
     }
   } catch (e) {
     if (DEBUG) {
-      console.warn(`Error fetching knolegde graph for author ${author}`, e.message)
+      console.warn(`Error fetching knowlegde graph for author ${author} (${e.message})`)
     }
     throw new Error(author)
   }
