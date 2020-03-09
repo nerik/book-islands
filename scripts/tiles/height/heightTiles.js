@@ -10,7 +10,7 @@ tileReduce({
   sources: [
     {
       name: 'islands',
-      mbtiles: path.join(ALL_VECTOR_TILES, '/main.mbtiles'),
+      mbtiles: path.join(ALL_VECTOR_TILES, '/islands.mbtiles'),
       // raw: true
     },
   ],

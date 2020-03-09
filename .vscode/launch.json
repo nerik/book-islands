@@ -43,8 +43,8 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Clusters",
-      "program": "${workspaceFolder}/scripts/layout/clusterByPop.js"
+      "name": "Add clusters",
+      "program": "${workspaceFolder}/scripts/layout/addClusters.js"
     },
     {
       "type": "node",
@@ -81,7 +81,8 @@
       "type": "node",
       "request": "launch",
       "name": "Produce height tiles",
-      "program": "${workspaceFolder}/scripts/tiles/height/heightTiles.js"
+      "program": "${workspaceFolder}/scripts/tiles/height/heightTiles.js",
+      "autoAttachChildProcesses": true
     }
   ]
 }

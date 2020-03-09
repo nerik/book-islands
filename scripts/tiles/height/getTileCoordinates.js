@@ -11,7 +11,7 @@ const baseIslandsBboxDict = JSON.parse(fs.readFileSync(BASE_ISLANDS_BBOX, 'utf-8
 const bookIslandsBBoxDict = JSON.parse(fs.readFileSync(ISLANDS_BBOX, 'utf-8'))
 
 const getTileCoordinates = async (data, tile, writeData, done) => {
-  const islands = data.islands.islands.features
+  const islands = data.islands && data.islands.islands && data.islands.islands.features
 
   if (!islands || !islands.length) {
     done()
