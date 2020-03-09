@@ -49,6 +49,7 @@ module.exports = {
   ISLANDS_CANDIDATES_META: 'out/layout/islands_candidates.meta.json',
   ISLANDS_FINAL_META: 'out/layout/islands_final.meta.json',
   ISLAND_LABELS: 'out/layout/island_labels.geo.json',
+  ISLAND_LABELS_RANK4: 'out/layout/island_labels_rank4.geo.json',
   BOOKS_POINTS: 'out/layout/books_points.geo.json',
   SEARCH_DB: 'out/search-db/search-authors-all.csv',
   SEARCH_DB_RANKED: 'out/search-db/search-authors.csv',
@@ -79,7 +80,7 @@ module.exports = {
     maxY: 90,
   },
   BBOX_CHUNKS: [
-    // [-180, -90, 180, 90]
+    // [150, 20, 173, 40],
     // -240 and 220 it is due the umap offsets
     [-240, -80, -90, 0],
     [-90, -80, 0, 0],

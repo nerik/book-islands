@@ -8,6 +8,7 @@ const {
   AUTHORS,
   ISLANDS_LOWDEF,
   ISLAND_LABELS,
+  ISLAND_LABELS_RANK4,
   BOOKS_POINTS,
   ISLAND_RANK_SCALE,
   BBOX_CHUNKS,
@@ -64,7 +65,8 @@ const getBooks = (author) => {
   return _.orderBy(books, ['popularity'], ['desc'])
 }
 
-const territoryLabels = []
+const islandLabels = []
+const islandLabelsRank4 = []
 const bookPoints = []
 BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   console.log('Current chunk:', bboxChunk, chunkIndex)
@@ -74,6 +76,12 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
 
   console.log('Has', lowdefIslands.length, 'islands')
 
+  lowdefIslands.sort((a, b) => {
+    return (
+      a.properties.center.properties.sum_popularity - b.properties.center.properties.sum_popularity
+    )
+  })
+
   lowdefIslands.forEach((lowdefIsland) => {
     const meta = lowdefIsland.properties
     const id = meta.author_slug
@@ -81,7 +89,6 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
     let authorsIds = [id]
 
     // console.log(polygons, authorsIds)
-    // console.log('---')
     const authors = getAuthors(authorsIds)
 
     const authorsBooks = authors.map((author) => ({
@@ -106,10 +113,13 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       labelCenterPt.properties.id = authorBooks.author.id
       labelCenterPt.properties.slug = authorBooks.author.author_slug
       labelCenterPt.properties.popularity = Math.round(authorBooks.author.sum_popularity)
+
       // sort is just the opposite of pop, use it for z-ordering in mgl
-      labelCenterPt.properties.sort = -labelCenterPt.properties.popularity
+      labelCenterPt.properties.sort = 1000000 - labelCenterPt.properties.popularity
       labelCenterPt.properties.rank = ISLAND_RANK_SCALE(authorPop)
-      territoryLabels.push(labelCenterPt)
+
+      const addTo = labelCenterPt.properties.rank === 4 ? islandLabelsRank4 : islandLabels
+      addTo.push(labelCenterPt)
 
       // generate available points for terr
       // TODO sort "real" points (cities, peaks etc) by territory
@@ -165,11 +175,12 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   })
 })
 
-console.log('Created ', territoryLabels.length, 'territory labels - with distribution:')
-console.log('1:', territoryLabels.filter((f) => f.properties.rank === 1).length)
-console.log('2:', territoryLabels.filter((f) => f.properties.rank === 2).length)
-console.log('3:', territoryLabels.filter((f) => f.properties.rank === 3).length)
-console.log('4:', territoryLabels.filter((f) => f.properties.rank === 4).length)
+console.log('Created ', islandLabels.length, 'territory labels - with distribution:')
+console.log('1:', islandLabels.filter((f) => f.properties.rank === 1).length)
+console.log('2:', islandLabels.filter((f) => f.properties.rank === 2).length)
+console.log('3:', islandLabels.filter((f) => f.properties.rank === 3).length)
+console.log('4:', islandLabelsRank4.filter((f) => f.properties.rank === 4).length)
+console.log('4:', islandLabelsRank4.length)
 
 console.log('Created ', bookPoints.length, 'bookPoints - with distribution')
 console.log('1:', bookPoints.filter((f) => f.properties.rank === 1).length)
@@ -177,7 +188,9 @@ console.log('2:', bookPoints.filter((f) => f.properties.rank === 2).length)
 console.log('3:', bookPoints.filter((f) => f.properties.rank === 3).length)
 console.log('4:', bookPoints.filter((f) => f.properties.rank === 4).length)
 
-fs.writeFileSync(ISLAND_LABELS, JSON.stringify(turf.featureCollection(territoryLabels)))
+fs.writeFileSync(ISLAND_LABELS, JSON.stringify(turf.featureCollection(islandLabels)))
+fs.writeFileSync(ISLAND_LABELS_RANK4, JSON.stringify(turf.featureCollection(islandLabelsRank4)))
 fs.writeFileSync(BOOKS_POINTS, JSON.stringify(turf.featureCollection(bookPoints)))
 console.log('Wrote', ISLAND_LABELS)
+console.log('Wrote', ISLAND_LABELS_RANK4)
 console.log('Wrote', BOOKS_POINTS)
