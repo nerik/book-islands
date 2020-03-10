@@ -22,6 +22,7 @@ module.exports = {
   AUTHORS: 'out/db/authors.json',
   BOOKS_JSON: 'out/books',
   AUTHORS_JSON: 'out/authors',
+  AUTHORS_ERROR_JSON: 'out/author-errors.json',
   GEONAMES_DB: './out/baseIslands/geonames.db',
   SHORELINES: 'out/baseIslands/gshhs/shorelines.geo.json',
   BASE_ISLANDS: 'out/baseIslands/baseIslands.geo.json',
@@ -56,8 +57,8 @@ module.exports = {
   SEARCH_BOOKS_DB_RANKED: 'out/search-db/search-books.csv',
   SEARCH_DB_BOOKS_RANKED_LIMIT: 4000,
   SEARCH_DB_AUTHORS_RANKED_LIMIT: 1000,
-  MAX_ZOOM_GENERATED: 12,
   MAX_ZOOM_VECTOR: 16,
+  MAX_ZOOM_HEIGHTS_GENERATED: 15,
   HEIGHT_TILES: 'tiles/height',
   POINT_TILES: 'tiles/points',
   ISLAND_TILES: 'tiles/islands',
@@ -67,12 +68,6 @@ module.exports = {
   //   minY: 11,
   //   maxX: 26,
   //   maxY: 23,
-  // },
-  // TEST_BBOX: {
-  //   minX: -180,
-  //   minY: -90,
-  //   maxX: 180,
-  //   maxY: 90,
   // },
   TEST_BBOX: {
     minX: -180,
@@ -104,5 +99,5 @@ module.exports = {
   USE_PROGRESS_BAR: true,
   STORAGE_BUCKET_DATA: 'cilex-books-map-data',
   STORAGE_BUCKET_TILES: 'cilex-books-map-tiles',
-  VERSION: '-v4',
+  VERSION: '-v2',
 }

@@ -1,81 +1,88 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Index",
-            "program": "${workspaceFolder}/scripts/db/normalizeAuthorCategory.js"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Generate database",
-            "program": "${workspaceFolder}/scripts/db/generateDb.js"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Generate books json",
-            "program": "${workspaceFolder}/scripts/db/generatebookJSONS.js"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Generate base islands",
-            "program": "${workspaceFolder}/scripts/baseIslands/generateBaseIslands.js"
-        },
-        {
-          "type": "node",
-          "request": "launch",
-          "name": "Normalize UMAPs to world",
-          "program": "${workspaceFolder}/scripts/umap/normalizeToWorld.js"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Clusters",
-            "program": "${workspaceFolder}/scripts/layout/clusterByPop.js"
-        },
-        {
-          "type": "node",
-          "request": "launch",
-          "name": "Score",
-          "program": "${workspaceFolder}/scripts/layout/score.js"
-        },
-        {
-          "type": "node",
-          "request": "launch",
-          "name": "Layout",
-          "program": "${workspaceFolder}/scripts/layout/layout.js"
-        },
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Index",
+      "program": "${workspaceFolder}/scripts/db/normalizeAuthorCategory.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Generate database",
+      "program": "${workspaceFolder}/scripts/db/generateDb.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Generate books json",
+      "program": "${workspaceFolder}/scripts/db/generateBookJSONS.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Generate authors json",
+      "program": "${workspaceFolder}/scripts/db/generateAuthorJSONS.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Generate base islands",
+      "program": "${workspaceFolder}/scripts/baseIslands/generateBaseIslands.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Normalize UMAPs to world",
+      "program": "${workspaceFolder}/scripts/umap/normalizeToWorld.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Add clusters",
+      "program": "${workspaceFolder}/scripts/layout/addClusters.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Score",
+      "program": "${workspaceFolder}/scripts/layout/score.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Layout",
+      "program": "${workspaceFolder}/scripts/layout/layout.js"
+    },
 
-        {
-          "type": "node",
-          "request": "launch",
-          "name": "Points",
-          "program": "${workspaceFolder}/scripts/layout/points.js"
-        },
-        {
-          "type": "node",
-          "request": "launch",
-          "name": "Collect islands",
-          "program": "${workspaceFolder}/scripts/layout/collectHighDefIslands.js"
-        },
-        {
-          "type": "node",
-          "request": "launch",
-          "name": "Download needed height data",
-          "program": "${workspaceFolder}/scripts/tiles/height/download.js"
-        },
-        {
-          "type": "node",
-          "request": "launch",
-          "name": "Produce height tiles",
-          "program": "${workspaceFolder}/scripts/tiles/height/heightTiles.js"
-        }
-    ]
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Points",
+      "program": "${workspaceFolder}/scripts/layout/points.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Collect islands",
+      "program": "${workspaceFolder}/scripts/layout/collectHighDefIslands.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Download needed height data",
+      "program": "${workspaceFolder}/scripts/tiles/height/download.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Produce height tiles",
+      "program": "${workspaceFolder}/scripts/tiles/height/heightTiles.js",
+      "autoAttachChildProcesses": true
+    }
+  ]
 }
