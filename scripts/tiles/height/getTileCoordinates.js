@@ -11,9 +11,9 @@ const baseIslandsBboxDict = JSON.parse(fs.readFileSync(BASE_ISLANDS_BBOX, 'utf-8
 const bookIslandsBBoxDict = JSON.parse(fs.readFileSync(ISLANDS_BBOX, 'utf-8'))
 
 const getTileCoordinates = async (data, tile, writeData, done) => {
-  const islands = data.islands.islands.features
-
-  if (!islands || !islands.length) {
+  const islands = data.islands && data.islands.islands && data.islands.islands.features
+  // we don't need images below zoom level 7
+  if (!islands || !islands.length || tile[2] < 7) {
     done()
     return
   }
