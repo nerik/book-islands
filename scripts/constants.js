@@ -57,12 +57,11 @@ module.exports = {
   SEARCH_BOOKS_DB_RANKED: 'out/search-db/search-books.csv',
   SEARCH_DB_BOOKS_RANKED_LIMIT: 4000,
   SEARCH_DB_AUTHORS_RANKED_LIMIT: 1000,
-  MAX_ZOOM_GENERATED: 12,
+  MAX_ZOOM_VECTOR: 16,
   MAX_ZOOM_HEIGHTS_GENERATED: 15,
   HEIGHT_TILES: 'tiles/height',
-  POINTS_TILES: 'tiles/points',
-  ISLANDS_TILES: 'tiles/islands',
-  ALL_VECTOR_TILES: 'tiles/allvector',
+  POINT_TILES: 'tiles/points',
+  ISLAND_TILES: 'tiles/islands',
   HEIGHT_TILE_SIZE: 256,
   // TEST_BBOX: {
   //   minX: 3,
@@ -77,7 +76,7 @@ module.exports = {
     maxY: 90,
   },
   BBOX_CHUNKS: [
-    // [-180, -90, 180, 90]
+    // [0, -50, 90, 0],
     // -240 and 220 it is due the umap offsets
     [-240, -80, -90, 0],
     [-90, -80, 0, 0],

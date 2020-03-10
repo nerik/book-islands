@@ -20,17 +20,21 @@ const getIslandScaleForPriority = (score, clusterCenterMrct, islandMrct, maxScal
   // scale everything by this factor
   const OVERALL_SCALE_FACTOR = 1
 
+  // that motherfucker shakespeare is getting too fucking big you fucking fat fuck
+  const ABSOLUTE_MAX_AREA = 10000000000
+
   const maxNumIterations = Math.ceil(MAX_SCALE / STEP_DECREMENT) - 1
   let currentScale = MAX_SCALE + STEP_DECREMENT
   let islandAtScaleMrct
+  let islandAtScaleArea
 
   let i = 0
   for (i = 0; i < maxNumIterations; i++) {
     currentScale -= STEP_DECREMENT
     islandAtScaleMrct = transposeAndScale(clusterCenterMrct, islandMrct, currentScale)
-    const islandAtScaleArea = turf.area(turf.toWgs84(islandAtScaleMrct))
+    islandAtScaleArea = turf.area(turf.toWgs84(islandAtScaleMrct))
 
-    if (islandAtScaleArea <= maxArea) {
+    if (islandAtScaleArea <= maxArea && islandAtScaleArea < ABSOLUTE_MAX_AREA) {
       break
     }
   }
@@ -38,6 +42,7 @@ const getIslandScaleForPriority = (score, clusterCenterMrct, islandMrct, maxScal
   return {
     scale: currentScale * OVERALL_SCALE_FACTOR,
     islandAtScaleMrct,
+    islandAtScaleArea,
   }
 }
 
