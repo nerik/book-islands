@@ -60,6 +60,7 @@ module.exports = {
   MAX_ZOOM_GENERATED: 12,
   HEIGHT_TILES: 'tiles/height',
   ALL_VECTOR_TILES: 'tiles/allvector',
+  ISLAND_TILES: 'tiles/islands',
   HEIGHT_TILE_SIZE: 256,
   // TEST_BBOX: {
   //   minX: 3,
@@ -80,7 +81,7 @@ module.exports = {
     maxY: 90,
   },
   BBOX_CHUNKS: [
-    // [150, 20, 173, 40],
+    // [35, -50, 55, -35],
     // -240 and 220 it is due the umap offsets
     [-240, -80, -90, 0],
     [-90, -80, 0, 0],
