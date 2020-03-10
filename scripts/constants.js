@@ -57,6 +57,7 @@ module.exports = {
   SEARCH_DB_BOOKS_RANKED_LIMIT: 4000,
   SEARCH_DB_AUTHORS_RANKED_LIMIT: 1000,
   MAX_ZOOM_GENERATED: 12,
+  MAX_ZOOM_VECTOR: 16,
   HEIGHT_TILES: 'tiles/height',
   POINT_TILES: 'tiles/points',
   ISLAND_TILES: 'tiles/islands',

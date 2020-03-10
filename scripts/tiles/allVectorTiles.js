@@ -5,7 +5,7 @@ const fs = require('fs')
 const rimraf = require('rimraf')
 
 const {
-  MAX_ZOOM_GENERATED,
+  MAX_ZOOM_VECTOR,
   ISLANDS,
   ISLAND_LABELS,
   BOOKS_POINTS,
@@ -24,7 +24,7 @@ const allPaths = BBOX_CHUNKS.map((bbox, chunkIndex) =>
 
 const islandsMbt = `${ISLAND_TILES}/islands.mbtiles`
 const islandsTiles = `${ISLAND_TILES}/tiles`
-const cmd = `tippecanoe -o ${islandsMbt} --drop-densest-as-needed -l islands ${allPaths} --maximum-zoom=${MAX_ZOOM_GENERATED}`
+const cmd = `tippecanoe -o ${islandsMbt} --drop-densest-as-needed -l islands ${allPaths} --maximum-zoom=${MAX_ZOOM_VECTOR}`
 console.log(cmd)
 exec(cmd)
 
@@ -83,7 +83,7 @@ Object.keys(CONFIG).forEach((pointType) => {
     const name = `${pointType}-rank${i}`
     const mbt = `${POINT_TILES}/${name}.mbtiles`
     const filter = `--feature-filter '{ "*": ["==", "rank", ${i}] }'`
-    const ptsCmd = `tippecanoe -o ${mbt} --minimum-zoom=${rankConfig.minzoom} --maximum-zoom=${MAX_ZOOM_GENERATED} --base-zoom=${rankConfig.minzoom} --named-layer='${name}':${config.path} ${filter}`
+    const ptsCmd = `tippecanoe -o ${mbt} --minimum-zoom=${rankConfig.minzoom} --maximum-zoom=${MAX_ZOOM_VECTOR} --base-zoom=${rankConfig.minzoom} --named-layer='${name}':${config.path} ${filter}`
     console.log(ptsCmd)
     exec(ptsCmd)
     mbts.push(mbt)
