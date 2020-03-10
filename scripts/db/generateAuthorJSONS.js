@@ -99,8 +99,9 @@ const getSingleAuthor = async (author, bookId) => {
 
 generateAuthorDBJsons()
 // generateAuthorErrorJsons()
-// getSingleAuthor('Iris Origo', '-qFl_MYbAhYC')
-// getSingleAuthor('james king', 'qvVaAAAAMAAJ')
+// getSingleAuthor('James Waller', 'yn7kAAAAIAAJ')
+// getSingleAuthor('Tim Bergling', 'lSwbAAAAYAAJ')
+// getSingleAuthor('Chuck Yeager', 'pqdHKsDa4nMC')
 // getSingleAuthor('Carl Boggs', 'wNw_uw4BBlsC')
 // getSingleAuthor('Linda Camp Keith')
 // getSingleAuthor('Juan Carlos Alonso Lena')

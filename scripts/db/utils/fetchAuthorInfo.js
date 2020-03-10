@@ -115,9 +115,16 @@ async function getAuthorInfoFromWikipedia(author) {
 }
 
 async function getAuthorInfoFromGoogleBookInfo(author, bookId) {
-  const url = `${GOOGLE_BOOKS_BASE_URL}/${bookId}`
-  const html = await rp(url, { followAllRedirects: true })
-  const aboutTheAuthor = $('#about_author_v', html)
+  const url = `${GOOGLE_BOOKS_BASE_URL}${bookId}`
+  const html = await rp(url, {
+    followAllRedirects: true,
+    headers: {
+      'User-Agent':
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36',
+    },
+  })
+  const authorHTMLSelector = '.Co1Hzf'
+  const aboutTheAuthor = $(authorHTMLSelector, html)
   const bio = aboutTheAuthor && aboutTheAuthor.text()
   if (bio) {
     const authorInfo = {
