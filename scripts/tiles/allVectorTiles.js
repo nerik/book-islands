@@ -22,12 +22,17 @@ const allPaths = BBOX_CHUNKS.map((bbox, chunkIndex) =>
   ISLANDS.replace('.geo.json', `_${chunkIndex}.geo.json`)
 ).join(' ')
 
-const cmd = `tippecanoe --drop-densest-as-needed -l islands ${allPaths} --maximum-zoom=${MAX_ZOOM_GENERATED} --output-to-directory=${ISLAND_TILES}/tiles`
+const islandsMbt = `${ISLAND_TILES}/islands.mbtiles`
+const islandsTiles = `${ISLAND_TILES}/tiles`
+const cmd = `tippecanoe -o ${islandsMbt} --drop-densest-as-needed -l islands ${allPaths} --maximum-zoom=${MAX_ZOOM_GENERATED}`
 console.log(cmd)
 exec(cmd)
 
-// Points
+const tilesCmd = `mb-util --image_format=pbf ${islandsMbt} ${islandsTiles} --silent`
+console.log(tilesCmd)
+exec(tilesCmd)
 
+// Points
 rimraf.sync(POINT_TILES)
 fs.mkdirSync(POINT_TILES)
 
