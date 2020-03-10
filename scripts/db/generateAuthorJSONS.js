@@ -6,8 +6,15 @@ const Database = require('sqlite-async')
 const getAuthorInfo = require('./utils/fetchAuthorInfo')
 
 const kebabCase = require('lodash/kebabCase')
-const { BOOKS_DB, BOOKS_DB_TABLE, AUTHORS_JSON, AUTHORS_ERROR_JSON } = require('../constants')
+const {
+  BOOKS_DB,
+  BOOKS_DB_TABLE,
+  AUTHORS_JSON,
+  AUTHORS_ERROR_JSON,
+  ISLAND_RANK_SCALE,
+} = require('../constants')
 
+const MAX_RANK_TO_GENERATE = 3
 const MAX_WORKERS = 3
 const INDEX_START = 0
 const USE_WORKER = true
@@ -19,12 +26,12 @@ var pool = workerpool.pool(__dirname + '/workers/getAuthorInfo.js', {
 const generateAuthorJsons = async (authors) => {
   const authorsWithErrors = []
   for (let i = INDEX_START; i < authors.length; i++) {
-    const author = authors[i]
+    const { author, bookId } = authors[i]
     if (USE_WORKER) {
       pool
         .proxy()
         .then((worker) => {
-          return worker.getAuthorInfo(author)
+          return worker.getAuthorInfo(author, bookId)
         })
         .then((authorInfo) => {
           console.log(`${i} ${author} ✅`)
@@ -46,7 +53,7 @@ const generateAuthorJsons = async (authors) => {
         })
     } else {
       try {
-        const authorInfo = await getAuthorInfo(author)
+        const authorInfo = await getAuthorInfo(author, bookId)
         fs.writeFileSync(`${AUTHORS_JSON}/${kebabCase(author)}.json`, JSON.stringify(authorInfo))
         console.log(`${i} ${author} ✅`)
       } catch {
@@ -66,10 +73,14 @@ const generateAuthorDBJsons = async () => {
     fs.mkdirSync(AUTHORS_JSON)
   }
   const db = await Database.open(BOOKS_DB, Database.OPEN_READONLY)
-  const dbQuery = `SELECT author FROM ${BOOKS_DB_TABLE} GROUP BY author ORDER BY score DESC`
+  const dbQuery = `SELECT author, sum(score) AS score, public_id as bookId FROM (SELECT * FROM ${BOOKS_DB_TABLE} ORDER BY score DESC) GROUP BY author ORDER BY score DESC`
   const rows = await db.all(dbQuery)
-  const authors = rows.map((row) => row.author)
-  generateAuthorJsons(authors)
+  const authors = rows.map(({ author, bookId, score }) => {
+    return { author, bookId, rank: ISLAND_RANK_SCALE(score) }
+  })
+
+  const authorsToFetch = authors.filter(({ rank }) => rank < MAX_RANK_TO_GENERATE)
+  generateAuthorJsons(authorsToFetch)
 }
 
 const generateAuthorErrorJsons = async () => {
@@ -77,17 +88,19 @@ const generateAuthorErrorJsons = async () => {
   generateAuthorJsons(authors)
 }
 
-const getSingleAuthor = async (author) => {
+const getSingleAuthor = async (author, bookId) => {
   try {
-    const authorInfo = await getAuthorInfo(author)
+    const authorInfo = await getAuthorInfo(author, bookId)
     console.log('Author info', authorInfo)
   } catch (e) {
     console.error(e)
   }
 }
 
-// generateAuthorDBJsons()
-generateAuthorErrorJsons()
-// getSingleAuthor('paquito palotes')
+generateAuthorDBJsons()
+// generateAuthorErrorJsons()
+// getSingleAuthor('Iris Origo', '-qFl_MYbAhYC')
+// getSingleAuthor('james king', 'qvVaAAAAMAAJ')
+// getSingleAuthor('Carl Boggs', 'wNw_uw4BBlsC')
 // getSingleAuthor('Linda Camp Keith')
 // getSingleAuthor('Juan Carlos Alonso Lena')

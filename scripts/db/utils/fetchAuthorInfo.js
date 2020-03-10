@@ -3,6 +3,8 @@ const rp = require('request-promise')
 const $ = require('cheerio')
 
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY
+const GOOGLE_BOOKS_BASE_URL =
+  process.env.GOOGLE_BOOKS_BASE_URL || 'https://www.google.com/books/edition/_/'
 
 const FETCH_KNOWLEGDE_GRAPH = false
 const FETCH_WIKIPEDIA_DATA = true
@@ -52,90 +54,135 @@ async function getAuthorInfoFromBooksAPI(author) {
   }
 }
 
-async function getAuthorInfo(author) {
+async function getAuthorInfoFromKnowledgeGraph(author) {
   const apiUrl = 'https://kgsearch.googleapis.com/v1/entities:search'
   const encodedAuthor = encodeURIComponent(author)
   const uri = `${apiUrl}?query=${encodedAuthor}&key=${GOOGLE_API_KEY}&limit=1&indent=True&types=Person`
-  try {
-    if (FETCH_KNOWLEGDE_GRAPH && DEBUG) {
-      console.log(`Fecthing knowledge graph data for ${author}`)
+  const { itemListElement } = await rp({ uri, json: true })
+  if (itemListElement && itemListElement.length) {
+    const { name, image, url, detailedDescription } = itemListElement[0].result
+    const authorInfo = {
+      id: author,
+      name,
+      url,
+      ...(image && image.contentUrl && { image: image.contentUrl }),
+      bio: detailedDescription && detailedDescription.articleBody,
     }
-    const { itemListElement } = FETCH_KNOWLEGDE_GRAPH ? await rp({ uri, json: true }) : {}
-    if (itemListElement && itemListElement.length) {
-      const { name, image, url, detailedDescription } = itemListElement[0].result
-      const authorInfo = {
-        id: author,
-        name,
-        url,
-        ...(image && image.contentUrl && { image: image.contentUrl }),
-        bio: detailedDescription && detailedDescription.articleBody,
-      }
-      if (FETCH_WIKIPEDIA_DATA && name) {
-        try {
-          const url = `https://en.wikipedia.org/wiki/${name}`
-          const html = await rp(url, { followAllRedirects: true })
-          const tableRows = $('.infobox.vcard', html)
-            .find('tbody > tr')
-            .toArray()
-            .filter((tr) => tr.firstChild.attribs.scope === 'row')
-          const bornRow = tableRows.length
-            ? tableRows.find((row) =>
-                $(row, html)
-                  .children()
-                  .first()
-                  .text()
-                  .toUpperCase()
-                  .includes('BORN')
-              )
-            : null
-          if (bornRow) {
-            const bornText = cleanText($(bornRow.lastChild, html).text())
-            if (bornText) {
-              authorInfo.born = bornText
-            }
-          }
-          const deathRow = tableRows.length
-            ? tableRows.find((row) =>
-                $(row, html)
-                  .children()
-                  .first()
-                  .text()
-                  .toUpperCase()
-                  .includes('DIED')
-              )
-            : null
-          if (deathRow) {
-            const deathText = cleanText($(deathRow.lastChild, html).text())
-            if (deathText) {
-              authorInfo.death = deathText
-            }
-          }
-        } catch (e) {
-          if (DEBUG) {
-            console.warn(`No wikipedia data for ${author}`)
-          }
-        }
-      }
+    return authorInfo
+  }
+}
+
+async function getAuthorInfoFromWikipedia(author) {
+  const url = `https://en.wikipedia.org/wiki/${author}`
+  const html = await rp(url, { followAllRedirects: true })
+  const authorInfo = {}
+  const tableRows = $('.infobox.vcard', html)
+    .find('tbody > tr')
+    .toArray()
+    .filter((tr) => tr.firstChild.attribs.scope === 'row')
+  const bornRow = tableRows.length
+    ? tableRows.find((row) =>
+        $(row, html)
+          .children()
+          .first()
+          .text()
+          .toUpperCase()
+          .includes('BORN')
+      )
+    : null
+  if (bornRow) {
+    const bornText = cleanText($(bornRow.lastChild, html).text())
+    if (bornText) {
+      authorInfo.born = bornText
+    }
+  }
+  const deathRow = tableRows.length
+    ? tableRows.find((row) =>
+        $(row, html)
+          .children()
+          .first()
+          .text()
+          .toUpperCase()
+          .includes('DIED')
+      )
+    : null
+  if (deathRow) {
+    const deathText = cleanText($(deathRow.lastChild, html).text())
+    if (deathText) {
+      authorInfo.death = deathText
+    }
+  }
+}
+
+async function getAuthorInfoFromGoogleBookInfo(author, bookId) {
+  const url = `${GOOGLE_BOOKS_BASE_URL}/${bookId}`
+  const html = await rp(url, { followAllRedirects: true })
+  const aboutTheAuthor = $('#about_author_v', html)
+  const bio = aboutTheAuthor && aboutTheAuthor.text()
+  if (bio) {
+    const authorInfo = {
+      id: author,
+      name: author,
+      bio,
+    }
+    return authorInfo
+  } else {
+    throw new Error(`No author information in the book`)
+  }
+}
+
+async function getAuthorInfo(author, bookId) {
+  if (bookId) {
+    try {
+      const authorInfo = await getAuthorInfoFromGoogleBookInfo(author, bookId)
       return authorInfo
-    } else {
-      if (FETCH_BOOKS_API) {
-        if (DEBUG) {
-          console.warn(`No knowlegde graph data for ${author}, trying with google books api`)
-        }
-        try {
-          return await getAuthorInfoFromBooksAPI(author)
-        } catch (e) {
-          throw new Error(e.message)
-        }
-      } else {
-        throw new Error(`No knowlegde graph data`)
+    } catch (e) {
+      if (DEBUG) {
+        console.warn(
+          `Error fetching google book info author ${author} and book ${bookId} (${e.message})`
+        )
       }
+      throw new Error(author)
     }
-  } catch (e) {
-    if (DEBUG) {
-      console.warn(`Error fetching knowlegde graph for author ${author} (${e.message})`)
+  } else {
+    try {
+      if (FETCH_KNOWLEGDE_GRAPH) {
+        if (DEBUG) {
+          console.log(`Fecthing knowledge graph data for ${author}`)
+        }
+        let authorInfo = await getAuthorInfoFromKnowledgeGraph(author)
+        if (FETCH_WIKIPEDIA_DATA && authorInfo && authorInfo.name) {
+          try {
+            const authorExtraInfo = getAuthorInfoFromWikipedia(authorInfo.name)
+            authorInfo = { ...authorInfo, ...authorExtraInfo }
+          } catch (e) {
+            if (DEBUG) {
+              console.warn(`No wikipedia data for ${author}`)
+            }
+          }
+        }
+        return authorInfo
+      } else {
+        if (FETCH_BOOKS_API) {
+          if (DEBUG) {
+            console.warn(`No knowlegde graph data for ${author}, trying with google books api`)
+          }
+          try {
+            const authorInfo = await getAuthorInfoFromBooksAPI(author)
+            return authorInfo
+          } catch (e) {
+            throw new Error(e.message)
+          }
+        } else {
+          throw new Error(`No knowlegde graph data`)
+        }
+      }
+    } catch (e) {
+      if (DEBUG) {
+        console.warn(`Error fetching knowlegde graph for author ${author} (${e.message})`)
+      }
+      throw new Error(author)
     }
-    throw new Error(author)
   }
 }
 
