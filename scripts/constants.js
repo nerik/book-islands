@@ -49,7 +49,6 @@ module.exports = {
   ISLANDS_CANDIDATES_META: 'out/layout/islands_candidates.meta.json',
   ISLANDS_FINAL_META: 'out/layout/islands_final.meta.json',
   ISLAND_LABELS: 'out/layout/island_labels.geo.json',
-  ISLAND_LABELS_RANK4: 'out/layout/island_labels_rank4.geo.json',
   BOOKS_POINTS: 'out/layout/books_points.geo.json',
   SEARCH_DB: 'out/search-db/search-authors-all.csv',
   SEARCH_DB_RANKED: 'out/search-db/search-authors.csv',
@@ -59,7 +58,7 @@ module.exports = {
   SEARCH_DB_AUTHORS_RANKED_LIMIT: 1000,
   MAX_ZOOM_GENERATED: 12,
   HEIGHT_TILES: 'tiles/height',
-  ALL_VECTOR_TILES: 'tiles/allvector',
+  POINT_TILES: 'tiles/points',
   ISLAND_TILES: 'tiles/islands',
   HEIGHT_TILE_SIZE: 256,
   // TEST_BBOX: {
@@ -81,7 +80,7 @@ module.exports = {
     maxY: 90,
   },
   BBOX_CHUNKS: [
-    // [35, -50, 55, -35],
+    // [0, -50, 90, 0],
     // -240 and 220 it is due the umap offsets
     [-240, -80, -90, 0],
     [-90, -80, 0, 0],

@@ -8,10 +8,9 @@ const {
   MAX_ZOOM_GENERATED,
   ISLANDS,
   ISLAND_LABELS,
-  ISLAND_LABELS_RANK4,
   BOOKS_POINTS,
   ISLAND_TILES,
-  ALL_VECTOR_TILES,
+  POINT_TILES,
   BBOX_CHUNKS,
 } = require('../constants')
 
@@ -29,23 +28,66 @@ exec(cmd)
 
 // Points
 
-rimraf.sync(ALL_VECTOR_TILES)
-fs.mkdirSync(ALL_VECTOR_TILES)
+rimraf.sync(POINT_TILES)
+fs.mkdirSync(POINT_TILES)
 
-const pointsMbt = `${ALL_VECTOR_TILES}/points.mbtiles`
+const CONFIG = {
+  author: {
+    path: ISLAND_LABELS,
+    ranks: [
+      null,
+      {
+        minzoom: 8,
+      },
+      {
+        minzoom: 6,
+      },
+      {
+        minzoom: 4,
+      },
+      {
+        minzoom: 3,
+      },
+    ],
+  },
+  books: {
+    path: BOOKS_POINTS,
+    ranks: [
+      null,
+      {
+        minzoom: 8,
+      },
+      {
+        minzoom: 8,
+      },
+      {
+        minzoom: 8,
+      },
+      {
+        minzoom: 8,
+      },
+    ],
+  },
+}
 
-const ptsCmd = `tippecanoe -o ${pointsMbt} --minimum-zoom=3 --maximum-zoom=${MAX_ZOOM_GENERATED} --base-zoom=5 --named-layer='author_labels':${ISLAND_LABELS} --named-layer='books_labels':${BOOKS_POINTS}`
-console.log(ptsCmd)
-exec(ptsCmd)
+const mbts = []
+Object.keys(CONFIG).forEach((pointType) => {
+  const config = CONFIG[pointType]
+  for (let i = 4; i > 0; i--) {
+    const rankConfig = config.ranks[i]
+    const name = `${pointType}-rank${i}`
+    const mbt = `${POINT_TILES}/${name}.mbtiles`
+    const filter = `--feature-filter '{ "*": ["==", "rank", ${i}] }'`
+    const ptsCmd = `tippecanoe -o ${mbt} --minimum-zoom=${rankConfig.minzoom} --maximum-zoom=${MAX_ZOOM_GENERATED} --base-zoom=${rankConfig.minzoom} --named-layer='${name}':${config.path} ${filter}`
+    console.log(ptsCmd)
+    exec(ptsCmd)
+    mbts.push(mbt)
+  }
+})
 
-const pointsRank4Mbt = `${ALL_VECTOR_TILES}/pointsRank4.mbtiles`
-const ptsRank4Cmd = `tippecanoe -o ${pointsRank4Mbt} --minimum-zoom=3 --maximum-zoom=${MAX_ZOOM_GENERATED} --base-zoom=3 --no-tile-size-limit --named-layer='author_labels_rank4':${ISLAND_LABELS_RANK4}`
-console.log(ptsRank4Cmd)
-exec(ptsRank4Cmd)
+// ALL POINTS merged
+const allPointsTiles = `${POINT_TILES}/tiles`
 
-// ALL VECTOR merged
-const allVectorTiles = `${ALL_VECTOR_TILES}/tiles`
-
-const mergeCmd = `tile-join  ${pointsMbt} ${pointsRank4Mbt} --no-tile-size-limit --output-to-directory=${allVectorTiles}`
+const mergeCmd = `tile-join ${mbts.join(' ')} --no-tile-size-limit --output-to-directory=${allPointsTiles}`
 console.log(mergeCmd)
 exec(mergeCmd)

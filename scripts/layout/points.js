@@ -66,7 +66,6 @@ const getBooks = (author) => {
 }
 
 const islandLabels = []
-const islandLabelsRank4 = []
 const bookPoints = []
 BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
   console.log('Current chunk:', bboxChunk, chunkIndex)
@@ -118,8 +117,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
       labelCenterPt.properties.sort = 1000000 - labelCenterPt.properties.popularity
       labelCenterPt.properties.rank = ISLAND_RANK_SCALE(authorPop)
 
-      const addTo = labelCenterPt.properties.rank === 4 ? islandLabelsRank4 : islandLabels
-      addTo.push(labelCenterPt)
+      islandLabels.push(labelCenterPt)
 
       // generate available points for terr
       // TODO sort "real" points (cities, peaks etc) by territory
@@ -179,8 +177,7 @@ console.log('Created ', islandLabels.length, 'territory labels - with distributi
 console.log('1:', islandLabels.filter((f) => f.properties.rank === 1).length)
 console.log('2:', islandLabels.filter((f) => f.properties.rank === 2).length)
 console.log('3:', islandLabels.filter((f) => f.properties.rank === 3).length)
-console.log('4:', islandLabelsRank4.filter((f) => f.properties.rank === 4).length)
-console.log('4:', islandLabelsRank4.length)
+console.log('4:', islandLabels.filter((f) => f.properties.rank === 4).length)
 
 console.log('Created ', bookPoints.length, 'bookPoints - with distribution')
 console.log('1:', bookPoints.filter((f) => f.properties.rank === 1).length)
@@ -189,8 +186,6 @@ console.log('3:', bookPoints.filter((f) => f.properties.rank === 3).length)
 console.log('4:', bookPoints.filter((f) => f.properties.rank === 4).length)
 
 fs.writeFileSync(ISLAND_LABELS, JSON.stringify(turf.featureCollection(islandLabels)))
-fs.writeFileSync(ISLAND_LABELS_RANK4, JSON.stringify(turf.featureCollection(islandLabelsRank4)))
 fs.writeFileSync(BOOKS_POINTS, JSON.stringify(turf.featureCollection(bookPoints)))
 console.log('Wrote', ISLAND_LABELS)
-console.log('Wrote', ISLAND_LABELS_RANK4)
 console.log('Wrote', BOOKS_POINTS)
