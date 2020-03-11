@@ -99,5 +99,5 @@ module.exports = {
   USE_PROGRESS_BAR: true,
   STORAGE_BUCKET_DATA: 'cilex-books-map-data',
   STORAGE_BUCKET_TILES: 'cilex-books-map-tiles',
-  VERSION: '-v2',
+  VERSION: '',
 }
