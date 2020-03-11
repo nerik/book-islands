@@ -64,8 +64,9 @@ const next = () => {
     const transposedIsland = transposeAndScale(centerMrct, transposedToCenterMrct, meta.scale)
     const transposedIslandWgs84 = turf.toWgs84(transposedIsland)
 
-    // TODO whitelist props to move to final islands
-    // transposedIslandWgs84.properties = { ...meta }
+    transposedIslandWgs84.properties = {
+      layouted_id: meta.author_id,
+    }
 
     islands.push(transposedIslandWgs84)
 
@@ -84,7 +85,7 @@ const next = () => {
     const isletsTransposedWgs84 = isletsTransposed.map((f) => turf.toWgs84(f))
     isletsTransposedWgs84.forEach((f) => {
       f.properties.islet = true
-      f.properties.author_id = meta.author_id
+      f.properties.layouted_id = meta.author_id
       islands.push(f)
     })
   })
