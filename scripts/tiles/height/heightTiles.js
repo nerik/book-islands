@@ -2,15 +2,17 @@
 
 const tileReduce = require('@mapbox/tile-reduce')
 const path = require('path')
-const { MAX_ZOOM_HEIGHTS_GENERATED, ALL_VECTOR_TILES } = require('../../constants')
+const { MAX_ZOOM_HEIGHTS_GENERATED, ISLAND_TILES } = require('../../constants')
 
 tileReduce({
   zoom: MAX_ZOOM_HEIGHTS_GENERATED,
   map: path.join(__dirname, '/getTileCoordinates.js'),
+  // log: true,
   sources: [
     {
       name: 'islands',
-      mbtiles: path.join(ISLANDS_TILES, '/islands.mbtiles'),
+      mbtiles: path.join(ISLAND_TILES, '/islands.mbtiles'),
+      // layers: 'islands',
       // raw: true
     },
   ],
