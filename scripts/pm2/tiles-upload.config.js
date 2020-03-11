@@ -5,8 +5,13 @@ const cacheAge = 1296000
 module.exports = {
   apps: [
     {
-      name: 'upload-vectortiles',
-      script: `gsutil -h "Cache-Control:public,max-age=${cacheAge}" -h "Content-Encoding:gzip" -m cp -r tiles/allvector/* gs://${STORAGE_BUCKET_TILES}/allvector${VERSION}`,
+      name: 'upload-points',
+      script: `gsutil -h "Cache-Control:public,max-age=${cacheAge}" -h "Content-Encoding:gzip" -m cp -r tiles/points/tiles gs://${STORAGE_BUCKET_TILES}/points${VERSION}`,
+      autorestart: false,
+    },
+    {
+      name: 'upload-islands',
+      script: `gsutil -h "Cache-Control:public,max-age=${cacheAge}" -h "Content-Encoding:gzip" -m cp -r tiles/islands/tiles gs://${STORAGE_BUCKET_TILES}/islands${VERSION}`,
       autorestart: false,
     },
     {
