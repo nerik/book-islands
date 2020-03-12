@@ -161,7 +161,7 @@ BBOX_CHUNKS.forEach((bboxChunk, chunkIndex) => {
           rank,
           sort,
           // remove below for final dataset
-          author_id: authorBooks.author.id,
+          // author_id: authorBooks.author.id,
           // cluster_r: cluster.properties.cluster_r,
           // cluster_g: cluster.properties.cluster_g,
           // cluster_b: cluster.properties.cluster_b,

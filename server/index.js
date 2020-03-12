@@ -10,7 +10,7 @@ console.log(`on port ${PORT}`)
 app.use(cors())
 app.use(function(req, res, next) {
   var ext = path.extname(req.url)
-  if (ext !== '.png') {
+  if (ext !== '.png' && !req.url.match('fonts')) {
     res.setHeader('Content-Encoding', 'gzip')
   }
   next()
