@@ -66,7 +66,7 @@ const next = () => {
 
     transposedIslandWgs84.properties = {
       ...transposedIslandWgs84.properties,
-      layouted_id: parseInt(meta.author_id),
+      layouted_id: meta.author_id,
     }
 
     islands.push(transposedIslandWgs84)
