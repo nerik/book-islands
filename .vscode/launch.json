@@ -68,8 +68,14 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Collect islands",
+      "name": "Collect high def islands",
       "program": "${workspaceFolder}/scripts/layout/collectHighDefIslands.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Create search database",
+      "program": "${workspaceFolder}/scripts/layout/createSearchDatabase.js"
     },
     {
       "type": "node",

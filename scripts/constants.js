@@ -45,6 +45,7 @@ module.exports = {
   BASE_ISLANDS_META: 'out/layout/baseIslands.meta.json',
   ISLANDS: 'out/layout/islands.geo.json',
   ISLANDS_BBOX: 'out/layout/islands_bbox.geo.json',
+  ISLANDS_BBOX_BY_SLUG: 'out/layout/islands_bbox_by_slug.geo.json',
   ISLANDS_LOWDEF: 'out/layout/islands_lowdef.geo.json',
   ISLANDS_LOWDEF_BUFF: 'out/layout/islands_lowdef_buff.geo.json',
   ISLANDS_CANDIDATES_META: 'out/layout/islands_candidates.meta.json',

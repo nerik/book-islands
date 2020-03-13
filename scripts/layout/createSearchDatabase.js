@@ -5,6 +5,7 @@ const csvStringify = require('csv-stringify/lib/sync')
 
 const {
   BOOKS_POINTS,
+  ISLANDS_BBOX_BY_SLUG,
   ISLAND_LABELS,
   SEARCH_BOOKS_DB,
   SEARCH_BOOKS_DB_RANKED,
@@ -15,6 +16,7 @@ const {
 } = require('../constants')
 
 const authors = JSON.parse(fs.readFileSync(ISLAND_LABELS, 'utf-8')).features
+const islandsBbox = JSON.parse(fs.readFileSync(ISLANDS_BBOX_BY_SLUG, 'utf-8'))
 const books = JSON.parse(fs.readFileSync(BOOKS_POINTS, 'utf-8')).features
 
 const trunc = (n) => {
@@ -23,13 +25,19 @@ const trunc = (n) => {
   return Math.round(n * mult) / mult
 }
 
+const fallbackCoordinatesMargin = 0.01
 const parseAuthor = (author) => {
-  return [
-    author.properties.id,
-    author.properties.rank,
-    trunc(author.geometry.coordinates[0]),
-    trunc(author.geometry.coordinates[1]),
-  ]
+  const authorBbox = islandsBbox[author.properties.slug]
+  const [longitude, latitude] = author.geometry.coordinates
+  const coordinates = authorBbox
+    ? [...authorBbox.map(trunc)]
+    : [
+        trunc(longitude) - fallbackCoordinatesMargin,
+        trunc(latitude) - fallbackCoordinatesMargin,
+        trunc(longitude) + fallbackCoordinatesMargin,
+        trunc(latitude) + fallbackCoordinatesMargin,
+      ]
+  return [author.properties.id, author.properties.rank, ...coordinates]
 }
 
 const parseBook = (book) => {
@@ -41,7 +49,7 @@ const parseBook = (book) => {
   ]
 }
 
-const authorCsvFields = ['author', 'rank', 'lng', 'lat']
+const authorCsvFields = ['author', 'rank', 'minX', 'minY', 'maxX', 'maxY']
 const bookCsvFields = ['book', 'id', 'lng', 'lat']
 
 const authorsRecords = [authorCsvFields].concat(
