@@ -7,13 +7,13 @@ const JSONStream = require('JSONStream')
 const progressBar = require('../util/progressBar')
 const transposeToWorldCenter = require('../util/transposeToWorldCenter')
 const transposeAndScale = require('../util/transposeAndScale')
-const pointWithinBBox = require('../util/pointWithinBBox')
 
 const {
   BASE_ISLANDS,
   ISLETS,
   ISLANDS,
   ISLANDS_BBOX,
+  ISLANDS_BBOX_BY_SLUG,
   ISLANDS_LOWDEF,
   BBOX_CHUNKS,
 } = require('../constants')
@@ -30,12 +30,14 @@ const bboxChunks = BBOX_CHUNKS.map((bboxChunk, chunkIndex) => ({ bboxChunk, chun
 // .filter(chunk => chunk.chunkIndex === 1)
 
 const islandsBbox = {}
+const islandsBboxBySlug = {}
 let currentChunkPos = 0
 
 const next = () => {
   if (!bboxChunks[currentChunkPos]) {
     console.log('Writing islands bbox dictionary in', ISLANDS_BBOX)
     fs.writeFileSync(ISLANDS_BBOX, JSON.stringify(islandsBbox))
+    fs.writeFileSync(ISLANDS_BBOX_BY_SLUG, JSON.stringify(islandsBboxBySlug))
     console.log('All done.')
     return
   }
@@ -87,6 +89,7 @@ const next = () => {
     isletsTransposedWgs84.forEach((f) => {
       f.properties.islet = true
       f.properties.layouted_id = meta.author_id
+      f.properties.author_slug = meta.author_slug
       islands.push(f)
     })
   })
@@ -95,6 +98,12 @@ const next = () => {
   Object.entries(islandsGrouped).forEach(([id, islands]) => {
     const islandsWithIslets = turf.featureCollection(islands)
     islandsBbox[id] = turf.bbox(islandsWithIslets)
+  })
+
+  const islandsGroupedBySlug = _.groupBy(islands, 'properties.author_slug')
+  Object.entries(islandsGroupedBySlug).forEach(([id, islands]) => {
+    const islandsWithIslets = turf.featureCollection(islands)
+    islandsBboxBySlug[id] = turf.bbox(islandsWithIslets)
   })
 
   // console.log(islandsLayoutedIds.length, 'islands with', numFaulty, 'faulty')
