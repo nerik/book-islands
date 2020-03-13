@@ -65,7 +65,8 @@ const next = () => {
     const transposedIslandWgs84 = turf.toWgs84(transposedIsland)
 
     transposedIslandWgs84.properties = {
-      layouted_id: meta.author_id,
+      ...transposedIslandWgs84.properties,
+      layouted_id: parseInt(meta.author_id),
     }
 
     islands.push(transposedIslandWgs84)

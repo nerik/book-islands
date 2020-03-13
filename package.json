@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "live-server --no-browser --port=9091",
-    "serve": "node server/"
+    "serve": "node server/",
+    "debug:heights": "ndb ./scripts/tiles/height/heightTiles.js"
   },
   "repository": {
     "type": "git",

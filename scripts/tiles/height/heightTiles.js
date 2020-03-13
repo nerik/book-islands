@@ -8,6 +8,7 @@ tileReduce({
   zoom: MAX_ZOOM_HEIGHTS_GENERATED,
   map: path.join(__dirname, '/getTileCoordinates.js'),
   // log: true,
+  // bbox: [3, 11, 26, 23],
   sources: [
     {
       name: 'islands',
