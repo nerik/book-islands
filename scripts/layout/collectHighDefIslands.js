@@ -69,6 +69,7 @@ const next = () => {
     transposedIslandWgs84.properties = {
       ...transposedIslandWgs84.properties,
       layouted_id: meta.author_id,
+      author_slug: meta.author_slug,
     }
 
     islands.push(transposedIslandWgs84)
