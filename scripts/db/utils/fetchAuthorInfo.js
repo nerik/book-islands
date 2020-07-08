@@ -41,6 +41,8 @@ async function getAuthorInfoFromBooksAPI(author) {
           id: author,
           name: author,
           bio,
+          source: 'Google Books API',
+          url,
         }
         return authorInfo
       } else {
@@ -62,6 +64,7 @@ async function getAuthorInfoFromKnowledgeGraph(author) {
   if (itemListElement && itemListElement.length) {
     const { name, image, url, detailedDescription } = itemListElement[0].result
     const authorInfo = {
+      source: 'Knowledge Graph',
       id: author,
       name,
       url,
@@ -75,7 +78,10 @@ async function getAuthorInfoFromKnowledgeGraph(author) {
 async function getAuthorInfoFromWikipedia(author) {
   const url = `https://en.wikipedia.org/wiki/${author}`
   const html = await rp(url, { followAllRedirects: true })
-  const authorInfo = {}
+  const authorInfo = {
+    source: 'Wikipedia',
+    url,
+  }
   const tableRows = $('.infobox.vcard', html)
     .find('tbody > tr')
     .toArray()
@@ -131,6 +137,8 @@ async function getAuthorInfoFromGoogleBookInfo(author, bookId) {
       id: author,
       name: author,
       bio,
+      source: 'Google Books',
+      url,
     }
     return authorInfo
   } else {
