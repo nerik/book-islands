@@ -34,8 +34,16 @@ const generateAuthorJsons = async (authors) => {
           return worker.getAuthorInfo(author, bookId)
         })
         .then((authorInfo) => {
-          console.log(`${i} ${author} ✅`)
-          fs.writeFileSync(`${AUTHORS_JSON}/${kebabCase(author)}.json`, JSON.stringify(authorInfo))
+          if (authorInfo) {
+            console.log(`${i} ${author} ✅`)
+            fs.writeFileSync(
+              `${AUTHORS_JSON}/${kebabCase(author)}.json`,
+              JSON.stringify(authorInfo)
+            )
+          } else {
+            console.log(`${i} ${author} ❌`)
+            authorsWithErrors.push('empty: ' + author)
+          }
         })
         .catch((err) => {
           console.log(`${i} ${author} ❌`)
@@ -54,8 +62,13 @@ const generateAuthorJsons = async (authors) => {
     } else {
       try {
         const authorInfo = await getAuthorInfo(author, bookId)
-        fs.writeFileSync(`${AUTHORS_JSON}/${kebabCase(author)}.json`, JSON.stringify(authorInfo))
-        console.log(`${i} ${author} ✅`)
+        if (authorInfo) {
+          fs.writeFileSync(`${AUTHORS_JSON}/${kebabCase(author)}.json`, JSON.stringify(authorInfo))
+          console.log(`${i} ${author} ✅`)
+        } else {
+          console.log(`${i} ${author} ❌`)
+          authorsWithErrors.push('empty: ' + author)
+        }
       } catch {
         console.log(`${i} ${author} ❌`)
         authorsWithErrors.push(author)
@@ -105,3 +118,5 @@ generateAuthorDBJsons()
 // getSingleAuthor('Carl Boggs', 'wNw_uw4BBlsC')
 // getSingleAuthor('Linda Camp Keith')
 // getSingleAuthor('Juan Carlos Alonso Lena')
+// getSingleAuthor('thomas wolfe')
+// getSingleAuthor('Mungo Park')
