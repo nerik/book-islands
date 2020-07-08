@@ -77,11 +77,16 @@ async function getAuthorInfoFromKnowledgeGraph(author) {
       'professor',
       'book',
     ]
-    const bestMatchIndex = itemListElement.findIndex((e) =>
-      descriptions.some(
-        (description) => e.result.description && e.result.description.includes(description)
+    const bestMatchIndex = itemListElement.findIndex((e) => {
+      const { description, detailedDescription } = e.result
+      return descriptions.some(
+        (d) =>
+          (description && description.includes(d)) ||
+          (detailedDescription &&
+            detailedDescription.articleBody &&
+            detailedDescription.articleBody.includes(d))
       )
-    )
+    })
     if (bestMatchIndex > -1) {
       const { name, image, detailedDescription } = itemListElement[bestMatchIndex].result
       if (detailedDescription) {
