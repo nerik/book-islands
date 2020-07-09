@@ -92,8 +92,8 @@ const generateAuthorDBJsons = async () => {
     return { author, bookId, rank: ISLAND_RANK_SCALE(score) }
   })
 
-  const authorsToFetch = authors.filter(({ rank }) => rank < MAX_RANK_TO_GENERATE)
-  generateAuthorJsons(authorsToFetch)
+  // const authorsToFetch = authors.filter(({ rank }) => rank < MAX_RANK_TO_GENERATE)
+  generateAuthorJsons(authors)
 }
 
 const generateAuthorErrorJsons = async () => {
