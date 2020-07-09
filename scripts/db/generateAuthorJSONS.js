@@ -112,6 +112,10 @@ const getSingleAuthor = async (author, bookId) => {
 }
 
 generateAuthorDBJsons()
+// generateAuthorJsons([
+//   { author: 'zaharia stancu', bookId: 'g0UAh2v-W2sC' },
+//   { author: 'Thomas Wolfe', bookId: 'ZCyaAAAAIAAJ' },
+// ])
 // generateAuthorErrorJsons()
 // getSingleAuthor('James Waller', 'yn7kAAAAIAAJ')
 // getSingleAuthor('Tim Bergling', 'lSwbAAAAYAAJ')
