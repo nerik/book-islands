@@ -105,6 +105,7 @@ const getSingleAuthor = async (author, bookId) => {
   try {
     const authorInfo = await getAuthorInfo(author, bookId)
     console.log('Author info', authorInfo)
+    fs.writeFileSync(`${AUTHORS_JSON}/${kebabCase(author)}.json`, JSON.stringify(authorInfo))
   } catch (e) {
     console.error(e)
   }
@@ -119,4 +120,5 @@ generateAuthorDBJsons()
 // getSingleAuthor('Linda Camp Keith')
 // getSingleAuthor('Juan Carlos Alonso Lena')
 // getSingleAuthor('thomas wolfe')
+// getSingleAuthor('Leo Lionni')
 // getSingleAuthor('Mungo Park')

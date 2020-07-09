@@ -193,21 +193,7 @@ async function getAuthorInfo(author, bookId) {
     }
   } else {
     try {
-      if (FETCH_BOOKS_API) {
-        try {
-          const authorInfo = await getAuthorInfoFromBooksAPI(author)
-          return authorInfo
-        } catch (e) {
-          if (DEBUG) {
-            console.warn(e.message)
-          }
-        }
-      }
-
       if (FETCH_KNOWLEGDE_GRAPH) {
-        if (DEBUG) {
-          console.log(`No google books api data, trying with knowledge graph data for ${author}`)
-        }
         try {
           const authorInfo = await getAuthorInfoFromKnowledgeGraph(author)
           if (FETCH_WIKIPEDIA_DATA && authorInfo && authorInfo.name) {
@@ -218,15 +204,32 @@ async function getAuthorInfo(author, bookId) {
               if (DEBUG) {
                 console.warn(`No wikipedia data for ${author}`)
               }
-              return authorInfo
             }
           }
+          return authorInfo
         } catch (e) {
-          throw new Error(`No author info in knowledge`)
+          if (DEBUG) {
+            console.warn(`No author info in knowledge`)
+            // console.warn(e.message)
+          }
         }
-      } else {
-        throw new Error(`No data found in any source`)
       }
+
+      if (FETCH_BOOKS_API) {
+        if (DEBUG) {
+          console.log(`No google knowledge graph data, trying with books api data for ${author}`)
+        }
+        try {
+          const authorInfo = await getAuthorInfoFromBooksAPI(author)
+          return authorInfo
+        } catch (e) {
+          if (DEBUG) {
+            // console.warn(e.message)
+            console.warn(`No author info in books API`)
+          }
+        }
+      }
+      throw new Error(`No data found in any source`)
     } catch (e) {
       if (DEBUG) {
         console.warn(`Error fetching knowlegde graph for author ${author} (${e.message})`)
