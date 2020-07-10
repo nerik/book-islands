@@ -63,19 +63,35 @@ async function getAuthorInfoFromKnowledgeGraph(author) {
   const { itemListElement } = await rp({ uri, json: true })
   if (itemListElement && itemListElement.length) {
     const descriptions = [
-      'writer',
-      'playwright',
-      'journalist',
-      'biographer',
-      'essayist',
-      'novelist',
       'author',
-      'poet',
-      'editor',
-      'critic',
-      'publisher',
-      'professor',
+      'biograph',
+      'biolog',
       'book',
+      'cartograp',
+      'critic',
+      'correspondent',
+      'editor',
+      'economist',
+      'explor',
+      'essay',
+      'geolog',
+      'mathemat',
+      'philosoph',
+      'polymath',
+      'histor',
+      'journal',
+      'novel',
+      'playwright',
+      'physicist',
+      'poet',
+      'Pope',
+      'politic',
+      'professor',
+      'publish',
+      'theorist',
+      'theolo',
+      'traged',
+      'writ',
     ]
     const bestMatchIndex = itemListElement.findIndex((e) => {
       const { description, detailedDescription } = e.result
@@ -100,6 +116,9 @@ async function getAuthorInfoFromKnowledgeGraph(author) {
         }
         return authorInfo
       }
+    } else {
+      console.log(uri)
+      return null
     }
   }
 }
@@ -212,9 +231,9 @@ async function getAuthorInfo(author, bookId) {
             if (DEBUG) {
               console.warn(`No wikipedia data for ${author}`)
             }
+            return authorInfo
           }
         }
-        return authorInfo
       } catch (e) {
         if (DEBUG) {
           console.warn(`No author info in knowledge`)

@@ -23,6 +23,7 @@ module.exports = {
   BOOKS_JSON: 'out/books',
   AUTHORS_JSON: 'out/authors',
   AUTHORS_ERROR_JSON: 'out/author-errors.json',
+  MI_AUTHORS: 'in/google-books/most-important-authors.json',
   GEONAMES_DB: './out/baseIslands/geonames.db',
   SHORELINES: 'out/baseIslands/gshhs/shorelines.geo.json',
   BASE_ISLANDS: 'out/baseIslands/baseIslands.geo.json',

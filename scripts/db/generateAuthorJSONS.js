@@ -8,16 +8,16 @@ const getAuthorInfo = require('./utils/fetchAuthorInfo')
 const kebabCase = require('lodash/kebabCase')
 const {
   BOOKS_DB,
+  MI_AUTHORS,
   BOOKS_DB_TABLE,
   AUTHORS_JSON,
   AUTHORS_ERROR_JSON,
   ISLAND_RANK_SCALE,
 } = require('../constants')
 
-const MAX_RANK_TO_GENERATE = 3
 const MAX_WORKERS = 3
 const INDEX_START = 0
-const USE_WORKER = true
+const USE_WORKER = false
 
 var pool = workerpool.pool(__dirname + '/workers/getAuthorInfo.js', {
   maxWorkers: MAX_WORKERS,
@@ -42,7 +42,7 @@ const generateAuthorJsons = async (authors) => {
             )
           } else {
             console.log(`${i} ${author} ❌`)
-            authorsWithErrors.push('empty: ' + author)
+            authorsWithErrors.push(author)
           }
         })
         .catch((err) => {
@@ -67,7 +67,7 @@ const generateAuthorJsons = async (authors) => {
           console.log(`${i} ${author} ✅`)
         } else {
           console.log(`${i} ${author} ❌`)
-          authorsWithErrors.push('empty: ' + author)
+          authorsWithErrors.push(author)
         }
       } catch {
         console.log(`${i} ${author} ❌`)
@@ -98,7 +98,11 @@ const generateAuthorDBJsons = async () => {
 
 const generateAuthorErrorJsons = async () => {
   const authors = JSON.parse(fs.readFileSync(AUTHORS_ERROR_JSON, 'utf-8'))
-  generateAuthorJsons(authors)
+  const mostImportantAuthors = JSON.parse(fs.readFileSync(MI_AUTHORS, 'utf-8'))
+  const mostImportantPendingAuthors = authors.filter((author) =>
+    mostImportantAuthors.includes(author)
+  )
+  generateAuthorJsons(mostImportantPendingAuthors.map((author) => ({ author })))
 }
 
 const getSingleAuthor = async (author, bookId) => {
@@ -112,11 +116,12 @@ const getSingleAuthor = async (author, bookId) => {
 }
 
 generateAuthorDBJsons()
-// generateAuthorJsons([
-//   { author: 'zaharia stancu', bookId: 'g0UAh2v-W2sC' },
-//   { author: 'Thomas Wolfe', bookId: 'ZCyaAAAAIAAJ' },
-// ])
 // generateAuthorErrorJsons()
+// generateAuthorJsons([
+//   // { author: 'zaharia stancu', bookId: 'g0UAh2v-W2sC' },
+//   // { author: 'Thomas Wolfe', bookId: 'ZCyaAAAAIAAJ' },
+//   { author: 'Sophocles', bookId: 'lVOxAAAAIAAJ' },
+// ])
 // getSingleAuthor('James Waller', 'yn7kAAAAIAAJ')
 // getSingleAuthor('Tim Bergling', 'lSwbAAAAYAAJ')
 // getSingleAuthor('Chuck Yeager', 'pqdHKsDa4nMC')
