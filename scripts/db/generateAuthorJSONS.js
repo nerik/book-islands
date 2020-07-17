@@ -15,7 +15,7 @@ const {
   ISLAND_RANK_SCALE,
 } = require('../constants')
 
-const MAX_WORKERS = 4
+const MAX_WORKERS = 3
 const INDEX_START = 0
 const USE_WORKER = true
 
