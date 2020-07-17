@@ -130,48 +130,55 @@ async function getAuthorInfoFromKnowledgeGraph(author) {
 }
 
 async function getAuthorInfoFromWikipedia(author) {
-  const url = `https://en.wikipedia.org/wiki/${author}`
-  const html = await rp(url, { followAllRedirects: true })
-  const authorInfo = {
-    wikipediaUrl: url,
-  }
-  const tableRows = $('.infobox.vcard', html)
-    .find('tbody > tr')
-    .toArray()
-    .filter((tr) => tr.firstChild.attribs.scope === 'row')
-  const bornRow = tableRows.length
-    ? tableRows.find((row) =>
-        $(row, html)
-          .children()
-          .first()
-          .text()
-          .toUpperCase()
-          .includes('BORN')
-      )
-    : null
-  if (bornRow) {
-    const bornText = cleanText($(bornRow.lastChild, html).text())
-    if (bornText) {
-      authorInfo.born = bornText
+  try {
+    const url = `https://en.wikipedia.org/wiki/${author}`
+    const html = await rp(url, { followAllRedirects: true })
+    const authorInfo = {
+      wikipediaUrl: url,
     }
-  }
-  const deathRow = tableRows.length
-    ? tableRows.find((row) =>
-        $(row, html)
-          .children()
-          .first()
-          .text()
-          .toUpperCase()
-          .includes('DIED')
-      )
-    : null
-  if (deathRow) {
-    const deathText = cleanText($(deathRow.lastChild, html).text())
-    if (deathText) {
-      authorInfo.death = deathText
+    const tableRows = $('.infobox.vcard', html)
+      .find('tbody > tr')
+      .toArray()
+      .filter((tr) => tr.firstChild.attribs.scope === 'row')
+    const bornRow = tableRows.length
+      ? tableRows.find((row) =>
+          $(row, html)
+            .children()
+            .first()
+            .text()
+            .toUpperCase()
+            .includes('BORN')
+        )
+      : null
+    if (bornRow) {
+      const bornText = cleanText($(bornRow.lastChild, html).text())
+      if (bornText) {
+        authorInfo.born = bornText
+      }
     }
+    const deathRow = tableRows.length
+      ? tableRows.find((row) =>
+          $(row, html)
+            .children()
+            .first()
+            .text()
+            .toUpperCase()
+            .includes('DIED')
+        )
+      : null
+    if (deathRow) {
+      const deathText = cleanText($(deathRow.lastChild, html).text())
+      if (deathText) {
+        authorInfo.death = deathText
+      }
+    }
+    return authorInfo
+  } catch (e) {
+    if (DEBUG) {
+      console.log(`Error fetching author: ${author} in wikipedia: ${e.message}`)
+    }
+    return {}
   }
-  return authorInfo
 }
 
 async function getAuthorInfoFromGoogleBookInfo(author, book) {
