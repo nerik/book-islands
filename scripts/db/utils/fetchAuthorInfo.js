@@ -31,8 +31,8 @@ async function getAuthorInfoFromBooksAPI(author) {
   if (items && items.length) {
     const book = items.find((item) => item.volumeInfo.authors.includes(author))
     if (book) {
-      const { volumeInfo } = book
-      const url = volumeInfo.canonicalVolumeLink
+      const { canonicalVolumeLink, title } = book.volumeInfo
+      const url = canonicalVolumeLink
       const html = await rp(url, { followAllRedirects: true })
       const aboutTheAuthor = $('#about_author_v', html)
       const bio = aboutTheAuthor && aboutTheAuthor.text()
@@ -43,6 +43,7 @@ async function getAuthorInfoFromBooksAPI(author) {
           bio,
           source: 'Google Books API',
           url,
+          book: { id: book.id, title },
         }
         return authorInfo
       } else {
@@ -168,8 +169,8 @@ async function getAuthorInfoFromWikipedia(author) {
   return authorInfo
 }
 
-async function getAuthorInfoFromGoogleBookInfo(author, bookId) {
-  const url = `${GOOGLE_BOOKS_BASE_URL}${bookId}`
+async function getAuthorInfoFromGoogleBookInfo(author, book) {
+  const url = `${GOOGLE_BOOKS_BASE_URL}${book.id}`
   const html = await rp(url, {
     followAllRedirects: true,
     headers: {
@@ -181,15 +182,16 @@ async function getAuthorInfoFromGoogleBookInfo(author, bookId) {
   const aboutTheAuthor = $(authorHTMLSelector, html)
   const bio = aboutTheAuthor && aboutTheAuthor.text()
   if (DEBUG) {
-    console.log(`Fetching author: ${author} and bookId: ${bookId}`)
+    console.log(`Fetching author: ${author} and book id: ${book.id}`)
   }
   if (bio) {
     const authorInfo = {
       id: author,
       name: author,
       bio,
-      source: 'Google Books',
       url,
+      source: 'Google Books',
+      book: { ...book },
     }
     return authorInfo
   } else {
@@ -197,22 +199,22 @@ async function getAuthorInfoFromGoogleBookInfo(author, bookId) {
   }
 }
 
-async function getAuthorInfo(author, bookId) {
-  if (bookId) {
+async function getAuthorInfo(author, book) {
+  if (book && book.id) {
     try {
-      const authorInfo = await getAuthorInfoFromGoogleBookInfo(author, bookId)
+      const authorInfo = await getAuthorInfoFromGoogleBookInfo(author, book)
       const bioUpper = authorInfo.bio && authorInfo.bio.toUpperCase()
       if (bioUpper && author.split(' ').some((name) => bioUpper.includes(name.toUpperCase()))) {
         return authorInfo
       } else if (DEBUG) {
         console.warn(
-          `Data from google book author info ${author} and book ${bookId} doesn't match with author name trying with knowlegde graph`
+          `Data from google book author info ${author} and book ${book.id} doesn't match with author name trying with knowlegde graph`
         )
       }
     } catch (e) {
       if (DEBUG) {
         console.warn(
-          `Error fetching google book info author ${author} and book ${bookId} (${e.message})`
+          `Error fetching google book info author ${author} and book ${book.id} (${e.message})`
         )
       }
       // throw new Error(`No data found in books info source`)

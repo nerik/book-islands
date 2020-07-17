@@ -17,7 +17,7 @@ const {
 
 const MAX_WORKERS = 3
 const INDEX_START = 0
-const USE_WORKER = false
+const USE_WORKER = true
 
 var pool = workerpool.pool(__dirname + '/workers/getAuthorInfo.js', {
   maxWorkers: MAX_WORKERS,
@@ -26,12 +26,12 @@ var pool = workerpool.pool(__dirname + '/workers/getAuthorInfo.js', {
 const generateAuthorJsons = async (authors) => {
   const authorsWithErrors = []
   for (let i = INDEX_START; i < authors.length; i++) {
-    const { author, bookId } = authors[i]
+    const { author, book } = authors[i]
     if (USE_WORKER) {
       pool
         .proxy()
         .then((worker) => {
-          return worker.getAuthorInfo(author, bookId)
+          return worker.getAuthorInfo(author, book)
         })
         .then((authorInfo) => {
           if (authorInfo) {
@@ -61,7 +61,7 @@ const generateAuthorJsons = async (authors) => {
         })
     } else {
       try {
-        const authorInfo = await getAuthorInfo(author, bookId)
+        const authorInfo = await getAuthorInfo(author, book)
         if (authorInfo) {
           fs.writeFileSync(`${AUTHORS_JSON}/${kebabCase(author)}.json`, JSON.stringify(authorInfo))
           console.log(`${i} ${author} ✅`)
@@ -86,10 +86,10 @@ const generateAuthorDBJsons = async () => {
     fs.mkdirSync(AUTHORS_JSON)
   }
   const db = await Database.open(BOOKS_DB, Database.OPEN_READONLY)
-  const dbQuery = `SELECT author, sum(score) AS score, public_id as bookId FROM (SELECT * FROM ${BOOKS_DB_TABLE} ORDER BY score DESC) GROUP BY author ORDER BY score DESC`
+  const dbQuery = `SELECT author, sum(score) AS score, public_id as bookId, title FROM (SELECT * FROM ${BOOKS_DB_TABLE} ORDER BY score DESC) GROUP BY author ORDER BY score DESC`
   const rows = await db.all(dbQuery)
-  const authors = rows.map(({ author, bookId, score }) => {
-    return { author, bookId, rank: ISLAND_RANK_SCALE(score) }
+  const authors = rows.map(({ author, bookId, score, title }) => {
+    return { author, rank: ISLAND_RANK_SCALE(score), book: { id: bookId, title } }
   })
 
   // const authorsToFetch = authors.filter(({ rank }) => rank < MAX_RANK_TO_GENERATE)
