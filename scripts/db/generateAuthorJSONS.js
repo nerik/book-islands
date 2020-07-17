@@ -15,7 +15,7 @@ const {
   ISLAND_RANK_SCALE,
 } = require('../constants')
 
-const MAX_WORKERS = 3
+const MAX_WORKERS = 4
 const INDEX_START = 0
 const USE_WORKER = true
 
@@ -25,6 +25,13 @@ var pool = workerpool.pool(__dirname + '/workers/getAuthorInfo.js', {
 
 const generateAuthorJsons = async (authors) => {
   const authorsWithErrors = []
+
+  const handleAuthorMissing = (author, index) => {
+    console.log(`${index} ${author} ❌`)
+    authorsWithErrors.push(author)
+    const id = kebabCase(author)
+    fs.writeFileSync(`${AUTHORS_JSON}/${id}.json`, JSON.stringify({ id, name: author }))
+  }
   for (let i = INDEX_START; i < authors.length; i++) {
     const { author, book } = authors[i]
     if (USE_WORKER) {
@@ -41,13 +48,11 @@ const generateAuthorJsons = async (authors) => {
               JSON.stringify(authorInfo)
             )
           } else {
-            console.log(`${i} ${author} ❌`)
-            authorsWithErrors.push(author)
+            handleAuthorMissing(author, i)
           }
         })
         .catch((err) => {
-          console.log(`${i} ${author} ❌`)
-          authorsWithErrors.push(err.message)
+          handleAuthorMissing(author, i)
         })
         .then(() => {
           const { pendingTasks, activeTasks } = pool.stats()
@@ -66,12 +71,10 @@ const generateAuthorJsons = async (authors) => {
           fs.writeFileSync(`${AUTHORS_JSON}/${kebabCase(author)}.json`, JSON.stringify(authorInfo))
           console.log(`${i} ${author} ✅`)
         } else {
-          console.log(`${i} ${author} ❌`)
-          authorsWithErrors.push(author)
+          handleAuthorMissing(author, i)
         }
       } catch {
-        console.log(`${i} ${author} ❌`)
-        authorsWithErrors.push(author)
+        handleAuthorMissing(author, i)
       }
     }
   }
@@ -105,9 +108,9 @@ const generateAuthorErrorJsons = async () => {
   generateAuthorJsons(mostImportantPendingAuthors.map((author) => ({ author })))
 }
 
-const getSingleAuthor = async (author, bookId) => {
+const getSingleAuthor = async (author, book) => {
   try {
-    const authorInfo = await getAuthorInfo(author, bookId)
+    const authorInfo = await getAuthorInfo(author, book)
     console.log('Author info', authorInfo)
     fs.writeFileSync(`${AUTHORS_JSON}/${kebabCase(author)}.json`, JSON.stringify(authorInfo))
   } catch (e) {
@@ -118,9 +121,10 @@ const getSingleAuthor = async (author, bookId) => {
 generateAuthorDBJsons()
 // generateAuthorErrorJsons()
 // generateAuthorJsons([
-//   // { author: 'zaharia stancu', bookId: 'g0UAh2v-W2sC' },
-//   // { author: 'Thomas Wolfe', bookId: 'ZCyaAAAAIAAJ' },
-//   { author: 'Sophocles', bookId: 'lVOxAAAAIAAJ' },
+//   // { author: 'zaharia stancu', book: { id: 'g0UAh2v-W2sC' } },
+//   // { author: 'Thomas Wolfe', book: { id: 'ZCyaAAAAIAAJ' } },
+//   // { author: 'Sophocles', book: { id: 'lVOxAAAAIAAJ' } },
+//   { author: 'Pepe paco' },
 // ])
 // getSingleAuthor('James Waller', 'yn7kAAAAIAAJ')
 // getSingleAuthor('Tim Bergling', 'lSwbAAAAYAAJ')
