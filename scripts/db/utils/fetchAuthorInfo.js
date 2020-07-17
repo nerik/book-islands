@@ -28,33 +28,37 @@ async function getAuthorInfoFromBooksAPI(author) {
   const apiUrl = 'https://www.googleapis.com/books/v1/volumes'
   const encodedAuthor = encodeURIComponent(author)
   const uri = `${apiUrl}?q=+inauthor:${encodedAuthor}&key=${GOOGLE_API_KEY}`
-  const { items } = await rp({ uri, json: true })
-  if (items && items.length) {
-    const book = items.find((item) => item.volumeInfo.authors.includes(author))
-    if (book) {
-      const { canonicalVolumeLink, title } = book.volumeInfo
-      const url = canonicalVolumeLink
-      const html = await rp(url, { followAllRedirects: true })
-      const aboutTheAuthor = $('#about_author_v', html)
-      const bio = aboutTheAuthor && aboutTheAuthor.text()
-      if (bio) {
-        const authorInfo = {
-          id: kebabCase(author),
-          name: author,
-          bio,
-          source: 'Google Books API',
-          url,
-          book: { id: book.id, title },
+  try {
+    const { items } = await rp({ uri, json: true })
+    if (items && items.length) {
+      const book = items.find((item) => item.volumeInfo.authors.includes(author))
+      if (book) {
+        const { canonicalVolumeLink, title } = book.volumeInfo
+        const url = canonicalVolumeLink
+        const html = await rp(url, { followAllRedirects: true })
+        const aboutTheAuthor = $('#about_author_v', html)
+        const bio = aboutTheAuthor && aboutTheAuthor.text()
+        if (bio) {
+          const authorInfo = {
+            id: kebabCase(author),
+            name: author,
+            bio,
+            source: 'Google Books API',
+            url,
+            book: { id: book.id, title },
+          }
+          return authorInfo
+        } else {
+          throw new Error(`No book author match with book api results for ${author}`)
         }
-        return authorInfo
       } else {
-        throw new Error(`No book author match with book api results for ${author}`)
+        throw new Error(`No author data in books api result for ${author}`)
       }
     } else {
-      throw new Error(`No author data in books api result for ${author}`)
+      throw new Error(`No data in books api for ${author}`)
     }
-  } else {
-    throw new Error(`No data in books api for ${author}`)
+  } catch (e) {
+    throw new Error(`Error requesting data in books api for ${author}`)
   }
 }
 
