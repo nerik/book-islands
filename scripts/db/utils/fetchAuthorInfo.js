@@ -1,5 +1,6 @@
 require('dotenv').config()
 const rp = require('request-promise')
+const kebabCase = require('lodash/kebabCase')
 const $ = require('cheerio')
 
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY
@@ -38,7 +39,7 @@ async function getAuthorInfoFromBooksAPI(author) {
       const bio = aboutTheAuthor && aboutTheAuthor.text()
       if (bio) {
         const authorInfo = {
-          id: author,
+          id: kebabCase(author),
           name: author,
           bio,
           source: 'Google Books API',
@@ -109,7 +110,7 @@ async function getAuthorInfoFromKnowledgeGraph(author) {
       if (detailedDescription) {
         const authorInfo = {
           source: 'Knowledge Graph',
-          id: author,
+          id: kebabCase(author),
           name,
           url: detailedDescription.url,
           ...(image && image.contentUrl && { image: image.contentUrl }),
@@ -186,7 +187,7 @@ async function getAuthorInfoFromGoogleBookInfo(author, book) {
   }
   if (bio) {
     const authorInfo = {
-      id: author,
+      id: kebabCase(author),
       name: author,
       bio,
       url,
